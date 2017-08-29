@@ -1,0 +1,31 @@
+text-button:hover
+{
+	color: #A59876;
+}
+
+text-button:focus
+{
+	color: #615432;
+}
+
+draggable-label:focus
+{
+	color: #FF0000;
+}
+
+.label_1:hover
+{
+	color: #80AAFF;
+}
+
+/*Selector with ID is more important than next rule*/
+#blabla
+{
+	color: #837654;
+	position-x: 10;
+}
+
+text-button
+{
+	color: #80FF80;
+}
