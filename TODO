@@ -1,6 +1,0 @@
-BUGS:
-	Can't change font using CSS
-
-IMPROVEMENTS:
-	Add full CSS support
-	Optimize CSS parsing and applying

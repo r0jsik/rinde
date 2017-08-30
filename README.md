@@ -11,7 +11,14 @@ Required libraries:
 
 Coming soon:
 <ul>
+	<li>Documentation</li>
 	<li>Full CSS support</li>
 	<li>Many more node types + SVG graphics</li>
-	<li>Bugfixes</li>
+	<li>Optimization</li>
+</ul>
+
+Coming sooooon:
+<ul>
+	<li>Animations</li>
+	<li>Independent from pygame</li>
 </ul>
