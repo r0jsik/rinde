@@ -67,7 +67,8 @@ class XMLParserBase(object):
 class LayoutParserBase(XMLParserBase):
 	def __init__(self, scene_directory):
 		super(LayoutParserBase, self).__init__("%s/layout.xml" % scene_directory)
-		
+	
+	def _init_scene(self):
 		self.__scene = self.parse_root()
 		self.__controller = self.__scene.get_controller()
 	
@@ -122,15 +123,22 @@ class LayoutParserBase(XMLParserBase):
 
 class LayoutParserWithCustomController(LayoutParserBase):
 	def __init__(self, scene_directory, controller):
+		super(LayoutParserWithCustomController, self).__init__(scene_directory)
+		
 		self.__controller = controller
 		
-		super(LayoutParserWithCustomController, self).__init__(scene_directory)
+		self._init_scene()
 	
 	def _create_scene(self, attributes):
 		return Scene(self.__controller, **attributes)
 
 
 class LayoutParserWhichMakesController(LayoutParserBase):
+	def __init__(self, scene_directory):
+		super(LayoutParserWhichMakesController, self).__init__(scene_directory)
+		
+		self._init_scene()
+	
 	def _create_scene(self, attributes):
 		controller = self.__extract_controller_from_attributes(attributes)
 		controller = self.__create_controller(controller)

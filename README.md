@@ -3,10 +3,11 @@ Rinde is amazing Python library which can be used for creating GUI based on XML 
 
 *Work in progress.*
 
-Required libraries:
+Requires:
 <ul>
-	<li>pygame</li>
-	<li>cssutils</li>
+    <li>Python 2.7 (for now)</li>
+    <li>cssutils</li>
+	<li>pygame (for now)</li>
 </ul>
 
 Coming soon:
@@ -21,4 +22,5 @@ Coming sooooon:
 <ul>
 	<li>Animations</li>
 	<li>Independence from pygame</li>
+	<li>Version for Python 3.x</li>
 </ul>

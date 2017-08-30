@@ -371,6 +371,7 @@ class ImageView(Node):
 		
 		image = Image(resource)
 		
+		self.style_name = "image-view"
 		self.property["image"] = self._create_updating_property(image)
 		self.update()
 	
