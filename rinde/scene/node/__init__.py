@@ -12,7 +12,7 @@ class NodeBase(object):
 		self.style_name = None
 		self.hovered = self.__create_state_property()
 		self.focused = self.__create_state_property()
-		self.properties = {}
+		self.property = {}
 		
 		self.__style = None
 	
@@ -32,9 +32,9 @@ class NodeBase(object):
 			self.__apply_style("focus")
 	
 	def __apply_default_style(self):
-		for property_name in self.properties:
-			if property_name not in self.__style[None]:
-				self.properties[property_name].default_value()
+		for property_name in self.property:
+			if self.property[property_name].is_changed() and property_name not in self.__style[None]:
+				self.property[property_name].default_value()
 		
 		self.__apply_style(None)
 	
@@ -51,31 +51,28 @@ class NodeBase(object):
 	
 	def __try_to_set_appearance(self, property_name, value):
 		appearance_name = property_name.replace("-", "_")
-		appearance = self.properties[appearance_name]
-		appearance.set(value)
+		appearance = self.property[appearance_name]
+		appearance.change(value)
 	
 	def set_style(self, style):
 		self.__style = style
 		self.__apply_style(None)
 	
 	def set_property(self, name, value):
-		self.property(name).reset(value)
+		self.property[name].set(value)
 	
 	def get_property(self, name):
-		return self.property(name).get()
-	
-	def property(self, name):
-		return self.properties[name]
+		return self.property[name].get()
 
 
 class Boundary(NodeBase):
 	def __init__(self, position_x=0, position_y=0, **kwargs):
 		super(Boundary, self).__init__(**kwargs)
 		
-		self.properties["position_x"] = self.__create_position_property()
-		self.properties["position_y"] = self.__create_position_property()
-		self.properties["width"] = IntegerProperty()
-		self.properties["height"] = IntegerProperty()
+		self.property["position_x"] = self.__create_position_property()
+		self.property["position_y"] = self.__create_position_property()
+		self.property["width"] = IntegerProperty()
+		self.property["height"] = IntegerProperty()
 		
 		self.__parent_position_x = self.__create_position_property()
 		self.__parent_position_y = self.__create_position_property()
@@ -96,8 +93,8 @@ class Boundary(NodeBase):
 		)
 	
 	def bind_parent_position(self, parent):
-		parent_position_x = parent.property("position_x")
-		parent_position_y = parent.property("position_y")
+		parent_position_x = parent.property["position_x"]
+		parent_position_y = parent.property["position_y"]
 		
 		self.__parent_position_x.bind_to(parent_position_x)
 		self.__parent_position_y.bind_to(parent_position_y)
@@ -112,18 +109,18 @@ class Boundary(NodeBase):
 		self.__bind_height(boundary)
 	
 	def __bind_width(self, boundary):
-		width = self.property("width")
-		boundary_width = boundary.property("width")
-		width.bind_to(boundary_width)
+		width = self.property["width"]
+		boundary_width = boundary.property["width"]
+		width.bind_to(boundary_width, True)
 	
 	def __bind_height(self, boundary):
-		height = self.property("height")
-		boundary_height = boundary.property("height")
-		height.bind_to(boundary_height)
+		height = self.property["height"]
+		boundary_height = boundary.property["height"]
+		height.bind_to(boundary_height, True)
 	
 	def unbind_size(self):
-		self.property("width").unbind()
-		self.property("height").unbind()
+		self.property["width"].unbind()
+		self.property["height"].unbind()
 	
 	def is_mouse_over(self, mouse_position):
 		if self.get_property("width") > mouse_position[0] - self.get_property("position_x") > 0:
@@ -263,7 +260,7 @@ class TextDisplay(FlatNode):
 		self.__font_size_property = self._create_updating_property()
 		self.__font_size_property.bind_to(font_size_property)
 		
-		self.properties["color"] = self._create_updating_property(color)
+		self.property["color"] = self._create_updating_property(color)
 		self.update()
 	
 	def update(self):
@@ -284,9 +281,9 @@ class Label(FlatNode):
 	def __init__(self, text, **kwargs):
 		super(Label, self).__init__(**kwargs)
 		
-		self.properties["text"] = self._create_updating_property(text)
-		self.properties["font"] = self.__create_font_property()
-		self.properties["font_size"] = self._create_updating_property()
+		self.property["text"] = self._create_updating_property(text)
+		self.property["font"] = self.__create_font_property()
+		self.property["font_size"] = self._create_updating_property()
 		
 		self.__init_shadow()
 		self.__init_face()
@@ -308,18 +305,18 @@ class Label(FlatNode):
 		self.__add_shadow_properties()
 	
 	def __create_text_display(self, color):
-		text_property = self.property("text")
-		font_property = self.property("font")
-		font_size_property = self.property("font_size")
+		text_property = self.property["text"]
+		font_property = self.property["font"]
+		font_size_property = self.property["font_size"]
 		
 		text_display = TextDisplay(text_property, font_property, font_size_property, color)
 		
 		return text_display
 	
 	def __add_shadow_properties(self):
-		self.properties["shadow_offset_x"] = self.__shadow.property("position_x")
-		self.properties["shadow_offset_y"] = self.__shadow.property("position_y")
-		self.properties["shadow_color"] = self.__shadow.property("color")
+		self.property["shadow_offset_x"] = self.__shadow.property["position_x"]
+		self.property["shadow_offset_y"] = self.__shadow.property["position_y"]
+		self.property["shadow_color"] = self.__shadow.property["color"]
 	
 	def __init_face(self):
 		self.__face = self.__create_text_display(self.DEFAULT_FACE_COLOR)
@@ -328,7 +325,7 @@ class Label(FlatNode):
 		self.__add_face_properties()
 	
 	def __add_face_properties(self):
-		self.properties["color"] = self.__face.property("color")
+		self.property["color"] = self.__face.property["color"]
 	
 	def update(self):
 		self.__shadow.update()
@@ -342,8 +339,8 @@ class DraggableLabel(Label):
 		self.style_name = "draggable-label"
 	
 	def drag(self, mouse_offset):
-		self.property("position_x").increase(mouse_offset[0])
-		self.property("position_y").increase(mouse_offset[1])
+		self.property["position_x"].increase(mouse_offset[0])
+		self.property["position_y"].increase(mouse_offset[1])
 
 
 class TextButton(Label):

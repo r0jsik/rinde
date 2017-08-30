@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <scene controller="controller.Controller" width="320" height="480">
-	<text-button id="blabla" text="Click to print Hello" action="say_hello" />
+	<text-button id="blabla" text="Click to print Hello" action="say_hello" position_x="10" />
 
 	<draggable-label text="Drag me 1" position_x="50" position_y="50" style_class="label_1" />
 	<draggable-label text="Drag me 2" position_x="50" position_y="90" />

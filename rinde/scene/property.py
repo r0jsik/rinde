@@ -5,26 +5,32 @@ class Property(object):
 		self.__bound_properties = []
 		self.__bound_to = None
 	
-	def bind_to(self, property):
+	def bind_to(self, property, update=False):
 		if self.__bound_to:
 			self.unbind()
 		
 		self.__bound_to = property
 		self.__bound_to.__bound_properties.append(self)
-		self.__value = property.__value
+		self.__bind_value(property, update)
 	
-	def reset(self, value):
-		self.__default_value = value
-		self.set(value)
+	def __bind_value(self, property, update):
+		if update:
+			self.set(property.__value)
+		else:
+			self.__value = property.__value
 	
 	def set(self, value):
+		self.__default_value = value
+		self.change(value)
+	
+	def change(self, value):
 		self.__value = value
 		self.__update_bound_properties()
 		self.value_changed()
 	
 	def __update_bound_properties(self):
 		for property in self.__bound_properties:
-			property.reset(self.__value)
+			property.set(self.__value)
 	
 	def value_changed(self):
 		pass
@@ -34,10 +40,13 @@ class Property(object):
 		self.__bound_to = None
 	
 	def default_value(self):
-		self.set(self.__default_value)
+		self.change(self.__default_value)
 	
 	def get(self):
 		return self.__value
+	
+	def is_changed(self):
+		return self.__value != self.__default_value
 
 
 class IntegerProperty(Property):
@@ -45,10 +54,10 @@ class IntegerProperty(Property):
 		super(IntegerProperty, self).__init__(value)
 	
 	def increase(self, value):
-		self.reset(self.get() + value)
+		self.set(self.get() + value)
 	
 	def decrease(self, value):
-		self.reset(self.get() - value)
+		self.set(self.get() - value)
 
 
 class BooleanProperty(Property):
@@ -56,7 +65,7 @@ class BooleanProperty(Property):
 		super(BooleanProperty, self).__init__(value)
 	
 	def true(self):
-		self.reset(True)
+		self.set(True)
 	
 	def false(self):
-		self.reset(False)
+		self.set(False)
