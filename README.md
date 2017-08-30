@@ -20,5 +20,5 @@ Coming soon:
 Coming sooooon:
 <ul>
 	<li>Animations</li>
-	<li>Independent from pygame</li>
+	<li>Independence from pygame</li>
 </ul>

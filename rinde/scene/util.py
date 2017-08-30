@@ -47,3 +47,14 @@ class CustomFonts:
 		font = CustomFonts.__CACHE[(file, size)] = Font(pygame_font)
 		
 		return font
+
+
+class Image:
+	def __init__(self, resource):
+		self.__pygame_image = pygame.image.load(resource)
+	
+	def convert_alpha(self):
+		self.__pygame_image = self.__pygame_image.convert_alpha()
+	
+	def get(self):
+		return self.__pygame_image

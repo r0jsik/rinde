@@ -122,9 +122,9 @@ class LayoutParserBase(XMLParserBase):
 
 class LayoutParserWithCustomController(LayoutParserBase):
 	def __init__(self, scene_directory, controller):
-		super(LayoutParserWithCustomController, self).__init__(scene_directory)
-		
 		self.__controller = controller
+		
+		super(LayoutParserWithCustomController, self).__init__(scene_directory)
 	
 	def _create_scene(self, attributes):
 		return Scene(self.__controller, **attributes)

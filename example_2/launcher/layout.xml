@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<scene controller="controller.LauncherController" width="480" height="480">
+	<image-view resource="launcher/image.png" position_x="165" position_y="115" />
+	<text-button text="Start game" action="start_game" position_x="10" />
+</scene>

@@ -1,6 +1,7 @@
 from rinde.scene.property import *
 from rinde.scene.util import SystemFonts
 from rinde.scene.util import CustomFonts
+from rinde.scene.util import Image
 from rinde.data import Resources
 from rinde.error import RindeException
 
@@ -160,15 +161,20 @@ class Node(Boundary):
 		self.__nodes = []
 		self.__canvas = None
 		self.__parent = None
+		
+		self.property["visible"] = BooleanProperty(True)
+		self.property["disable"] = BooleanProperty()
 	
 	def hover(self):
-		self.hovered.true()
+		if not self.get_property("disable"):
+			self.hovered.true()
 	
 	def leave(self):
 		self.hovered.false()
 	
 	def focus(self):
-		self.focused.true()
+		if not self.get_property("disable"):
+			self.focused.true()
 	
 	def unfocus(self):
 		self.focused.false()
@@ -186,11 +192,12 @@ class Node(Boundary):
 		pass
 	
 	def repaint(self, surface):
-		if self.__canvas:
-			surface.blit(self.__canvas, self.get_absolute_position())
-		
-		for node in self.__nodes:
-			node.repaint(surface)
+		if self.get_property("visible"):
+			if self.__canvas:
+				surface.blit(self.__canvas, self.get_absolute_position())
+			
+			for node in self.__nodes:
+				node.repaint(surface)
 	
 	def _create_updating_property(self, value=None):
 		property = Property(value)
@@ -276,7 +283,7 @@ class Label(FlatNode):
 	DEFAULT_FONT_FILE = Resources.get_path("Roboto Condensed Regular.ttf")
 	DEFAULT_FONT_SIZE = 32
 	DEFAULT_SHADOW_COLOR = 0x111111
-	DEFAULT_FACE_COLOR = 0x80FF80
+	DEFAULT_FACE_COLOR = 0x837654
 	
 	def __init__(self, text, **kwargs):
 		super(Label, self).__init__(**kwargs)
@@ -356,3 +363,19 @@ class TextButton(Label):
 			self.__action()
 		except TypeError:
 			raise RindeException("Action method cannot take any extra argument")
+
+
+class ImageView(Node):
+	def __init__(self, resource, **kwargs):
+		super(ImageView, self).__init__(**kwargs)
+		
+		image = Image(resource)
+		
+		self.property["image"] = self._create_updating_property(image)
+		self.update()
+	
+	def update(self):
+		image = self.get_property("image")
+		image = image.get()
+		
+		self._set_canvas(image)
