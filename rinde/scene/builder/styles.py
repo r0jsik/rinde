@@ -11,9 +11,9 @@ class StylesParser:
 		self.__scene_stylesheet = "%s/style.css" % scene_directory
 	
 	def parse(self):
-		rinde_styles = self.__parse_stylesheet(self.__RINDE_STYLESHEET)
-		scene_styles = self.__parse_stylesheet(self.__scene_stylesheet)
-		styles = Styles(rinde_styles, scene_styles)
+		rinde_stylesheet = self.__parse_stylesheet(self.__RINDE_STYLESHEET)
+		scene_stylesheet = self.__parse_stylesheet(self.__scene_stylesheet)
+		styles = Styles(rinde_stylesheet, scene_stylesheet)
 		
 		return styles
 	
@@ -32,7 +32,7 @@ class StylesheetParser(object):
 			raise RindeException("File %s not found" % file)
 	
 	def parse(self):
-		styles = {}
+		stylesheet = {}
 		
 		for rule in self.__stylesheet.cssRules:
 			if isinstance(rule, cssutils.css.CSSComment):
@@ -41,12 +41,12 @@ class StylesheetParser(object):
 			for selector in self.__get_selectors(rule):
 				declarations = self.__get_declarations(rule)
 				
-				if selector in styles:
-					styles[selector].update(declarations)
+				if selector in stylesheet:
+					stylesheet[selector].update(declarations)
 				else:
-					styles[selector] = declarations
+					stylesheet[selector] = declarations
 		
-		return styles
+		return stylesheet
 	
 	def __get_selectors(self, rule):
 		return [selector.strip() for selector in rule.selectorText.split(",")]
@@ -54,9 +54,9 @@ class StylesheetParser(object):
 	def __get_declarations(self, rule):
 		declarations = {}
 		
-		for style in rule.style:
-			name = style.name.replace("-", "_")
-			value = self.__parse_value(style.value)
+		for declaration in rule.style:
+			name = declaration.name.replace("-", "_")
+			value = self.__parse_value(declaration.value)
 			declarations[name] = value
 		
 		return declarations
@@ -75,13 +75,12 @@ class Styles:
 	def __init__(self, *stylesheets):
 		self.__styles = {}
 		
-		for styles in stylesheets:
-			for selector in styles:
-				self.__insert_style(selector, styles)
+		for stylesheet in stylesheets:
+			for selector, style in stylesheet.iteritems():
+				self.__insert_style(selector, style)
 	
-	def __insert_style(self, selector, styles):
+	def __insert_style(self, selector, style):
 		style_name, pseudoclass = self.__split_selector(selector)
-		style = styles[selector]
 		
 		if style_name not in self.__styles:
 			self.__styles[style_name] = {}
