@@ -1,5 +1,6 @@
 from rinde.scene import ControllerBase
 
+
 class LauncherController(ControllerBase):
 	def start(self, window):
 		self.__window = window
@@ -9,6 +10,9 @@ class LauncherController(ControllerBase):
 
 
 class BoardController(ControllerBase):
+	def start(self, window):
+		window.set_title("Amazing game started")
+	
 	def game_over(self):
 		self.nodes["label"].set_property("text", "Game over")
 		

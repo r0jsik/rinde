@@ -28,17 +28,12 @@ class XMLParserBase(object):
 		return parent
 	
 	def __parse_attributes(self, element):
-		attributes = {}
-		
-		for property, value in element.attrib.iteritems():
-			attributes[property] = self.__parse_value(value)
-		
-		return attributes
+		return {property: self.__parse_value(value) for property, value in element.attrib.iteritems()}
 	
 	def __parse_value(self, value):
-		if value.isdigit():
+		try:
 			return int(value)
-		else:
+		except ValueError:
 			return value
 	
 	def _parse_root(self, attributes):
@@ -48,14 +43,14 @@ class XMLParserBase(object):
 		return self.__parse_nodes(self.__root)
 	
 	def __parse_nodes(self, elements):
-		objects = []
+		nodes = []
 		
 		for element in elements:
 			attributes, children = self.__parse_element(element)
-			object = self._parse_node(element.tag, attributes, children)
-			objects.append(object)
+			node = self._parse_node(element.tag, attributes, children)
+			nodes.append(node)
 		
-		return objects
+		return nodes
 	
 	def __parse_element(self, element):
 		return self.__parse_attributes(element), self.__parse_nodes(element)
@@ -68,9 +63,11 @@ class LayoutParserBase(XMLParserBase):
 	def __init__(self, scene_directory):
 		super(LayoutParserBase, self).__init__("%s/layout.xml" % scene_directory)
 	
-	def _init_scene(self):
-		self.__scene = self.parse_root()
-		self.__controller = self.__scene.get_controller()
+	def build_scene(self):
+		scene = self.parse_root()
+		self.__controller = scene.get_controller()
+		
+		return scene
 	
 	def _parse_root(self, attributes):
 		try:
@@ -90,7 +87,8 @@ class LayoutParserBase(XMLParserBase):
 			raise RindeException("Incorrect %s argumentation" % type)
 	
 	def __try_to_parse_node(self, type, attributes):
-		self.__convert_action(attributes)
+		if "action" in attributes:
+			self.__action_to_controller_method(attributes)
 		
 		node = self.__create_node(type, attributes)
 		
@@ -99,26 +97,17 @@ class LayoutParserBase(XMLParserBase):
 		
 		return node
 	
-	def __convert_action(self, attributes):
+	def __action_to_controller_method(self, attributes):
 		try:
 			attributes["action"] = getattr(self.__controller, attributes["action"])
-		except KeyError:
-			pass
 		except AttributeError:
 			raise RindeException("Controller must implement method '%s'" % attributes["action"])
 	
 	def __create_node(self, type, attributes):
-		type = self.__camel_case(type)
 		node_type = getattr(rinde.scene.node, type)
 		node = node_type(**attributes)
 		
 		return node
-	
-	def __camel_case(self, string):
-		return string.title().replace("-", "")
-	
-	def get_scene(self):
-		return self.__scene
 
 
 class LayoutParserWithCustomController(LayoutParserBase):
@@ -126,19 +115,12 @@ class LayoutParserWithCustomController(LayoutParserBase):
 		super(LayoutParserWithCustomController, self).__init__(scene_directory)
 		
 		self.__controller = controller
-		
-		self._init_scene()
 	
 	def _create_scene(self, attributes):
 		return Scene(self.__controller, **attributes)
 
 
 class LayoutParserWhichMakesController(LayoutParserBase):
-	def __init__(self, scene_directory):
-		super(LayoutParserWhichMakesController, self).__init__(scene_directory)
-		
-		self._init_scene()
-	
 	def _create_scene(self, attributes):
 		controller = self.__extract_controller_from_attributes(attributes)
 		controller = self.__create_controller(controller)

@@ -1,8 +1,6 @@
 from rinde.scene.property import *
-from rinde.scene.util import SystemFonts
-from rinde.scene.util import CustomFonts
+from rinde.scene.util import Fonts
 from rinde.scene.util import Image
-from rinde.data import Resources
 from rinde.error import RindeException
 
 
@@ -18,7 +16,7 @@ class NodeBase(object):
 		self.__style = None
 	
 	def __create_state_property(self):
-		property = BooleanProperty()
+		property = BooleanProperty(False)
 		property.value_changed = self.__update_state
 		
 		return property
@@ -42,28 +40,33 @@ class NodeBase(object):
 	def __apply_style(self, state):
 		if state in self.__style:
 			for property_name, value in self.__style[state].iteritems():
-				self.__set_appearance(property_name, value)
+				self.__change_property(property_name, value)
 	
-	def __set_appearance(self, property_name, value):
+	def __change_property(self, name, value):
 		try:
-			self.__try_to_set_appearance(property_name, value)
+			self.property[name].change(value)
 		except KeyError:
-			raise RindeException("Unknown property '%s'" % property_name)
-	
-	def __try_to_set_appearance(self, property_name, value):
-		appearance_name = property_name.replace("-", "_")
-		appearance = self.property[appearance_name]
-		appearance.change(value)
+			raise RindeException("Unknown property '%s'" % name)
 	
 	def set_style(self, style):
 		self.__style = style
-		self.__apply_style(None)
+		
+		for property_name, value in style[None].iteritems():
+			self.property[property_name].reset(value)
+		
+		self.__apply_default_style()
 	
 	def set_property(self, name, value):
-		self.property[name].set(value)
+		try:
+			self.property[name].set(value)
+		except KeyError:
+			raise RindeException("Unknown property '%s'" % name)
 	
 	def get_property(self, name):
-		return self.property[name].get()
+		try:
+			return self.property[name].get()
+		except KeyError:
+			raise RindeException("Unknown property '%s'" % name)
 
 
 class Boundary(NodeBase):
@@ -162,18 +165,18 @@ class Node(Boundary):
 		self.__canvas = None
 		self.__parent = None
 		
-		self.property["visible"] = BooleanProperty(True)
-		self.property["disable"] = BooleanProperty()
+		self.property["visible"] = BooleanProperty()
+		self.property["enabled"] = BooleanProperty()
 	
 	def hover(self):
-		if not self.get_property("disable"):
+		if self.get_property("enabled"):
 			self.hovered.true()
 	
 	def leave(self):
 		self.hovered.false()
 	
 	def focus(self):
-		if not self.get_property("disable"):
+		if self.get_property("enabled"):
 			self.focused.true()
 	
 	def unfocus(self):
@@ -255,7 +258,7 @@ class FlatNode(Node):
 
 
 class TextDisplay(FlatNode):
-	def __init__(self, text_property, font_property, font_size_property, color):
+	def __init__(self, text_property, font_property, font_size_property):
 		super(TextDisplay, self).__init__()
 		
 		self.__text_property = self._create_updating_property()
@@ -267,29 +270,30 @@ class TextDisplay(FlatNode):
 		self.__font_size_property = self._create_updating_property()
 		self.__font_size_property.bind_to(font_size_property)
 		
-		self.property["color"] = self._create_updating_property(color)
-		self.update()
+		self.property["color"] = self._create_updating_property()
 	
 	def update(self):
 		text = self.__text_property.get()
-		font = self.__font_property.get()
+		font = self.__get_font()
 		color = self.get_property("color")
 		
 		canvas = font.render(text, color)
 		self._set_canvas(canvas)
+	
+	def __get_font(self):
+		font_file = self.__font_property.get()
+		font_size = self.__font_size_property.get()
+		font = Fonts.get(font_file, font_size)
+		
+		return font
 
 
 class Label(FlatNode):
-	DEFAULT_FONT_FILE = Resources.get_path("Roboto Condensed Regular.ttf")
-	DEFAULT_FONT_SIZE = 32
-	DEFAULT_SHADOW_COLOR = 0x111111
-	DEFAULT_FACE_COLOR = 0x837654
-	
 	def __init__(self, text, **kwargs):
 		super(Label, self).__init__(**kwargs)
 		
 		self.property["text"] = self._create_updating_property(text)
-		self.property["font"] = self.__create_font_property()
+		self.property["font"] = self._create_updating_property()
 		self.property["font_size"] = self._create_updating_property()
 		
 		self.__init_shadow()
@@ -298,25 +302,18 @@ class Label(FlatNode):
 		
 		self.style_name = "label"
 	
-	def __create_font_property(self):
-		font = CustomFonts.get(self.DEFAULT_FONT_FILE, self.DEFAULT_FONT_SIZE)
-		property = self._create_updating_property(font)
-		
-		return property
-	
 	def __init_shadow(self):
-		self.__shadow = self.__create_text_display(self.DEFAULT_SHADOW_COLOR)
-		self.__shadow.set_position(1, 1)
+		self.__shadow = self.__create_text_display()
 		self._add_node(self.__shadow)
 		
 		self.__add_shadow_properties()
 	
-	def __create_text_display(self, color):
+	def __create_text_display(self):
 		text_property = self.property["text"]
 		font_property = self.property["font"]
 		font_size_property = self.property["font_size"]
 		
-		text_display = TextDisplay(text_property, font_property, font_size_property, color)
+		text_display = TextDisplay(text_property, font_property, font_size_property)
 		
 		return text_display
 	
@@ -326,7 +323,7 @@ class Label(FlatNode):
 		self.property["shadow_color"] = self.__shadow.property["color"]
 	
 	def __init_face(self):
-		self.__face = self.__create_text_display(self.DEFAULT_FACE_COLOR)
+		self.__face = self.__create_text_display()
 		self._add_node(self.__face)
 		
 		self.__add_face_properties()
@@ -373,7 +370,6 @@ class ImageView(Node):
 		
 		self.style_name = "image-view"
 		self.property["image"] = self._create_updating_property(image)
-		self.update()
 	
 	def update(self):
 		image = self.get_property("image")

@@ -1,6 +1,24 @@
 import cssutils
 
 from rinde.error import RindeException
+from rinde.data import Resources
+
+
+class StylesParser:
+	__RINDE_STYLESHEET = Resources.get_path("rinde.css")
+	
+	def __init__(self, scene_directory):
+		self.__scene_stylesheet = "%s/style.css" % scene_directory
+	
+	def parse(self):
+		rinde_styles = self.__parse_stylesheet(self.__RINDE_STYLESHEET)
+		scene_styles = self.__parse_stylesheet(self.__scene_stylesheet)
+		styles = Styles(rinde_styles, scene_styles)
+		
+		return styles
+	
+	def __parse_stylesheet(self, stylesheet):
+		return StylesheetParser(stylesheet).parse()
 
 
 class StylesheetParser(object):
@@ -21,78 +39,83 @@ class StylesheetParser(object):
 				continue
 			
 			for selector in self.__get_selectors(rule):
+				declarations = self.__get_declarations(rule)
+				
 				if selector in styles:
-					styles[selector].update(rule)
+					styles[selector].update(declarations)
 				else:
-					styles[selector] = self.__get_declarations(rule)
+					styles[selector] = declarations
 		
 		return styles
 	
 	def __get_selectors(self, rule):
-		selectors = rule.selectorText.split(",")
-		selectors = [selector.strip() for selector in selectors]
-		
-		return selectors
+		return [selector.strip() for selector in rule.selectorText.split(",")]
 	
 	def __get_declarations(self, rule):
-		return {style.name: self.__parse_value(style.value) for style in rule.style}
+		declarations = {}
+		
+		for style in rule.style:
+			name = style.name.replace("-", "_")
+			value = self.__parse_value(style.value)
+			declarations[name] = value
+		
+		return declarations
 	
 	def __parse_value(self, value):
 		if value.startswith("#"):
 			return int(value[1:], 16)
 		
-		elif value.lstrip("-").isdigit():
+		if value.lstrip("-").isdigit():
 			return int(value)
 		
-		else:
-			return value
-
-
-class StylesParser(StylesheetParser):
-	def __init__(self, scene_directory):
-		super(StylesParser, self).__init__("%s/style.css" % scene_directory)
-	
-	def parse(self):
-		styles = super(StylesParser, self).parse()
-		styles = Styles(styles)
-		
-		return styles
+		return value
 
 
 class Styles:
-	def __init__(self, styles):
+	def __init__(self, *stylesheets):
 		self.__styles = {}
 		
-		for selector in styles:
-			self.__insert_style(selector, styles)
+		for styles in stylesheets:
+			for selector in styles:
+				self.__insert_style(selector, styles)
 	
 	def __insert_style(self, selector, styles):
-		style_name, style_state = self.__split_selector(selector)
+		style_name, pseudoclass = self.__split_selector(selector)
+		style = styles[selector]
 		
 		if style_name not in self.__styles:
 			self.__styles[style_name] = {}
 		
-		self.__styles[style_name][style_state] = styles[selector]
+		if pseudoclass in self.__styles[style_name]:
+			self.__styles[style_name][pseudoclass].update(style)
+		else:
+			self.__styles[style_name][pseudoclass] = style
 	
 	def __split_selector(self, selector):
-		selector = selector.split(":")
+		part = selector.split(":")
 		
 		try:
-			return selector[0], selector[1]
+			return part[0], part[1]
 		except IndexError:
-			return selector[0], None
+			return part[0], None
 	
-	def get_style(self, id, style_class, style_name):
-		style = {None: {}}
+	def get_style(self, node):
+		resultant_style = {None: {}}
 		
-		self.__update_style(style, "", style_name)
-		self.__update_style(style, ".", style_class)
-		self.__update_style(style, "#", id)
+		self.__update_style(resultant_style, "", node.style_name)
+		self.__update_style(resultant_style, ".", node.style_class)
+		self.__update_style(resultant_style, "#", node.id)
 		
-		return style
+		return resultant_style
 	
-	def __update_style(self, style, prefix, variable):
+	def __update_style(self, resultant_style, prefix, variable):
 		selector = "%s%s" % (prefix, variable)
 		
 		if variable and selector in self.__styles:
-			style.update(self.__styles[selector])
+			styles = self.__styles[selector]
+			
+			for pseudoclass, style in styles.iteritems():
+				if pseudoclass in resultant_style:
+					resultant_style[pseudoclass].update(style)
+				else:
+					resultant_style[pseudoclass] = style

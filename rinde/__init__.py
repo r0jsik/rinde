@@ -5,7 +5,7 @@ from rinde.data import Resources
 from rinde.scene.builder import SceneBuilder
 
 
-class Application(object):
+class Application:
 	def __init__(self, title, scene_directory):
 		self.__init_pygame()
 		

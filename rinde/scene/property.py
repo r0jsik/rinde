@@ -32,6 +32,13 @@ class Property(object):
 		for property in self.__bound_properties:
 			property.set(self.__value)
 	
+	def reset(self, value):
+		self.__default_value = value
+		self.__value = value
+		
+		for property in self.__bound_properties:
+			property.reset(value)
+	
 	def value_changed(self):
 		pass
 	
@@ -61,7 +68,7 @@ class IntegerProperty(Property):
 
 
 class BooleanProperty(Property):
-	def __init__(self, value=False):
+	def __init__(self, value=True):
 		super(BooleanProperty, self).__init__(value)
 	
 	def true(self):

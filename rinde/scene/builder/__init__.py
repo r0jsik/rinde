@@ -6,7 +6,7 @@ from rinde.scene.builder.styles import StylesParser
 class SceneBuilder:
 	def __init__(self, scene_directory, controller=None):
 		self.__layout_parser = self.__create_layout_parser(scene_directory, controller)
-		self.__scene = self.__layout_parser.get_scene()
+		self.__scene = self.__layout_parser.build_scene()
 		
 		self.__styles_parser = StylesParser(scene_directory)
 	
@@ -20,8 +20,7 @@ class SceneBuilder:
 		layout = self.__layout_parser.parse()
 		styles = self.__styles_parser.parse()
 		
-		self.__scene.set_layout(layout)
-		self.__scene.set_styles(styles)
+		self.__scene.show(layout, styles)
 		self.__scene.start_controller(window)
 	
 	def get_scene(self):

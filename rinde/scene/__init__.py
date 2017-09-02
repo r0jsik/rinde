@@ -17,20 +17,17 @@ class Scene:
 		else:
 			raise RindeException("Controller must be subclass of rinde.scene.ControllerBase")
 	
-	def set_layout(self, nodes):
+	def show(self, nodes, styles):
 		self.__nodes = nodes
+		self.__styles = styles
 		
 		for node in nodes:
 			node.set_parent(self)
-	
-	def set_styles(self, styles):
-		self.__styles = styles
-		
-		for node in self.__nodes:
 			node.update_style()
+			node.update()
 	
 	def update_style_request(self, node):
-		style = self.__styles.get_style(node.id, node.style_class, node.style_name)
+		style = self.__styles.get_style(node)
 		node.set_style(style)
 	
 	def start_controller(self, window):

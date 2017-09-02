@@ -1,52 +1,54 @@
 import pygame
+import re
 
+from rinde.data import Resources
 from rinde.error import RindeException
 
 
+class Fonts:
+	__CACHE = {}
+	
+	@staticmethod
+	def get(file, size):
+		file = Fonts.__get_path(file)
+		
+		try:
+			return Fonts.__CACHE[(file, size)]
+		except KeyError:
+			return Fonts.__load(file, size)
+	
+	@staticmethod
+	def __get_path(file):
+		is_rinde_font = re.compile("^[\'\"]([\w\s]+)[\'\"]$")
+		rinde_font = re.match(is_rinde_font, file)
+		
+		if rinde_font:
+			return Resources.get_path("%s.ttf" % rinde_font.group(1))
+		else:
+			is_custom_font = re.compile("^src\([\'\"]([\w\s./\\\\]+)[\'\"]\)$")
+			custom_font = re.match(is_custom_font, file)
+			
+			if custom_font:
+				return custom_font.group(1)
+	
+	@staticmethod
+	def __load(file, size):
+		font = Fonts.__CACHE[(file, size)] = Font(file, size)
+		return font
+
+
 class Font:
-	def __init__(self, pygame_font):
-		self.__pygame_font = pygame_font
+	def __init__(self, file, size):
+		try:
+			self.__pygame_font = pygame.font.Font(file, size)
+		except IOError:
+			raise RindeException("Font '%s' not found" % file)
 	
 	def render(self, text, color):
 		return self.__pygame_font.render(text, True, self.__int_to_rgb(color))
 	
 	def __int_to_rgb(self, color):
 		return [(color >> offset) & 255 for offset in [16, 8, 0]]
-
-
-class SystemFonts:
-	
-	@staticmethod
-	def get(name, size):
-		pygame_font = pygame.font.SysFont(name, size)
-		font = Font(pygame_font)
-		
-		return font
-
-
-class CustomFonts:
-	__CACHE = {}
-	
-	@staticmethod
-	def get(file, size):
-		try:
-			return CustomFonts.__CACHE[(file, size)]
-		except KeyError:
-			return CustomFonts.__load(file, size)
-	
-	@staticmethod
-	def __load(file, size):
-		try:
-			return CustomFonts.__try_to_load(file, size)
-		except IOError:
-			raise RindeException("Font file '%s' not found" % file)
-	
-	@staticmethod
-	def __try_to_load(file, size):
-		pygame_font = pygame.font.Font(file, size)
-		font = CustomFonts.__CACHE[(file, size)] = Font(pygame_font)
-		
-		return font
 
 
 class Image:
