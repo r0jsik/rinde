@@ -71,6 +71,9 @@ class BooleanProperty(Property):
 	def __init__(self, value=True):
 		super(BooleanProperty, self).__init__(value)
 	
+	def negate(self):
+		self.set(not self.get())
+	
 	def true(self):
 		self.set(True)
 	

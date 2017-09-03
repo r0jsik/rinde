@@ -11,8 +11,8 @@ class NodeBase(object):
 		self.style_name = None
 		self.hovered = self.__create_state_property()
 		self.focused = self.__create_state_property()
-		self.property = {}
 		
+		self._property = {}
 		self.__style = None
 	
 	def __create_state_property(self):
@@ -31,9 +31,9 @@ class NodeBase(object):
 			self.__apply_style("focus")
 	
 	def __apply_default_style(self):
-		for property_name in self.property:
-			if self.property[property_name].is_changed() and property_name not in self.__style[None]:
-				self.property[property_name].default_value()
+		for property_name in self._property:
+			if self._property[property_name].is_changed() and property_name not in self.__style[None]:
+				self._property[property_name].default_value()
 		
 		self.__apply_style(None)
 	
@@ -43,8 +43,11 @@ class NodeBase(object):
 				self.__change_property(property_name, value)
 	
 	def __change_property(self, name, value):
+		self.property(name).change(value)
+	
+	def property(self, name):
 		try:
-			self.property[name].change(value)
+			return self._property[name]
 		except KeyError:
 			raise RindeException("Unknown property '%s'" % name)
 	
@@ -52,31 +55,25 @@ class NodeBase(object):
 		self.__style = style
 		
 		for property_name, value in style[None].iteritems():
-			self.property[property_name].reset(value)
+			self._property[property_name].reset(value)
 		
 		self.__apply_default_style()
 	
 	def set_property(self, name, value):
-		try:
-			self.property[name].set(value)
-		except KeyError:
-			raise RindeException("Unknown property '%s'" % name)
+		self.property(name).set(value)
 	
 	def get_property(self, name):
-		try:
-			return self.property[name].get()
-		except KeyError:
-			raise RindeException("Unknown property '%s'" % name)
+		return self.property(name).get()
 
 
 class Boundary(NodeBase):
 	def __init__(self, position_x=0, position_y=0, **kwargs):
 		super(Boundary, self).__init__(**kwargs)
 		
-		self.property["position_x"] = self.__create_position_property()
-		self.property["position_y"] = self.__create_position_property()
-		self.property["width"] = IntegerProperty()
-		self.property["height"] = IntegerProperty()
+		self._property["position_x"] = self.__create_position_property()
+		self._property["position_y"] = self.__create_position_property()
+		self._property["width"] = IntegerProperty()
+		self._property["height"] = IntegerProperty()
 		
 		self.__parent_position_x = self.__create_position_property()
 		self.__parent_position_y = self.__create_position_property()
@@ -97,8 +94,8 @@ class Boundary(NodeBase):
 		)
 	
 	def bind_parent_position(self, parent):
-		parent_position_x = parent.property["position_x"]
-		parent_position_y = parent.property["position_y"]
+		parent_position_x = parent.property("position_x")
+		parent_position_y = parent.property("position_y")
 		
 		self.__parent_position_x.bind_to(parent_position_x)
 		self.__parent_position_y.bind_to(parent_position_y)
@@ -113,18 +110,18 @@ class Boundary(NodeBase):
 		self.__bind_height(boundary)
 	
 	def __bind_width(self, boundary):
-		width = self.property["width"]
-		boundary_width = boundary.property["width"]
+		width = self.property("width")
+		boundary_width = boundary.property("width")
 		width.bind_to(boundary_width, True)
 	
 	def __bind_height(self, boundary):
-		height = self.property["height"]
-		boundary_height = boundary.property["height"]
+		height = self.property("height")
+		boundary_height = boundary.property("height")
 		height.bind_to(boundary_height, True)
 	
 	def unbind_size(self):
-		self.property["width"].unbind()
-		self.property["height"].unbind()
+		self._property["width"].unbind()
+		self._property["height"].unbind()
 	
 	def is_mouse_over(self, mouse_position):
 		if self.get_property("width") > mouse_position[0] - self.get_property("position_x") > 0:
@@ -138,20 +135,14 @@ class Boundary(NodeBase):
 		self.set_property("position_y", position_y)
 	
 	def get_position(self):
-		position_x = self.get_property("position_x")
-		position_y = self.get_property("position_y")
-		
-		return position_x, position_y
+		return self.get_property("position_x"), self.get_property("position_y")
 	
 	def set_size(self, width, height):
 		self.set_property("width", width)
 		self.set_property("height", height)
 	
 	def get_size(self):
-		width = self.get_property("width")
-		height = self.get_property("height")
-		
-		return width, height
+		return self.get_property("width"), self.get_property("height")
 	
 	def get_absolute_position(self):
 		return self.__absolute_position
@@ -165,8 +156,8 @@ class Node(Boundary):
 		self.__canvas = None
 		self.__parent = None
 		
-		self.property["visible"] = BooleanProperty()
-		self.property["enabled"] = BooleanProperty()
+		self._property["visible"] = BooleanProperty()
+		self._property["enabled"] = BooleanProperty()
 	
 	def hover(self):
 		if self.get_property("enabled"):
@@ -270,7 +261,7 @@ class TextDisplay(FlatNode):
 		self.__font_size_property = self._create_updating_property()
 		self.__font_size_property.bind_to(font_size_property)
 		
-		self.property["color"] = self._create_updating_property()
+		self._property["color"] = self._create_updating_property()
 	
 	def update(self):
 		text = self.__text_property.get()
@@ -292,9 +283,9 @@ class Label(FlatNode):
 	def __init__(self, text, **kwargs):
 		super(Label, self).__init__(**kwargs)
 		
-		self.property["text"] = self._create_updating_property(text)
-		self.property["font"] = self._create_updating_property()
-		self.property["font_size"] = self._create_updating_property()
+		self._property["text"] = self._create_updating_property(text)
+		self._property["font"] = self._create_updating_property()
+		self._property["font_size"] = self._create_updating_property()
 		
 		self.__init_shadow()
 		self.__init_face()
@@ -309,18 +300,18 @@ class Label(FlatNode):
 		self.__add_shadow_properties()
 	
 	def __create_text_display(self):
-		text_property = self.property["text"]
-		font_property = self.property["font"]
-		font_size_property = self.property["font_size"]
+		text_property = self._property["text"]
+		font_property = self._property["font"]
+		font_size_property = self._property["font_size"]
 		
 		text_display = TextDisplay(text_property, font_property, font_size_property)
 		
 		return text_display
 	
 	def __add_shadow_properties(self):
-		self.property["shadow_offset_x"] = self.__shadow.property["position_x"]
-		self.property["shadow_offset_y"] = self.__shadow.property["position_y"]
-		self.property["shadow_color"] = self.__shadow.property["color"]
+		self._property["shadow_offset_x"] = self.__shadow._property["position_x"]
+		self._property["shadow_offset_y"] = self.__shadow._property["position_y"]
+		self._property["shadow_color"] = self.__shadow._property["color"]
 	
 	def __init_face(self):
 		self.__face = self.__create_text_display()
@@ -329,7 +320,7 @@ class Label(FlatNode):
 		self.__add_face_properties()
 	
 	def __add_face_properties(self):
-		self.property["color"] = self.__face.property["color"]
+		self._property["color"] = self.__face._property["color"]
 	
 	def update(self):
 		self.__shadow.update()
@@ -343,8 +334,8 @@ class DraggableLabel(Label):
 		self.style_name = "draggable-label"
 	
 	def drag(self, mouse_offset):
-		self.property["position_x"].increase(mouse_offset[0])
-		self.property["position_y"].increase(mouse_offset[1])
+		self._property["position_x"].increase(mouse_offset[0])
+		self._property["position_y"].increase(mouse_offset[1])
 
 
 class TextButton(Label):
@@ -362,14 +353,19 @@ class TextButton(Label):
 			raise RindeException("Action method cannot take any extra argument")
 
 
-class ImageView(Node):
+class ImageView(FlatNode):
 	def __init__(self, resource, **kwargs):
 		super(ImageView, self).__init__(**kwargs)
 		
-		image = Image(resource)
+		self._property["image"] = self.__create_image_property(resource)
 		
 		self.style_name = "image-view"
-		self.property["image"] = self._create_updating_property(image)
+	
+	def __create_image_property(self, resource):
+		image = Image(resource)
+		property = self._create_updating_property(image)
+		
+		return property
 	
 	def update(self):
 		image = self.get_property("image")

@@ -113,8 +113,8 @@ class Styles:
 		if variable and selector in self.__styles:
 			styles = self.__styles[selector]
 			
-			for pseudoclass, style in styles.iteritems():
-				if pseudoclass in resultant_style:
-					resultant_style[pseudoclass].update(style)
+			for state, style in styles.iteritems():
+				if state in resultant_style:
+					resultant_style[state].update(style)
 				else:
-					resultant_style[pseudoclass] = style
+					resultant_style[state] = style

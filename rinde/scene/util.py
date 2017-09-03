@@ -19,17 +19,33 @@ class Fonts:
 	
 	@staticmethod
 	def __get_path(file):
-		is_rinde_font = re.compile("^[\'\"]([\w\s]+)[\'\"]$")
-		rinde_font = re.match(is_rinde_font, file)
+		try:
+			return Resources.get_path("%s.ttf" % Fonts.__get_rinde_font_name(file))
+		except AttributeError:
+			return Fonts.__get_custom_font_path(file)
+	
+	@staticmethod
+	def __get_rinde_font_name(file):
+		pattern = "^[\'\"]([\w\s]+)[\'\"]$" # (in CSS) font: "Example Font"
+		pattern = re.compile(pattern)
+		rinde_font = re.match(pattern, file)
 		
-		if rinde_font:
-			return Resources.get_path("%s.ttf" % rinde_font.group(1))
-		else:
-			is_custom_font = re.compile("^src\([\'\"]([\w\s./\\\\]+)[\'\"]\)$")
-			custom_font = re.match(is_custom_font, file)
-			
-			if custom_font:
-				return custom_font.group(1)
+		return rinde_font.group(1)
+	
+	@staticmethod
+	def __get_custom_font_path(file):
+		try:
+			return Fonts.__to_custom_font(file)
+		except AttributeError:
+			raise RindeException("Incorrect font")
+	
+	@staticmethod
+	def __to_custom_font(file):
+		pattern = "^src\([\'\"]([\w\s./\\\\]+)[\'\"]\)$" # (in CSS) font: src("example/font.ttf")
+		pattern = re.compile(pattern)
+		custom_font = re.match(pattern, file)
+		
+		return custom_font.group(1)
 	
 	@staticmethod
 	def __load(file, size):
@@ -42,7 +58,9 @@ class Font:
 		try:
 			self.__pygame_font = pygame.font.Font(file, size)
 		except IOError:
-			raise RindeException("Font '%s' not found" % file)
+			raise RindeException("File '%s' not found" % file)
+		except RuntimeError:
+			raise RindeException("Incorrect font '%s'" % file)
 	
 	def render(self, text, color):
 		return self.__pygame_font.render(text, True, self.__int_to_rgb(color))
@@ -55,8 +73,5 @@ class Image:
 	def __init__(self, resource):
 		self.__pygame_image = pygame.image.load(resource)
 	
-	def convert_alpha(self):
-		self.__pygame_image = self.__pygame_image.convert_alpha()
-	
 	def get(self):
-		return self.__pygame_image
+		return self.__pygame_image.convert_alpha()
