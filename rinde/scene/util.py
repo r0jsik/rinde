@@ -26,8 +26,10 @@ class Fonts:
 	
 	@staticmethod
 	def __get_rinde_font_name(file):
-		pattern = "^[\'\"]([\w\s]+)[\'\"]$" # (in CSS) font: "Example Font"
-		pattern = re.compile(pattern)
+		# Declaration in CSS looks like
+		# font: "Example Font"
+		
+		pattern = re.compile("^[\'\"]([\w\s]+)[\'\"]$")
 		rinde_font = re.match(pattern, file)
 		
 		return rinde_font.group(1)
@@ -41,8 +43,10 @@ class Fonts:
 	
 	@staticmethod
 	def __to_custom_font(file):
-		pattern = "^src\([\'\"]([\w\s./\\\\]+)[\'\"]\)$" # (in CSS) font: src("example/font.ttf")
-		pattern = re.compile(pattern)
+		# Declaration in CSS looks like
+		# font: src("example/font.ttf")
+		
+		pattern = re.compile("^src\([\'\"]([\w\s./\\\\]+)[\'\"]\)$")
 		custom_font = re.match(pattern, file)
 		
 		return custom_font.group(1)

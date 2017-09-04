@@ -23,8 +23,7 @@ class Scene:
 		
 		for node in nodes:
 			node.set_parent(self)
-			node.update_style()
-			node.update()
+			node.reset()
 	
 	def update_style_request(self, node):
 		style = self.__styles.get_style(node)

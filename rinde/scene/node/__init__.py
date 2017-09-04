@@ -22,7 +22,7 @@ class NodeBase(object):
 		return property
 	
 	def __update_state(self):
-		self.__apply_default_style()
+		self.__apply_style(None)
 		
 		if self.hovered.get():
 			self.__apply_style("hover")
@@ -30,20 +30,13 @@ class NodeBase(object):
 		if self.focused.get():
 			self.__apply_style("focus")
 	
-	def __apply_default_style(self):
-		for property_name in self._property:
-			if self._property[property_name].is_changed() and property_name not in self.__style[None]:
-				self._property[property_name].default_value()
-		
-		self.__apply_style(None)
-	
 	def __apply_style(self, state):
 		if state in self.__style:
 			for property_name, value in self.__style[state].iteritems():
-				self.__change_property(property_name, value)
+				self.set_property(property_name, value)
 	
-	def __change_property(self, name, value):
-		self.property(name).change(value)
+	def set_property(self, name, value):
+		self.property(name).set(value)
 	
 	def property(self, name):
 		try:
@@ -51,19 +44,14 @@ class NodeBase(object):
 		except KeyError:
 			raise RindeException("Unknown property '%s'" % name)
 	
+	def get_property(self, name):
+		return self.property(name).get()
+	
 	def set_style(self, style):
 		self.__style = style
 		
 		for property_name, value in style[None].iteritems():
 			self._property[property_name].reset(value)
-		
-		self.__apply_default_style()
-	
-	def set_property(self, name, value):
-		self.property(name).set(value)
-	
-	def get_property(self, name):
-		return self.property(name).get()
 
 
 class Boundary(NodeBase):
@@ -83,11 +71,11 @@ class Boundary(NodeBase):
 	
 	def __create_position_property(self):
 		property = IntegerProperty()
-		property.value_changed = self.__update_absolute_position
+		property.value_changed = self.update_absolute_position
 		
 		return property
 	
-	def __update_absolute_position(self):
+	def update_absolute_position(self):
 		self.__absolute_position = (
 			self.get_property("position_x") + self.__parent_position_x.get(),
 			self.get_property("position_y") + self.__parent_position_y.get()
@@ -99,25 +87,18 @@ class Boundary(NodeBase):
 		
 		self.__parent_position_x.bind_to(parent_position_x)
 		self.__parent_position_y.bind_to(parent_position_y)
-		self.__update_absolute_position()
+		self.update_absolute_position()
 	
 	def unbind_parent_position(self):
 		self.__parent_position_x.unbind()
 		self.__parent_position_y.unbind()
 	
 	def bind_size(self, boundary):
-		self.__bind_width(boundary)
-		self.__bind_height(boundary)
-	
-	def __bind_width(self, boundary):
-		width = self.property("width")
-		boundary_width = boundary.property("width")
-		width.bind_to(boundary_width, True)
-	
-	def __bind_height(self, boundary):
-		height = self.property("height")
-		boundary_height = boundary.property("height")
-		height.bind_to(boundary_height, True)
+		width = boundary.property("width")
+		height = boundary.property("height")
+		
+		self._property["width"].bind_to(width)
+		self._property["height"].bind_to(height)
 	
 	def unbind_size(self):
 		self._property["width"].unbind()
@@ -152,9 +133,9 @@ class Node(Boundary):
 	def __init__(self, **kwargs):
 		super(Node, self).__init__(**kwargs)
 		
-		self.__nodes = []
 		self.__canvas = None
 		self.__parent = None
+		self.__nodes = []
 		
 		self._property["visible"] = BooleanProperty()
 		self._property["enabled"] = BooleanProperty()
@@ -202,11 +183,13 @@ class Node(Boundary):
 	def update(self):
 		pass
 	
-	def update_style(self):
+	def reset(self):
 		self.update_style_request(self)
+		self.update_absolute_position()
+		self.update()
 		
 		for node in self.__nodes:
-			node.update_style()
+			node.reset()
 	
 	def update_style_request(self, node):
 		try:
@@ -225,10 +208,10 @@ class Node(Boundary):
 		self.__nodes.remove(node)
 	
 	def _set_canvas(self, canvas):
+		self.__canvas = canvas
+		
 		size = canvas.get_size()
 		self.set_size(*size)
-		
-		self.__canvas = canvas.convert_alpha()
 	
 	def get_hovered_node(self, mouse_position):
 		last_hovered_node = None
@@ -253,12 +236,11 @@ class TextDisplay(FlatNode):
 		super(TextDisplay, self).__init__()
 		
 		self.__text_property = self._create_updating_property()
-		self.__text_property.bind_to(text_property)
-		
 		self.__font_property = self._create_updating_property()
-		self.__font_property.bind_to(font_property)
-		
 		self.__font_size_property = self._create_updating_property()
+		
+		self.__text_property.bind_to(text_property)
+		self.__font_property.bind_to(font_property)
 		self.__font_size_property.bind_to(font_size_property)
 		
 		self._property["color"] = self._create_updating_property()
@@ -272,9 +254,9 @@ class TextDisplay(FlatNode):
 		self._set_canvas(canvas)
 	
 	def __get_font(self):
-		font_file = self.__font_property.get()
-		font_size = self.__font_size_property.get()
-		font = Fonts.get(font_file, font_size)
+		file = self.__font_property.get()
+		size = self.__font_size_property.get()
+		font = Fonts.get(file, size)
 		
 		return font
 
@@ -300,13 +282,7 @@ class Label(FlatNode):
 		self.__add_shadow_properties()
 	
 	def __create_text_display(self):
-		text_property = self._property["text"]
-		font_property = self._property["font"]
-		font_size_property = self._property["font_size"]
-		
-		text_display = TextDisplay(text_property, font_property, font_size_property)
-		
-		return text_display
+		return TextDisplay(self.property("text"), self.property("font"), self.property("font_size"))
 	
 	def __add_shadow_properties(self):
 		self._property["shadow_offset_x"] = self.__shadow._property["position_x"]
