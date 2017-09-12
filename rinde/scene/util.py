@@ -19,37 +19,20 @@ class Fonts:
 	
 	@staticmethod
 	def __get_path(file):
-		try:
-			return Resources.get_path("%s.ttf" % Fonts.__get_rinde_font_name(file))
-		except AttributeError:
-			return Fonts.__get_custom_font_path(file)
-	
-	@staticmethod
-	def __get_rinde_font_name(file):
-		# Declaration in CSS looks like
-		# font: "Example Font"
+		is_custom_font = Fonts.__get_custom_font_pattern()
+		custom_font = re.match(is_custom_font, file)
 		
-		pattern = re.compile("^[\'\"]([\w\s]+)[\'\"]$")
-		rinde_font = re.match(pattern, file)
-		
-		return rinde_font.group(1)
+		if custom_font:
+			return custom_font.group(1)
+		else:
+			return Resources.get_path("%s.ttf" % file)
 	
 	@staticmethod
-	def __get_custom_font_path(file):
-		try:
-			return Fonts.__to_custom_font(file)
-		except AttributeError:
-			raise RindeException("Incorrect font")
-	
-	@staticmethod
-	def __to_custom_font(file):
+	def __get_custom_font_pattern():
 		# Declaration in CSS looks like
 		# font: src("example/font.ttf")
 		
-		pattern = re.compile("^src\([\'\"]([\w\s./\\\\]+)[\'\"]\)$")
-		custom_font = re.match(pattern, file)
-		
-		return custom_font.group(1)
+		return re.compile("^src\([\'\"]([\w\s./\\\\]+)[\'\"]\)$")
 	
 	@staticmethod
 	def __load(file, size):

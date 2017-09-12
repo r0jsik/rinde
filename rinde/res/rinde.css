@@ -17,3 +17,8 @@ text-button:focus
 {
     color: #615432;
 }
+
+vbox
+{
+    spacing: 0;
+}

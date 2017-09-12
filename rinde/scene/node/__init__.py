@@ -135,8 +135,8 @@ class Node(Boundary):
 		
 		self.__canvas = None
 		self.__parent = None
-		self.__nodes = []
 		
+		self._nodes = []
 		self._property["visible"] = BooleanProperty()
 		self._property["enabled"] = BooleanProperty()
 	
@@ -171,7 +171,7 @@ class Node(Boundary):
 			if self.__canvas:
 				surface.blit(self.__canvas, self.get_absolute_position())
 			
-			for node in self.__nodes:
+			for node in self._nodes:
 				node.repaint(surface)
 	
 	def _create_updating_property(self, value=None):
@@ -186,10 +186,11 @@ class Node(Boundary):
 	def reset(self):
 		self.update_style_request(self)
 		self.update_absolute_position()
-		self.update()
 		
-		for node in self.__nodes:
+		for node in self._nodes:
 			node.reset()
+		
+		self.update()
 	
 	def update_style_request(self, node):
 		try:
@@ -200,12 +201,12 @@ class Node(Boundary):
 	def _add_node(self, node):
 		node.set_parent(self)
 		node.bind_parent_position(self)
-		self.__nodes.append(node)
+		self._nodes.append(node)
 	
 	def _remove_node(self, node):
 		node.set_parent(None)
 		node.unbind_parent_position()
-		self.__nodes.remove(node)
+		self._nodes.remove(node)
 	
 	def _set_canvas(self, canvas):
 		self.__canvas = canvas
@@ -216,7 +217,7 @@ class Node(Boundary):
 	def get_hovered_node(self, mouse_position):
 		last_hovered_node = None
 		
-		for node in self.__nodes:
+		for node in self._nodes:
 			if node.is_mouse_over(mouse_position):
 				last_hovered_node = node
 		
@@ -348,3 +349,76 @@ class ImageView(FlatNode):
 		image = image.get()
 		
 		self._set_canvas(image)
+
+
+class Pane(Node):
+	def __init__(self, nodes, **kwargs):
+		super(Pane, self).__init__(**kwargs)
+		
+		map(self._add_node, nodes)
+	
+	def add_node(self, node):
+		self._add_node(node)
+		self.update()
+
+
+class VBox(Pane):
+	def __init__(self, nodes, align="left", **kwargs):
+		super(VBox, self).__init__(nodes, **kwargs)
+		
+		self.__align = align
+		
+		self._property["spacing"] = self._create_updating_property()
+		
+		self.style_name = "vbox"
+	
+	def update(self):
+		self.__update_size()
+		self.__update_nodes_positions()
+	
+	def __update_size(self):
+		width = self.__find_new_width()
+		height = self.__find_new_height()
+		
+		self.set_size(width, height)
+	
+	def __find_new_width(self):
+		max_node_width = 0
+		
+		for node in self._nodes:
+			node_width = node.get_property("width")
+			
+			if node_width > max_node_width:
+				max_node_width = node_width
+		
+		return max_node_width
+	
+	def __find_new_height(self):
+		total_height = 0
+		
+		for node in self._nodes:
+			total_height += node.get_property("height") + self.get_property("spacing")
+		
+		return total_height
+	
+	def __update_nodes_positions(self):
+		position_y = 0
+		
+		for index, node in enumerate(self._nodes):
+			position_x = self.__find_node_new_position_x(node)
+			
+			node.set_position(position_x, position_y)
+			
+			position_y += node.get_property("height") + self.get_property("spacing")
+	
+	def __find_node_new_position_x(self, node):
+		if self.__align == "left":
+			return 0
+		
+		if self.__align == "center":
+			return (self.get_property("width") - node.get_property("width"))/2
+		
+		if self.__align == "right":
+			return self.get_property("width") - node.get_property("width")
+		
+		raise RindeException("Unknown alignment: '%s'" % self.__align)

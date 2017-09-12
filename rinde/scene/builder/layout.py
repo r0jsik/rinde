@@ -80,17 +80,17 @@ class LayoutParserBase(XMLParserBase):
 	
 	def _parse_node(self, type, attributes, children):
 		try:
-			return self.__try_to_parse_node(type, attributes)
+			return self.__try_to_parse_node(type, attributes, children)
 		except AttributeError:
 			raise RindeException("Unknown node type: '%s'" % type)
 		except TypeError:
 			raise RindeException("Incorrect %s argumentation" % type)
 	
-	def __try_to_parse_node(self, type, attributes):
+	def __try_to_parse_node(self, type, attributes, children):
 		if "action" in attributes:
 			self.__action_to_controller_method(attributes)
 		
-		node = self.__create_node(type, attributes)
+		node = self.__create_node(type, attributes, children)
 		
 		if "id" in attributes:
 			self.__controller.add_node(attributes["id"], node)
@@ -103,11 +103,13 @@ class LayoutParserBase(XMLParserBase):
 		except AttributeError:
 			raise RindeException("Controller must implement method '%s'" % attributes["action"])
 	
-	def __create_node(self, type, attributes):
+	def __create_node(self, type, attributes, children):
 		node_type = getattr(rinde.scene.node, type)
-		node = node_type(**attributes)
 		
-		return node
+		if children:
+			return node_type(children, **attributes)
+		else:
+			return node_type(**attributes)
 
 
 class LayoutParserWithCustomController(LayoutParserBase):
