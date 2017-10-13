@@ -65,7 +65,8 @@ class Boundary(NodeBase):
 		
 		self.__parent_position_x = self.__create_position_property()
 		self.__parent_position_y = self.__create_position_property()
-		self.__absolute_position = (0, 0)
+		self.__absolute_position_x = self.__create_position_property()
+		self.__absolute_position_y = self.__create_position_property()
 		
 		self.set_position(position_x, position_y)
 	
@@ -76,17 +77,12 @@ class Boundary(NodeBase):
 		return property
 	
 	def update_absolute_position(self):
-		self.__absolute_position = (
-			self.get_property("position_x") + self.__parent_position_x.get(),
-			self.get_property("position_y") + self.__parent_position_y.get()
-		)
+		self.__absolute_position_x.set(self.get_property("position_x") + self.__parent_position_x.get())
+		self.__absolute_position_y.set(self.get_property("position_y") + self.__parent_position_y.get())
 	
 	def bind_parent_position(self, parent):
-		parent_position_x = parent.property("position_x")
-		parent_position_y = parent.property("position_y")
-		
-		self.__parent_position_x.bind_to(parent_position_x)
-		self.__parent_position_y.bind_to(parent_position_y)
+		self.__parent_position_x.bind_to(parent.__absolute_position_x)
+		self.__parent_position_y.bind_to(parent.__absolute_position_y)
 		self.update_absolute_position()
 	
 	def unbind_parent_position(self):
@@ -105,8 +101,8 @@ class Boundary(NodeBase):
 		self._property["height"].unbind()
 	
 	def is_mouse_over(self, mouse_position):
-		if self.get_property("width") > mouse_position[0] - self.get_property("position_x") > 0:
-			if self.get_property("height") > mouse_position[1] - self.get_property("position_y") > 0:
+		if self.get_property("width") > mouse_position[0] - self.__absolute_position_x.get() > 0:
+			if self.get_property("height") > mouse_position[1] - self.__absolute_position_y.get() > 0:
 				return True
 		
 		return False
@@ -126,7 +122,7 @@ class Boundary(NodeBase):
 		return self.get_property("width"), self.get_property("height")
 	
 	def get_absolute_position(self):
-		return self.__absolute_position
+		return self.__absolute_position_x.get(), self.__absolute_position_y.get()
 
 
 class Node(Boundary):

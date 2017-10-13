@@ -126,9 +126,8 @@ class LayoutParserWhichMakesController(LayoutParserBase):
 	def _create_scene(self, attributes):
 		controller = self.__extract_controller_from_attributes(attributes)
 		controller = self.__create_controller(controller)
-		scene = Scene(controller, **attributes)
 		
-		return scene
+		return Scene(controller, **attributes)
 	
 	def __extract_controller_from_attributes(self, attributes):
 		try:

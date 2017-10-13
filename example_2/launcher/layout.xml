@@ -3,7 +3,7 @@
 <Scene width="480" height="480" controller="controller.LauncherController">
 	<ImageView resource="launcher/image.png" position_x="165" position_y="115" />
 
-	<VBox align="center">
+	<VBox position_x="30" align="center">
 		<TextButton text="First button" action="start_game" />
 		<TextButton text="Second button" action="start_game" />
 		<TextButton text="Third button" action="start_game" />
