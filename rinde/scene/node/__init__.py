@@ -285,6 +285,7 @@ class Label(FlatNode):
 		self._property["shadow_offset_x"] = self.__shadow._property["position_x"]
 		self._property["shadow_offset_y"] = self.__shadow._property["position_y"]
 		self._property["shadow_color"] = self.__shadow._property["color"]
+		self._property["shadow_visible"] = self.__shadow._property["visible"]
 	
 	def __init_face(self):
 		self.__face = self.__create_text_display()

@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <Scene width="480" height="480" controller="controller.LauncherController">
-	<ImageView resource="launcher/image.png" position_x="165" position_y="115" />
-
-	<VBox position_x="30" align="center">
-		<TextButton text="First button" action="start_game" />
-		<TextButton text="Second button" action="start_game" />
-		<TextButton text="Third button" action="start_game" />
-		<TextButton text="Fourth button" action="start_game" />
+	<VBox position_x="320" position_y="10" align="right">
+		<Label text="Menu" />
+		<TextButton text="Start game" action="start_game" />
+		<TextButton text="Exit" action="exit" />
 	</VBox>
+
+	<ImageView resource="launcher/image.png" position_x="165" position_y="115" />
 </Scene>

@@ -1,24 +1,24 @@
 label, draggable-label, text-button
 {
-    font: "Roboto Condensed Regular";
-    font-size: 32;
-    color: #837654;
-    shadow-color: #111111;
-    shadow-offset-x: 1;
-    shadow-offset-y: 1;
+	font: "Roboto Condensed Regular";
+	font-size: 32;
+	color: #837654;
+	shadow-color: #111111;
+	shadow-offset-x: 1;
+	shadow-offset-y: 1;
 }
 
 text-button:hover
 {
-    color: #A59876;
+	color: #A59876;
 }
 
 text-button:focus
 {
-    color: #615432;
+	color: #615432;
 }
 
 vbox
 {
-    spacing: 0;
+	spacing: 0;
 }

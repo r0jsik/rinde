@@ -1,3 +1,6 @@
+from rinde.error import RindeException
+
+
 class Property(object):
 	def __init__(self, value):
 		self.__value = value
@@ -63,3 +66,18 @@ class BooleanProperty(Property):
 	
 	def false(self):
 		self.set(False)
+	
+	def reset(self, value):
+		super(BooleanProperty, self).reset(self.__to_bool(value))
+	
+	def __to_bool(self, value):
+		if value in [True, "true"]:
+			return True
+		
+		if value in [False, "false"]:
+			return False
+		
+		raise RindeException("Incorrect boolean value: %s" % value)
+	
+	def set(self, value):
+		super(BooleanProperty, self).set(self.__to_bool(value))

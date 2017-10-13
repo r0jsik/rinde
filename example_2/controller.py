@@ -7,6 +7,9 @@ class LauncherController(ControllerBase):
 	
 	def start_game(self):
 		self.__window.set_scene("board", BoardController())
+	
+	def exit(self):
+		raise SystemExit
 
 
 class BoardController(ControllerBase):
