@@ -262,6 +262,8 @@ class Label(FlatNode):
 	def __init__(self, text, **kwargs):
 		super(Label, self).__init__(**kwargs)
 		
+		text = str(text)
+		
 		self._property["text"] = self._create_updating_property(text)
 		self._property["font"] = self._create_updating_property()
 		self._property["font_size"] = self._create_updating_property()
@@ -360,12 +362,12 @@ class Pane(Node):
 
 
 class VBox(Pane):
-	def __init__(self, nodes, align="left", **kwargs):
+	def __init__(self, nodes, align="left", spacing=0, **kwargs):
 		super(VBox, self).__init__(nodes, **kwargs)
 		
 		self.__align = align
 		
-		self._property["spacing"] = self._create_updating_property()
+		self._property["spacing"] = self._create_updating_property(spacing)
 		
 		self.style_name = "vbox"
 	
