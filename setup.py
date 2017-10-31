@@ -3,12 +3,12 @@
 
 setup(
 	name="rinde",
-	description="Library which can be used for creating GUI based on XML and CSS.",
-	version="0.2",
+	description="Library used for creating GUI based on XML and CSS.",
+	version="0.3",
 	license="MIT License",
 	author="Marcin Rajs",
 	
 	requires=["pygame", "cssutils"],
-	packages=find_packages(exclude=["example_1"]),
+	packages=find_packages(exclude=["example_1", "example_2"]),
 	package_data={"rinde": ["res/*"]}
 )

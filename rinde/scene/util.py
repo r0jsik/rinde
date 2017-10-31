@@ -19,16 +19,16 @@ class Fonts:
 	
 	@staticmethod
 	def __get_path(file):
-		is_custom_font = Fonts.__get_custom_font_pattern()
-		custom_font = re.match(is_custom_font, file)
+		is_external_font = Fonts.__get_external_font_pattern()
+		external_font = re.match(is_external_font, file)
 		
-		if custom_font:
-			return custom_font.group(1)
+		if external_font:
+			return external_font.group(1)
 		else:
 			return Resources.get_path("%s.ttf" % file)
 	
 	@staticmethod
-	def __get_custom_font_pattern():
+	def __get_external_font_pattern():
 		# Declaration in CSS looks like
 		# font: src("example/font.ttf")
 		
@@ -57,8 +57,11 @@ class Font:
 
 
 class Image:
-	def __init__(self, resource):
-		self.__pygame_image = pygame.image.load(resource)
+	def __init__(self, file):
+		try:
+			self.__pygame_image = pygame.image.load(file)
+		except pygame.error:
+			raise RindeException("File '%s' not found" % file)
 	
 	def get(self):
 		return self.__pygame_image.convert_alpha()

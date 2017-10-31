@@ -17,11 +17,11 @@ class Scene:
 		else:
 			raise RindeException("Controller must be subclass of rinde.scene.ControllerBase")
 	
-	def show(self, nodes, styles):
-		self.__nodes = nodes
+	def show(self, layout, styles):
+		self.__layout = layout
 		self.__styles = styles
 		
-		for node in nodes:
+		for node in layout:
 			node.set_parent(self)
 			node.reset()
 	
@@ -46,7 +46,7 @@ class Scene:
 	def __get_hovered_node(self, mouse_position):
 		last_hovered_node = None
 		
-		for node in self.__nodes:
+		for node in self.__layout:
 			if node.is_mouse_over(mouse_position):
 				hovered_node = node.get_hovered_node(mouse_position)
 				
@@ -100,7 +100,7 @@ class Scene:
 	def __repaint(self, surface):
 		surface.fill(0xEEEEEE)
 		
-		for node in self.__nodes:
+		for node in self.__layout:
 			node.repaint(surface)
 	
 	def get_size(self):

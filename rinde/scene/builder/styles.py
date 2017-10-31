@@ -13,9 +13,8 @@ class StylesParser:
 	def parse(self):
 		rinde_stylesheet = self.__parse_stylesheet(self.__RINDE_STYLESHEET)
 		scene_stylesheet = self.__parse_stylesheet(self.__scene_stylesheet)
-		styles = Styles(rinde_stylesheet, scene_stylesheet)
 		
-		return styles
+		return Styles(rinde_stylesheet, scene_stylesheet)
 	
 	def __parse_stylesheet(self, stylesheet):
 		return StylesheetParser(stylesheet).parse()

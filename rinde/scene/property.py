@@ -1,6 +1,3 @@
-from rinde.error import RindeException
-
-
 class Property(object):
 	def __init__(self, value):
 		self.__value = value
@@ -19,7 +16,7 @@ class Property(object):
 		
 		self.__bound_to = property
 		self.__bound_to.__bound_properties.append(self)
-		self.__value = property.__value
+		self.reset(property.__value)
 	
 	def unbind(self):
 		self.__bound_to.__bound_properties.remove(self)
@@ -55,7 +52,7 @@ class IntegerProperty(Property):
 
 
 class BooleanProperty(Property):
-	def __init__(self, value=True):
+	def __init__(self, value=False):
 		super(BooleanProperty, self).__init__(value)
 	
 	def negate(self):
@@ -67,17 +64,5 @@ class BooleanProperty(Property):
 	def false(self):
 		self.set(False)
 	
-	def reset(self, value):
-		super(BooleanProperty, self).reset(self.__to_bool(value))
-	
-	def __to_bool(self, value):
-		if value in [True, "true"]:
-			return True
-		
-		if value in [False, "false"]:
-			return False
-		
-		raise RindeException("Incorrect boolean value: %s" % value)
-	
-	def set(self, value):
-		super(BooleanProperty, self).set(self.__to_bool(value))
+	def get(self):
+		return super(BooleanProperty, self).get() in [True, "true"]

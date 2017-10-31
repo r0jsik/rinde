@@ -31,9 +31,9 @@ class XMLParserBase(object):
 		return {property: self.__parse_value(value) for property, value in element.attrib.iteritems()}
 	
 	def __parse_value(self, value):
-		try:
+		if value.lstrip("-").isdigit():
 			return int(value)
-		except ValueError:
+		else:
 			return value
 	
 	def _parse_root(self, attributes):
@@ -112,9 +112,9 @@ class LayoutParserBase(XMLParserBase):
 			return node_type(**attributes)
 
 
-class LayoutParserWithCustomController(LayoutParserBase):
+class LayoutParserWithExistingController(LayoutParserBase):
 	def __init__(self, scene_directory, controller):
-		super(LayoutParserWithCustomController, self).__init__(scene_directory)
+		super(LayoutParserWithExistingController, self).__init__(scene_directory)
 		
 		self.__controller = controller
 	
@@ -122,7 +122,7 @@ class LayoutParserWithCustomController(LayoutParserBase):
 		return Scene(self.__controller, **attributes)
 
 
-class LayoutParserWhichMakesController(LayoutParserBase):
+class LayoutParserWithCreatingController(LayoutParserBase):
 	def _create_scene(self, attributes):
 		controller = self.__extract_controller_from_attributes(attributes)
 		controller = self.__create_controller(controller)

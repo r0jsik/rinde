@@ -26,19 +26,12 @@ class Window:
 	__INSTANCE = None
 	
 	def __init__(self, title, scene_directory):
-		self.__init_instance()
 		self.__init_favicon()
 		
 		self.set_title(title)
 		self.set_scene(scene_directory)
 		
-		self.__init_surface()
-	
-	def __init_instance(self):
-		if Window.__INSTANCE:
-			raise RindeException("Window already exists")
-		
-		Window.__INSTANCE = self
+		self.__init_instance()
 	
 	def __init_favicon(self):
 		try:
@@ -55,21 +48,26 @@ class Window:
 		pygame.display.set_caption(title)
 	
 	def set_scene(self, scene_directory, controller=None):
-		self.__scene_builder = SceneBuilder(scene_directory, controller)
-		self.__scene = self.__scene_builder.get_scene()
+		scene_builder = SceneBuilder(scene_directory, controller)
+		self.__scene = scene_builder.get_scene()
 		
 		self.__set_up_display()
 		
-		self.__scene_builder.finalize(self)
+		scene_builder.finalize(self)
 	
 	def __set_up_display(self):
+		scene_size = self.__scene.get_size()
+		
 		try:
-			pygame.display.set_mode(self.__scene.get_size())
+			self.__surface = pygame.display.set_mode(scene_size)
 		except TypeError:
 			raise RindeException("Incorrect scene size")
 	
-	def __init_surface(self):
-		self.__surface = pygame.display.get_surface()
+	def __init_instance(self):
+		if Window.__INSTANCE:
+			raise RindeException("Window already exists")
+		
+		Window.__INSTANCE = self
 	
 	def update(self):
 		self.__scene.update(self.__surface)

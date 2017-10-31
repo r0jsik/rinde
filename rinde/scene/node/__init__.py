@@ -16,7 +16,7 @@ class NodeBase(object):
 		self.__style = None
 	
 	def __create_state_property(self):
-		property = BooleanProperty(False)
+		property = BooleanProperty()
 		property.value_changed = self.__update_state
 		
 		return property
@@ -42,7 +42,7 @@ class NodeBase(object):
 		try:
 			return self._property[name]
 		except KeyError:
-			raise RindeException("Unknown property '%s'" % name)
+			raise RindeException("Unknown property: '%s'" % name)
 	
 	def get_property(self, name):
 		return self.property(name).get()
@@ -77,8 +77,11 @@ class Boundary(NodeBase):
 		return property
 	
 	def update_absolute_position(self):
-		self.__absolute_position_x.set(self.get_property("position_x") + self.__parent_position_x.get())
-		self.__absolute_position_y.set(self.get_property("position_y") + self.__parent_position_y.get())
+		absolute_position_x = self.get_property("position_x") + self.__parent_position_x.get()
+		absolute_position_y = self.get_property("position_y") + self.__parent_position_y.get()
+		
+		self.__absolute_position_x.set(absolute_position_x)
+		self.__absolute_position_y.set(absolute_position_y)
 	
 	def bind_parent_position(self, parent):
 		self.__parent_position_x.bind_to(parent.__absolute_position_x)
@@ -93,12 +96,12 @@ class Boundary(NodeBase):
 		width = boundary.property("width")
 		height = boundary.property("height")
 		
-		self._property["width"].bind_to(width)
-		self._property["height"].bind_to(height)
+		self.property("width").bind_to(width)
+		self.property("height").bind_to(height)
 	
 	def unbind_size(self):
-		self._property["width"].unbind()
-		self._property["height"].unbind()
+		self.property("width").unbind()
+		self.property("height").unbind()
 	
 	def is_mouse_over(self, mouse_position):
 		if self.get_property("width") > mouse_position[0] - self.__absolute_position_x.get() > 0:
@@ -133,8 +136,8 @@ class Node(Boundary):
 		self.__parent = None
 		
 		self._nodes = []
-		self._property["visible"] = BooleanProperty()
-		self._property["enabled"] = BooleanProperty()
+		self._property["visible"] = BooleanProperty(True)
+		self._property["enabled"] = BooleanProperty(True)
 	
 	def hover(self):
 		if self.get_property("enabled"):
@@ -229,18 +232,22 @@ class FlatNode(Node):
 
 
 class TextDisplay(FlatNode):
-	def __init__(self, text_property, font_property, font_size_property):
+	def __init__(self, label):
 		super(TextDisplay, self).__init__()
 		
-		self.__text_property = self._create_updating_property()
-		self.__font_property = self._create_updating_property()
-		self.__font_size_property = self._create_updating_property()
-		
-		self.__text_property.bind_to(text_property)
-		self.__font_property.bind_to(font_property)
-		self.__font_size_property.bind_to(font_size_property)
+		self.__text_property = self.__create_label_property(label, "text")
+		self.__font_property = self.__create_label_property(label, "font")
+		self.__font_size_property = self.__create_label_property(label, "font_size")
 		
 		self._property["color"] = self._create_updating_property()
+	
+	def __create_label_property(self, label, property_name):
+		property = label.property(property_name)
+		
+		label_property = self._create_updating_property()
+		label_property.bind_to(property)
+		
+		return label_property
 	
 	def update(self):
 		text = self.__text_property.get()
@@ -253,9 +260,8 @@ class TextDisplay(FlatNode):
 	def __get_font(self):
 		file = self.__font_property.get()
 		size = self.__font_size_property.get()
-		font = Fonts.get(file, size)
 		
-		return font
+		return Fonts.get(file, size)
 
 
 class Label(FlatNode):
@@ -275,28 +281,23 @@ class Label(FlatNode):
 		self.style_name = "label"
 	
 	def __init_shadow(self):
-		self.__shadow = self.__create_text_display()
-		self._add_node(self.__shadow)
-		
+		self.__shadow = TextDisplay(self)
 		self.__add_shadow_properties()
-	
-	def __create_text_display(self):
-		return TextDisplay(self.property("text"), self.property("font"), self.property("font_size"))
+		self._add_node(self.__shadow)
 	
 	def __add_shadow_properties(self):
-		self._property["shadow_offset_x"] = self.__shadow._property["position_x"]
-		self._property["shadow_offset_y"] = self.__shadow._property["position_y"]
-		self._property["shadow_color"] = self.__shadow._property["color"]
-		self._property["shadow_visible"] = self.__shadow._property["visible"]
+		self._property["shadow_offset_x"] = self.__shadow.property("position_x")
+		self._property["shadow_offset_y"] = self.__shadow.property("position_y")
+		self._property["shadow_color"] = self.__shadow.property("color")
+		self._property["shadow_visible"] = self.__shadow.property("visible")
 	
 	def __init_face(self):
-		self.__face = self.__create_text_display()
-		self._add_node(self.__face)
-		
+		self.__face = TextDisplay(self)
 		self.__add_face_properties()
+		self._add_node(self.__face)
 	
 	def __add_face_properties(self):
-		self._property["color"] = self.__face._property["color"]
+		self._property["color"] = self.__face.property("color")
 	
 	def update(self):
 		self.__shadow.update()
@@ -310,8 +311,8 @@ class DraggableLabel(Label):
 		self.style_name = "draggable-label"
 	
 	def drag(self, mouse_offset):
-		self._property["position_x"].increase(mouse_offset[0])
-		self._property["position_y"].increase(mouse_offset[1])
+		self.property("position_x").increase(mouse_offset[0])
+		self.property("position_y").increase(mouse_offset[1])
 
 
 class TextButton(Label):
@@ -333,15 +334,13 @@ class ImageView(FlatNode):
 	def __init__(self, resource, **kwargs):
 		super(ImageView, self).__init__(**kwargs)
 		
-		self._property["image"] = self.__create_image_property(resource)
+		self.__create_image_property(resource)
 		
 		self.style_name = "image-view"
 	
 	def __create_image_property(self, resource):
 		image = Image(resource)
-		property = self._create_updating_property(image)
-		
-		return property
+		self._property["image"] = self._create_updating_property(image)
 	
 	def update(self):
 		image = self.get_property("image")
@@ -355,33 +354,23 @@ class Pane(Node):
 		super(Pane, self).__init__(**kwargs)
 		
 		map(self._add_node, nodes)
-	
-	def add_node(self, node):
-		self._add_node(node)
-		self.update()
 
 
 class VBox(Pane):
 	def __init__(self, nodes, align="left", spacing=0, **kwargs):
 		super(VBox, self).__init__(nodes, **kwargs)
 		
-		self.__align = align
-		
+		self._property["align"] = self._create_updating_property(align)
 		self._property["spacing"] = self._create_updating_property(spacing)
 		
 		self.style_name = "vbox"
 	
 	def update(self):
-		self.__update_size()
+		self.__update_width()
+		self.__update_height()
 		self.__update_nodes_positions()
 	
-	def __update_size(self):
-		width = self.__find_new_width()
-		height = self.__find_new_height()
-		
-		self.set_size(width, height)
-	
-	def __find_new_width(self):
+	def __update_width(self):
 		max_node_width = 0
 		
 		for node in self._nodes:
@@ -390,34 +379,36 @@ class VBox(Pane):
 			if node_width > max_node_width:
 				max_node_width = node_width
 		
-		return max_node_width
+		self.set_property("width", max_node_width)
 	
-	def __find_new_height(self):
+	def __update_height(self):
 		total_height = 0
 		
 		for node in self._nodes:
 			total_height += node.get_property("height") + self.get_property("spacing")
 		
-		return total_height
+		self.set_property("height", total_height)
 	
 	def __update_nodes_positions(self):
 		position_y = 0
 		
 		for index, node in enumerate(self._nodes):
-			position_x = self.__find_node_new_position_x(node)
+			position_x = self.__compute_node_position_x(node)
 			
 			node.set_position(position_x, position_y)
 			
 			position_y += node.get_property("height") + self.get_property("spacing")
 	
-	def __find_node_new_position_x(self, node):
-		if self.__align == "left":
+	def __compute_node_position_x(self, node):
+		align = self.get_property("align")
+		
+		if align == "left":
 			return 0
 		
-		if self.__align == "center":
+		if align == "center":
 			return (self.get_property("width") - node.get_property("width"))/2
 		
-		if self.__align == "right":
+		if align == "right":
 			return self.get_property("width") - node.get_property("width")
 		
-		raise RindeException("Unknown alignment: '%s'" % self.__align)
+		raise RindeException("Unknown alignment: '%s'" % align)
