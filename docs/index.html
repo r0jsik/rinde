@@ -1,3 +1,4 @@
+﻿
 <!DOCTYPE html>
 
 <html>
@@ -6,61 +7,30 @@
 		<meta charset="UTF-8" />
 		<link rel="Stylesheet" type="text/css" href="style.css" />
 	</head>
-
+	
 	<body>
 		<dl id="menu">
 			<dt>
 				<a href="index.html">Main page</a>
 			</dt>
-
-			<dd>
-				<a href="page/scene.html">Scene</a>
-			</dd>
-
-			<dd>
-				<a href="page/node.html">Node</a>
-			</dd>
-
-			<dd>
-				<a href="page/label.html">Label</a>
-			</dd>
-
-			<dd>
-				<a href="page/draggable_label.html">DraggableLabel</a>
-			</dd>
-
-			<dd>
-				<a href="page/text_button.html">TextButton</a>
-			</dd>
-
-			<dd>
-				<a href="page/image_view.html">ImageView</a>
-			</dd>
-
-			<dd>
-				<a href="page/pane.html">Pane</a>
-			</dd>
-
-			<dd>
-				<a href="page/vbox.html">VBox</a>
-			</dd>
-		</dl>
-
+			
+			<dd><a href='Scene.html'>Scene</a></dd><dd><a href='Node.html'>Node</a></dd><dd><a href='Label.html'>Label</a></dd><dd><a href='DraggableLabel.html'>DraggableLabel</a></dd><dd><a href='TextButton.html'>TextButton</a></dd><dd><a href='ImageView.html'>ImageView</a></dd><dd><a href='CanvasView.html'>CanvasView</a></dd><dd><a href='Pane.html'>Pane</a></dd><dd><a href='VBox.html'>VBox</a></dd><dd><a href='HBox.html'>HBox</a></dd>		</dl>
+		
 		<div id="main">
 			<h1>How to run Rinde application?</h1>
 
 <h2>Prepare Python script</h2>
 <p>
-	First of all, create file <kbd>__init__.py</kbd> and write example code:
+	First of all, create <kbd>__init__.py</kbd> file and write example code:
 
 	<code>
 		import rinde<br />
 		<br />
 		if __name__ == '__main__':<br />
-		&nbsp;&nbsp;&nbsp;&nbsp;rinde.Application("Window title", "scene_directory") # Runs application
+		&nbsp;&nbsp;&nbsp;&nbsp;rinde.Application("Window title", "scene_directory")
 	</code>
 
-	Create new directory next to script and name it as <kbd>scene_directory</kbd>.
+	Then create new directory next to script and name it as <kbd>scene_directory</kbd>.
 </p>
 
 <h2>Prepare scene directory</h2>
@@ -68,20 +38,20 @@ Scene directory has to contain two files:
 
 <h3>layout.xml</h3>
 <p>
-	Defines layout in XML language. Example code defines <a href="pages/scene.html">Scene</a> with <a href="pages/text_button.html">TextButton</a> as only node:
+	Defines layout in XML language. Example code defines <a href="page/scene.html">Scene</a> with <a href="page/text_button.html">TextButton</a> as only node:
 
 	<code>
 		&lt;?xml version="1.0" encoding="UTF-8" ?&gt;<br />
 		<br />
-		&lt;Scene width="320" height="480" controller="controller.Controller"&gt;<br />
-		&nbsp;&nbsp;&nbsp;&nbsp;&lt;TextButton id="blabla" style_class="abc" text="Click to print Hello" action="say_hello" position_x="10" /&gt;<br />
+		&lt;Scene controller="controller.Controller" width="320" height="480"&gt;<br />
+		&nbsp;&nbsp;&nbsp;&nbsp;&lt;TextButton text="Click to print Hello" action="say_hello" id="blabla" style_class="abc" position_x="10" /&gt;<br />
 		&lt;/Scene&gt;
 	</code>
 </p>
 
 <h3>style.css</h3>
 <p>
-	Defines nodes stylization in CSS language. Above TextButton can be stylized using these rules:
+	Defines nodes style in CSS language. Created TextButton can be stylized using these rules:
 
 	<code>
 		/* Using selector */<br />
@@ -106,7 +76,7 @@ Scene directory has to contain two files:
 
 <h2>Scene controller</h2>
 <p>
-	Controller is object controlling scene. Create new python script next to <kbd>__init__.py</kbd>, name it as <kbd>controller.py</kbd> and write following code:
+	Controller is object controlling scene. Create new Python script next to <kbd>__init__.py</kbd>, name it as <kbd>controller.py</kbd> and write following code:
 
 	<code>
 	from rinde.scene import ControllerBase<br />
@@ -122,6 +92,7 @@ Scene directory has to contain two files:
 
 	<strong>Important!</strong>
 	Controller can be bound to scene using layout.xml file through <kbd>controller</kbd> attribute in Scene tag. Notice that in this example <kbd>controller="controller.Controller"</kbd> means <kbd>controller="path.to.module.ControllerClass"</kbd>.
-</p>		</div>
+</p>
+		</div>
 	</body>
 </html>

@@ -1,12 +1,14 @@
 import pygame
 
 from rinde.error import RindeException
+from rinde.scene.util import Image
+from rinde.scene.util import Screen
 
 
 class Scene:
-	def __init__(self, controller, width, height):
+	def __init__(self, controller, width=0, height=0):
 		self.__init_controller(controller)
-		self.__size = (width, height)
+		self.__init_window(width, height)
 		self.__focused_node = None
 		self.__hovered_node = None
 		self.__events_handler = EventsHandler(self)
@@ -17,6 +19,14 @@ class Scene:
 		else:
 			raise RindeException("Controller must be subclass of rinde.scene.ControllerBase")
 	
+	def __init_window(self, width, height):
+		if width and height:
+			self.__size = (width, height)
+			self.__mode = 0
+		else:
+			self.__size = Screen.SIZE
+			self.__mode = pygame.FULLSCREEN
+	
 	def show(self, layout, styles):
 		self.__layout = layout
 		self.__styles = styles
@@ -24,6 +34,7 @@ class Scene:
 		for node in layout:
 			node.set_parent(self)
 			node.reset()
+			node.update_position()
 	
 	def update_style_request(self, node):
 		style = self.__styles.get_style(node)
@@ -44,18 +55,13 @@ class Scene:
 			self.__leave_hovered_node()
 	
 	def __get_hovered_node(self, mouse_position):
-		last_hovered_node = None
+		hovered_node = None
 		
 		for node in self.__layout:
-			if node.is_mouse_over(mouse_position):
+			if node.can_be_hovered(mouse_position):
 				hovered_node = node.get_hovered_node(mouse_position)
-				
-				if hovered_node:
-					last_hovered_node = hovered_node
-				else:
-					last_hovered_node = node
 		
-		return last_hovered_node
+		return hovered_node
 	
 	def __leave_hovered_node(self):
 		if self.__hovered_node:
@@ -94,6 +100,7 @@ class Scene:
 		pass
 	
 	def update(self, surface):
+		self.__controller.update()
 		self.__events_handler.handle_events()
 		self.__repaint(surface)
 	
@@ -106,18 +113,24 @@ class Scene:
 	def get_size(self):
 		return self.__size
 	
+	def get_mode(self):
+		return self.__mode
+	
 	def get_controller(self):
 		return self.__controller
 
 
 class ControllerBase(object):
 	def __init__(self):
-		self.nodes = {}
+		self._nodes = {}
 	
 	def add_node(self, node_id, node):
-		self.nodes[node_id] = node
+		self._nodes[node_id] = node
 	
 	def start(self, window):
+		pass
+	
+	def update(self):
 		pass
 
 
@@ -134,29 +147,29 @@ class EventsHandler(object):
 		self.__update_hovering()
 	
 	def __handle_event(self, event):
-		if event.type == 2:
+		if event.type == pygame.KEYDOWN:
 			self.__handle_key_down_event(event)
 		
-		elif event.type == 4:
+		elif event.type == pygame.MOUSEMOTION:
 			self.__handle_mouse_motion(event)
 		
-		elif event.type == 5:
+		elif event.type == pygame.MOUSEBUTTONDOWN:
 			self.__handle_mouse_press(event)
 		
-		elif event.type == 6:
+		elif event.type == pygame.MOUSEBUTTONUP:
 			self.__handle_mouse_release(event)
 		
-		elif event.type == 12:
+		elif event.type == pygame.QUIT:
 			exit()
 	
 	def __handle_key_down_event(self, event):
-		if event.key == 285 and self.__is_alt_down():
+		if event.key == pygame.K_F4 and self.__is_alt_down():
 			exit()
 		else:
 			self.__scene.key_pressed(event.key, event.unicode)
 	
 	def __is_alt_down(self):
-		return pygame.key.get_mods() & 768
+		return pygame.key.get_mods() & pygame.KMOD_ALT
 	
 	def __handle_mouse_motion(self, event):
 		if event.buttons[0]:

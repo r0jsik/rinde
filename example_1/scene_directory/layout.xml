@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<Scene width="320" height="480" controller="controller.Controller">
-	<TextButton id="blabla" text="Click to print Hello" action="say_hello" position_x="10" />
+<Scene controller="controller.Controller" width="320" height="480">
+	<TextButton text="Click to print Hello" action="say_hello" id="blabla" position_x="10" />
 
-	<DraggableLabel text="Drag me 1" position_x="50" position_y="50" style_class="label_1" />
-	<DraggableLabel text="Drag me 2" position_x="50" position_y="90" />
+	<VBox align="center" position_x="95" position_y="95">
+		<DraggableLabel text="Drag me" style_class="label_1" />
+		<DraggableLabel text="Drag me 2" />
+	</VBox>
 </Scene>

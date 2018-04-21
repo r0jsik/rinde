@@ -1,39 +1,17 @@
-from rinde.scene.property import *
+from rinde.scene.property import Property
+from rinde.scene.property import BooleanProperty
 from rinde.scene.util import Fonts
 from rinde.scene.util import Image
+from rinde.scene.util import Canvas
+from rinde.scene.node.util import Boundary
+from rinde.scene.node.util import VBoxLayoutComputer
+from rinde.scene.node.util import HBoxLayoutComputer
 from rinde.error import RindeException
 
 
 class NodeBase(object):
-	def __init__(self, id=None, style_class=None):
-		self.id = id
-		self.style_class = style_class
-		self.style_name = None
-		self.hovered = self.__create_state_property()
-		self.focused = self.__create_state_property()
-		
+	def __init__(self, **kwargs):
 		self._property = {}
-		self.__style = None
-	
-	def __create_state_property(self):
-		property = BooleanProperty()
-		property.value_changed = self.__update_state
-		
-		return property
-	
-	def __update_state(self):
-		self.__apply_style(None)
-		
-		if self.hovered.get():
-			self.__apply_style("hover")
-		
-		if self.focused.get():
-			self.__apply_style("focus")
-	
-	def __apply_style(self, state):
-		if state in self.__style:
-			for property_name, value in self.__style[state].iteritems():
-				self.set_property(property_name, value)
 	
 	def set_property(self, name, value):
 		self.property(name).set(value)
@@ -46,112 +24,91 @@ class NodeBase(object):
 	
 	def get_property(self, name):
 		return self.property(name).get()
+
+
+class StylizableNode(NodeBase):
+	def __init__(self, id=None, style_class=None, **kwargs):
+		super(StylizableNode, self).__init__(**kwargs)
+		
+		self.id = id
+		self.style_class = style_class
+		self.style_name = None
+		
+		self._property["hovered"] = self.__create_state_property()
+		self._property["focused"] = self.__create_state_property()
+		
+		self.__style = None
+	
+	def __create_state_property(self):
+		property = BooleanProperty()
+		property.add_trigger(self.__update_state)
+		
+		return property
+	
+	def __update_state(self):
+		self.__apply_style(None)
+		
+		if self.get_property("hovered"):
+			self.__apply_style("hover")
+		
+		if self.get_property("focused"):
+			self.__apply_style("focus")
+	
+	def __apply_style(self, state):
+		if state in self.__style:
+			for property_name, value in self.__style[state].iteritems():
+				self.set_property(property_name, value)
 	
 	def set_style(self, style):
 		self.__style = style
 		
 		for property_name, value in style[None].iteritems():
-			self._property[property_name].reset(value)
+			self.property(property_name).reset(value)
 
 
-class Boundary(NodeBase):
-	def __init__(self, position_x=0, position_y=0, **kwargs):
-		super(Boundary, self).__init__(**kwargs)
+class BoundaryNode(NodeBase):
+	def __init__(self, **kwargs):
+		super(BoundaryNode, self).__init__(**kwargs)
 		
-		self._property["position_x"] = self.__create_position_property()
-		self._property["position_y"] = self.__create_position_property()
-		self._property["width"] = IntegerProperty()
-		self._property["height"] = IntegerProperty()
+		self._boundary = Boundary(**kwargs)
 		
-		self.__parent_position_x = self.__create_position_property()
-		self.__parent_position_y = self.__create_position_property()
-		self.__absolute_position_x = self.__create_position_property()
-		self.__absolute_position_y = self.__create_position_property()
-		
-		self.set_position(position_x, position_y)
-	
-	def __create_position_property(self):
-		property = IntegerProperty()
-		property.value_changed = self.update_absolute_position
-		
-		return property
-	
-	def update_absolute_position(self):
-		absolute_position_x = self.get_property("position_x") + self.__parent_position_x.get()
-		absolute_position_y = self.get_property("position_y") + self.__parent_position_y.get()
-		
-		self.__absolute_position_x.set(absolute_position_x)
-		self.__absolute_position_y.set(absolute_position_y)
-	
-	def bind_parent_position(self, parent):
-		self.__parent_position_x.bind_to(parent.__absolute_position_x)
-		self.__parent_position_y.bind_to(parent.__absolute_position_y)
-		self.update_absolute_position()
-	
-	def unbind_parent_position(self):
-		self.__parent_position_x.unbind()
-		self.__parent_position_y.unbind()
-	
-	def bind_size(self, boundary):
-		width = boundary.property("width")
-		height = boundary.property("height")
-		
-		self.property("width").bind_to(width)
-		self.property("height").bind_to(height)
-	
-	def unbind_size(self):
-		self.property("width").unbind()
-		self.property("height").unbind()
-	
-	def is_mouse_over(self, mouse_position):
-		if self.get_property("width") > mouse_position[0] - self.__absolute_position_x.get() > 0:
-			if self.get_property("height") > mouse_position[1] - self.__absolute_position_y.get() > 0:
-				return True
-		
-		return False
-	
-	def set_position(self, position_x, position_y):
-		self.set_property("position_x", position_x)
-		self.set_property("position_y", position_y)
-	
-	def get_position(self):
-		return self.get_property("position_x"), self.get_property("position_y")
+		self._property["position_x"] = self._boundary.position_x()
+		self._property["position_y"] = self._boundary.position_y()
+		self._property["width"] = self._boundary.width()
+		self._property["height"] = self._boundary.height()
 	
 	def set_size(self, width, height):
 		self.set_property("width", width)
 		self.set_property("height", height)
 	
-	def get_size(self):
-		return self.get_property("width"), self.get_property("height")
+	def update_position(self):
+		self._boundary.update_position()
 	
-	def get_absolute_position(self):
-		return self.__absolute_position_x.get(), self.__absolute_position_y.get()
+	def set_boundary_parent(self, boundary):
+		self._boundary.set_parent(boundary)
 
 
-class Node(Boundary):
-	def __init__(self, **kwargs):
-		super(Node, self).__init__(**kwargs)
+class InteractiveNode(StylizableNode, BoundaryNode):
+	def __init__(self, visible=True, enabled=True, **kwargs):
+		super(InteractiveNode, self).__init__(**kwargs)
 		
-		self.__canvas = None
-		self.__parent = None
-		
-		self._nodes = []
-		self._property["visible"] = BooleanProperty(True)
-		self._property["enabled"] = BooleanProperty(True)
+		self._property["visible"] = BooleanProperty(visible)
+		self._property["enabled"] = BooleanProperty(enabled)
+	
+	def can_be_hovered(self, mouse_position):
+		return self.get_property("visible") and self.get_property("enabled") and self._boundary.is_mouse_over(mouse_position)
 	
 	def hover(self):
-		if self.get_property("enabled"):
-			self.hovered.true()
+		self.set_property("hovered", True)
 	
 	def leave(self):
-		self.hovered.false()
+		self.set_property("hovered", False)
 	
 	def focus(self):
-		if self.get_property("enabled"):
-			self.focused.true()
+		self.set_property("focused", True)
 	
 	def unfocus(self):
-		self.focused.false()
+		self.set_property("focused", False)
 	
 	def drag(self, mouse_offset):
 		pass
@@ -164,149 +121,148 @@ class Node(Boundary):
 	
 	def scroll_down(self):
 		pass
-	
-	def repaint(self, surface):
-		if self.get_property("visible"):
-			if self.__canvas:
-				surface.blit(self.__canvas, self.get_absolute_position())
-			
-			for node in self._nodes:
-				node.repaint(surface)
-	
-	def _create_updating_property(self, value=None):
-		property = Property(value)
-		property.value_changed = self.update
+
+
+class SceneNode(StylizableNode, BoundaryNode):
+	def __init__(self, **kwargs):
+		super(SceneNode, self).__init__(**kwargs)
 		
-		return property
-	
-	def update(self):
-		pass
-	
-	def reset(self):
-		self.update_style_request(self)
-		self.update_absolute_position()
-		
-		for node in self._nodes:
-			node.reset()
-		
-		self.update()
+		self.__nodes = []
+		self.__parent = None
 	
 	def update_style_request(self, node):
-		try:
-			self.__parent.update_style_request(node) #Scene is at the end of chain
-		except AttributeError:
+		if self.__parent:
+			self.__parent.update_style_request(node)  # Scene is at the end of execution chain
+		else:
 			raise RindeException("Node is not on scene so cannot update style")
 	
 	def _add_node(self, node):
 		node.set_parent(self)
-		node.bind_parent_position(self)
-		self._nodes.append(node)
+		node.set_boundary_parent(self._boundary)
+		self.__nodes.append(node)
+	
+	def set_parent(self, parent):
+		if None not in [self.__parent, parent]:
+			raise RindeException("Node has already got parent")
+		
+		self.__parent = parent
 	
 	def _remove_node(self, node):
 		node.set_parent(None)
-		node.unbind_parent_position()
-		self._nodes.remove(node)
+		node.set_boundary_parent(None)
+		self.__nodes.remove(node)
+	
+	def get_hovered_node(self, mouse_position):
+		return self
+	
+	def get_nodes(self):
+		return self.__nodes
+
+
+class Node(InteractiveNode, SceneNode):
+	def __init__(self, **kwargs):
+		super(Node, self).__init__(**kwargs)
+		
+		self.__canvas = None
+		
+		self.style_name = "node"
+	
+	def repaint(self, surface):
+		if self.get_property("visible"):
+			if self.__canvas:
+				surface.blit(self.__canvas, self._boundary.get_absolute_position())
+			
+			for node in self.get_nodes():
+				node.repaint(surface)
+	
+	def _borrow_property(self, node, property_name):
+		property = node.property(property_name)
+		property.add_trigger(self.update)
+		
+		return property
+	
+	def _create_property(self, trigger, value=None):
+		property = Property(value)
+		property.add_trigger(trigger)
+		
+		return property
+	
+	def reset(self):
+		self.update_style_request(self)
+		
+		for node in self.get_nodes():
+			node.reset()
+		
+		self.update()
+	
+	def update(self):
+		pass
 	
 	def _set_canvas(self, canvas):
 		self.__canvas = canvas
 		
-		size = canvas.get_size()
-		self.set_size(*size)
-	
-	def get_hovered_node(self, mouse_position):
-		last_hovered_node = None
+		width, height = canvas.get_size()
+		self.set_size(width, height)
+
+
+class Label(Node):
+	def __init__(self, text, **kwargs):
+		super(Label, self).__init__(**kwargs)
 		
-		for node in self._nodes:
-			if node.is_mouse_over(mouse_position):
-				last_hovered_node = node
+		self.style_name = "label"
 		
-		return last_hovered_node
+		self._property["text"] = Property(text)
+		self._property["font"] = Property()
+		self._property["font_size"] = Property()
+		
+		self.__init_shadow()
+		self.__init_face()
 	
-	def set_parent(self, parent):
-		self.__parent = parent
+	def __init_shadow(self):
+		shadow = TextDisplay(self)
+		
+		self._property["shadow_offset_x"] = shadow.property("position_x")
+		self._property["shadow_offset_y"] = shadow.property("position_y")
+		self._property["shadow_color"] = shadow.property("color")
+		self._property["shadow_visible"] = shadow.property("visible")
+		
+		self._add_node(shadow)
+	
+	def __init_face(self):
+		face = TextDisplay(self)
+		
+		self._property["color"] = face.property("color")
+		
+		self._add_node(face)
 
 
-class FlatNode(Node):
-	def get_hovered_node(self, mouse_position):
-		return None
-
-
-class TextDisplay(FlatNode):
+class TextDisplay(Node):
 	def __init__(self, label):
 		super(TextDisplay, self).__init__()
 		
-		self.__text_property = self.__create_label_property(label, "text")
-		self.__font_property = self.__create_label_property(label, "font")
-		self.__font_size_property = self.__create_label_property(label, "font_size")
-		
-		self._property["color"] = self._create_updating_property()
-	
-	def __create_label_property(self, label, property_name):
-		property = label.property(property_name)
-		
-		label_property = self._create_updating_property()
-		label_property.bind_to(property)
-		
-		return label_property
+		self._property["text"] = self._borrow_property(label, "text")
+		self._property["font"] = self._borrow_property(label, "font")
+		self._property["font_size"] = self._borrow_property(label, "font_size")
+		self._property["color"] = self._create_property(self.update)
 	
 	def update(self):
-		text = self.__text_property.get()
-		font = self.__get_font()
+		text = self.get_property("text")
 		color = self.get_property("color")
+		font = self.__get_font()
 		
 		canvas = font.render(text, color)
 		self._set_canvas(canvas)
 	
 	def __get_font(self):
-		file = self.__font_property.get()
-		size = self.__font_size_property.get()
+		file = self.get_property("font")
+		size = self.get_property("font_size")
 		
 		return Fonts.get(file, size)
 
 
-class Label(FlatNode):
-	def __init__(self, text, **kwargs):
-		super(Label, self).__init__(**kwargs)
-		
-		text = str(text)
-		
-		self._property["text"] = self._create_updating_property(text)
-		self._property["font"] = self._create_updating_property()
-		self._property["font_size"] = self._create_updating_property()
-		
-		self.__init_shadow()
-		self.__init_face()
-		self.bind_size(self.__face)
-		
-		self.style_name = "label"
-	
-	def __init_shadow(self):
-		self.__shadow = TextDisplay(self)
-		self.__add_shadow_properties()
-		self._add_node(self.__shadow)
-	
-	def __add_shadow_properties(self):
-		self._property["shadow_offset_x"] = self.__shadow.property("position_x")
-		self._property["shadow_offset_y"] = self.__shadow.property("position_y")
-		self._property["shadow_color"] = self.__shadow.property("color")
-		self._property["shadow_visible"] = self.__shadow.property("visible")
-	
-	def __init_face(self):
-		self.__face = TextDisplay(self)
-		self.__add_face_properties()
-		self._add_node(self.__face)
-	
-	def __add_face_properties(self):
-		self._property["color"] = self.__face.property("color")
-	
-	def update(self):
-		self.__shadow.update()
-		self.__face.update()
-
-
 class DraggableLabel(Label):
-	def __init__(self, text, **kwargs):
-		super(DraggableLabel, self).__init__(text, **kwargs)
+	def __init__(self, **kwargs):
+		super(DraggableLabel, self).__init__(**kwargs)
 		
 		self.style_name = "draggable-label"
 	
@@ -316,99 +272,108 @@ class DraggableLabel(Label):
 
 
 class TextButton(Label):
-	def __init__(self, text, action, **kwargs):
-		super(TextButton, self).__init__(text, **kwargs)
+	def __init__(self, action, **kwargs):
+		super(TextButton, self).__init__(**kwargs)
 		
-		self.__action = action
-		
+		self.click = action
 		self.style_name = "text-button"
-	
-	def click(self):
-		try:
-			self.__action()
-		except TypeError:
-			raise RindeException("Action method cannot take any extra argument")
 
 
-class ImageView(FlatNode):
+class ImageView(Node):
 	def __init__(self, resource, **kwargs):
 		super(ImageView, self).__init__(**kwargs)
 		
-		self.__create_image_property(resource)
-		
 		self.style_name = "image-view"
-	
-	def __create_image_property(self, resource):
-		image = Image(resource)
-		self._property["image"] = self._create_updating_property(image)
+		
+		self.__content = Image(resource)
 	
 	def update(self):
-		image = self.get_property("image")
-		image = image.get()
+		self._set_canvas(self.__content.get())
+	
+	def resize_content(self, width, height):
+		self.__content.resize(width, height)
+		self.update()
+
+
+class CanvasView(Node):
+	def __init__(self, width, height, **kwargs):
+		super(CanvasView, self).__init__(**kwargs)
 		
-		self._set_canvas(image)
+		self.style_name = "canvas-view"
+		
+		self.__content = Canvas(width, height)
+	
+	def update(self):
+		self._set_canvas(self.__content.get())
+	
+	def get_content(self):
+		return self.__content
 
 
 class Pane(Node):
-	def __init__(self, nodes, **kwargs):
+	def __init__(self, nodes=(), **kwargs):
 		super(Pane, self).__init__(**kwargs)
 		
+		self._property["margin"] = self._boundary.margin()
+		self._property["padding"] = self._boundary.padding()
+		
+		self.style_name = "pane"
+		
 		map(self._add_node, nodes)
+	
+	def get_hovered_node(self, mouse_position):
+		hovered_node = self
+		
+		for node in self.get_nodes():
+			if node.can_be_hovered(mouse_position):
+				hovered_node = node.get_hovered_node(mouse_position)
+		
+		return hovered_node
 
 
-class VBox(Pane):
-	def __init__(self, nodes, align="left", spacing=0, **kwargs):
-		super(VBox, self).__init__(nodes, **kwargs)
+class Box(Pane):
+	def __init__(self, nodes, align, spacing=0, **kwargs):
+		super(Box, self).__init__(nodes, **kwargs)
 		
-		self._property["align"] = self._create_updating_property(align)
-		self._property["spacing"] = self._create_updating_property(spacing)
-		
-		self.style_name = "vbox"
+		self._property["spacing"] = self._create_property(self._update_nodes_spacing, spacing)
+		self._property["align"] = self._create_property(self._update_nodes_align, align)
+	
+	def _update_nodes_spacing(self):
+		pass
+	
+	def _update_nodes_align(self):
+		pass
 	
 	def update(self):
-		self.__update_width()
-		self.__update_height()
-		self.__update_nodes_positions()
+		self._update_nodes_spacing()
+		self._update_nodes_align()
+
+
+class VBox(Box):
+	def __init__(self, nodes=(), align="left", **kwargs):
+		super(VBox, self).__init__(nodes, align, **kwargs)
+		
+		self.style_name = "vbox"
+		
+		self.__layout_computer = VBoxLayoutComputer(self)
 	
-	def __update_width(self):
-		max_node_width = 0
-		
-		for node in self._nodes:
-			node_width = node.get_property("width")
-			
-			if node_width > max_node_width:
-				max_node_width = node_width
-		
-		self.set_property("width", max_node_width)
+	def _update_nodes_spacing(self):
+		self.__layout_computer.update_nodes_spacing("height", "y")
 	
-	def __update_height(self):
-		total_height = 0
+	def _update_nodes_align(self):
+		self.__layout_computer.update_nodes_align("x")
+
+
+class HBox(Box):
+	def __init__(self, nodes=(), align="top", **kwargs):
+		super(HBox, self).__init__(nodes, align, **kwargs)
 		
-		for node in self._nodes:
-			total_height += node.get_property("height") + self.get_property("spacing")
+		self.style_name = "hbox"
 		
-		self.set_property("height", total_height)
+		self.__layout_computer = HBoxLayoutComputer(self)
 	
-	def __update_nodes_positions(self):
-		position_y = 0
-		
-		for index, node in enumerate(self._nodes):
-			position_x = self.__compute_node_position_x(node)
-			
-			node.set_position(position_x, position_y)
-			
-			position_y += node.get_property("height") + self.get_property("spacing")
+	def _update_nodes_spacing(self):
+		self.__layout_computer.update_nodes_spacing("width", "x")
 	
-	def __compute_node_position_x(self, node):
-		align = self.get_property("align")
-		
-		if align == "left":
-			return 0
-		
-		if align == "center":
-			return (self.get_property("width") - node.get_property("width"))/2
-		
-		if align == "right":
-			return self.get_property("width") - node.get_property("width")
-		
-		raise RindeException("Unknown alignment: '%s'" % align)
+	def _update_nodes_align(self):
+		self.__layout_computer.update_nodes_align("y")

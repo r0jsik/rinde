@@ -1,8 +1,9 @@
 class Property(object):
-	def __init__(self, value):
+	def __init__(self, value=None):
 		self.__value = value
 		self.__bound_properties = []
 		self.__bound_to = None
+		self.__triggers = []
 	
 	def reset(self, value):
 		self.__value = value
@@ -28,13 +29,20 @@ class Property(object):
 	
 	def __change(self, value):
 		self.__value = value
-		self.value_changed()
+		self.invoke_triggers()
 		
 		for property in self.__bound_properties:
 			property.set(value)
 	
-	def value_changed(self):
-		pass
+	def invoke_triggers(self):
+		for trigger in self.__triggers:
+			trigger()
+	
+	def add_trigger(self, action):
+		self.__triggers.append(action)
+	
+	def remove_trigger(self, action):
+		self.__triggers.remove(action)
 	
 	def get(self):
 		return self.__value
@@ -55,7 +63,7 @@ class BooleanProperty(Property):
 	def __init__(self, value=False):
 		super(BooleanProperty, self).__init__(value)
 	
-	def negate(self):
+	def toggle(self):
 		self.set(not self.get())
 	
 	def true(self):

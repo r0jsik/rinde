@@ -5,6 +5,15 @@ from rinde.data import Resources
 from rinde.error import RindeException
 
 
+class Screen:
+	SIZE = None
+	
+	@staticmethod
+	def init_size():
+		screen_size = pygame.display.Info()
+		Screen.SIZE = (screen_size.current_w, screen_size.current_h)
+
+
 class Fonts:
 	__CACHE = {}
 	
@@ -50,7 +59,7 @@ class Font:
 			raise RindeException("Incorrect font '%s'" % file)
 	
 	def render(self, text, color):
-		return self.__pygame_font.render(text, True, self.__int_to_rgb(color))
+		return self.__pygame_font.render(unicode(text), True, self.__int_to_rgb(color))
 	
 	def __int_to_rgb(self, color):
 		return [(color >> offset) & 255 for offset in [16, 8, 0]]
@@ -59,9 +68,33 @@ class Font:
 class Image:
 	def __init__(self, file):
 		try:
-			self.__pygame_image = pygame.image.load(file)
+			self.__image = pygame.image.load(file)
 		except pygame.error:
 			raise RindeException("File '%s' not found" % file)
 	
 	def get(self):
-		return self.__pygame_image.convert_alpha()
+		return self.__image.convert_alpha()
+	
+	def resize(self, width, height):
+		self.__image = pygame.transform.scale(self.__image, (width, height))
+	
+	def get_size(self):
+		return self.__image.get_size()
+
+
+class Canvas:
+	def __init__(self, width, height):
+		self.__canvas = pygame.Surface((width, height))
+		self.fill(0, 0, 0)
+	
+	def fill(self, red, green, blue):
+		self.__canvas.fill((red, green, blue))
+	
+	def draw_line(self, color, start, end, width=1):
+		pygame.draw.line(self.__canvas, color, start, end, width)
+	
+	def get_size(self):
+		return self.__canvas.get_size()
+	
+	def get(self):
+		return self.__canvas

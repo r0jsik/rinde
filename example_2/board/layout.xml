@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-
-<Scene width="480" height="480">
-	<Label id="label" text="Very interesting game" position_x="10" />
-	<TextButton id="button" text="Don't click me" action="game_over" position_x="154" position_y="100" />
-</Scene>

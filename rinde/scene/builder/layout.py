@@ -13,7 +13,7 @@ class XMLParserBase(object):
 		except IOError:
 			raise RindeException("File '%s' not found" % file)
 		except xml.etree.cElementTree.ParseError as exception:
-			raise RindeException("Layout %s" % exception)
+			raise RindeException("XML %s" % exception)
 	
 	def __get_root(self, file):
 		element_tree = xml.etree.cElementTree.parse(file)
@@ -62,12 +62,9 @@ class XMLParserBase(object):
 class LayoutParserBase(XMLParserBase):
 	def __init__(self, scene_directory):
 		super(LayoutParserBase, self).__init__("%s/layout.xml" % scene_directory)
-	
-	def build_scene(self):
-		scene = self.parse_root()
-		self.__controller = scene.get_controller()
 		
-		return scene
+		self.__scene = self.parse_root()
+		self.__controller = self.__scene.get_controller()
 	
 	def _parse_root(self, attributes):
 		try:
@@ -107,9 +104,12 @@ class LayoutParserBase(XMLParserBase):
 		node_type = getattr(rinde.scene.node, type)
 		
 		if children:
-			return node_type(children, **attributes)
+			return node_type(nodes=children, **attributes)
 		else:
 			return node_type(**attributes)
+	
+	def get_scene(self):
+		return self.__scene
 
 
 class LayoutParserWithExistingController(LayoutParserBase):
