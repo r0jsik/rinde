@@ -34,7 +34,7 @@ class Scene:
 		for node in layout:
 			node.set_parent(self)
 			node.reset()
-			node.update_position()
+			node.update_absolute_position()
 	
 	def update_style_request(self, node):
 		style = self.__styles.get_style(node)

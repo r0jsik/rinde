@@ -1,11 +1,12 @@
 from rinde.scene.property import Property
 from rinde.scene.property import BooleanProperty
-from rinde.scene.util import Fonts
+from rinde.scene.util import Font
 from rinde.scene.util import Image
 from rinde.scene.util import Canvas
 from rinde.scene.node.util import Boundary
 from rinde.scene.node.util import VBoxLayoutComputer
 from rinde.scene.node.util import HBoxLayoutComputer
+from rinde.scene.node.util import SliderLayoutComputer
 from rinde.error import RindeException
 
 
@@ -81,8 +82,9 @@ class BoundaryNode(NodeBase):
 		self.set_property("width", width)
 		self.set_property("height", height)
 	
-	def update_position(self):
-		self._boundary.update_position()
+	def update_absolute_position(self):
+		self._boundary.update_absolute_position_x()
+		self._boundary.update_absolute_position_y()
 	
 	def set_boundary_parent(self, boundary):
 		self._boundary.set_parent(boundary)
@@ -155,7 +157,7 @@ class SceneNode(StylizableNode, BoundaryNode):
 	def get_hovered_node(self, mouse_position):
 		return self
 	
-	def get_nodes(self):
+	def _get_nodes(self):
 		return self.__nodes
 
 
@@ -172,7 +174,7 @@ class Node(InteractiveNode, SceneNode):
 			if self.__canvas:
 				surface.blit(self.__canvas, self._boundary.get_absolute_position())
 			
-			for node in self.get_nodes():
+			for node in self._get_nodes():
 				node.repaint(surface)
 	
 	def _borrow_property(self, node, property_name):
@@ -190,7 +192,7 @@ class Node(InteractiveNode, SceneNode):
 	def reset(self):
 		self.update_style_request(self)
 		
-		for node in self.get_nodes():
+		for node in self._get_nodes():
 			node.reset()
 		
 		self.update()
@@ -257,7 +259,7 @@ class TextDisplay(Node):
 		file = self.get_property("font")
 		size = self.get_property("font_size")
 		
-		return Fonts.get(file, size)
+		return Font(file, size)
 
 
 class DraggableLabel(Label):
@@ -329,6 +331,9 @@ class Pane(Node):
 				hovered_node = node.get_hovered_node(mouse_position)
 		
 		return hovered_node
+	
+	def get_nodes(self):
+		return self._get_nodes()
 
 
 class Box(Pane):
@@ -377,3 +382,92 @@ class HBox(Box):
 	
 	def _update_nodes_align(self):
 		self.__layout_computer.update_nodes_align("y")
+
+
+class Slider(Pane):
+	def __init__(self, model="default_slider", range=100, action=None, **kwargs):
+		super(Slider, self).__init__(**kwargs)
+		
+		self.__model = model
+		self.__range = range
+		self.__action = action
+		
+		self.__init_track()
+		self.__init_thumb()
+		
+		self.__layout_computer = SliderLayoutComputer(self)
+		
+		self.style_name = "slider"
+	
+	def __init_track(self):
+		self.__track = SliderTrack(self.__model, self.__range)
+		self._add_node(self.__track)
+	
+	def __init_thumb(self):
+		self.__thumb = SliderThumb(self.__model, self.__range, self.__action)
+		self._add_node(self.__thumb)
+	
+	def update(self):
+		self.__layout_computer.center_nodes(self.__track, self.__thumb)
+		self.__track.resize_content()
+	
+	def get_value(self):
+		return self.__thumb.get_property("position_x")
+
+
+class SliderTrack(HBox):
+	def __init__(self, model, range):
+		super(SliderTrack, self).__init__(align="middle")
+		
+		self.__model = model
+		self.__range = range
+		
+		self.__init_corner("l")
+		self.__init_content()
+		self.__init_corner("r")
+		
+		self.style_name = None
+	
+	def __init_corner(self, side):
+		corner = self.__create_part("%s_corner" % side)
+		self._add_node(corner)
+	
+	def __create_part(self, name):
+		return ImageView("%s/%s.png" % (self.__model, name))
+	
+	def __init_content(self):
+		self.__content = self.__create_part("content")
+		self._add_node(self.__content)
+	
+	def resize_content(self):
+		height = self.get_property("height")
+		
+		self.__content.resize_content(self.__range, height)
+		self.update()
+	
+	def get_left_corner_width(self):
+		nodes = self.get_nodes()
+		return nodes[0].get_property("width")
+
+
+class SliderThumb(ImageView):
+	def __init__(self, model, range, action):
+		super(SliderThumb, self).__init__("%s/thumb.png" % model)
+		
+		self.__range = range
+		self.__init_value_property(action)
+		
+		self.style_name = None
+	
+	def __init_value_property(self, action):
+		self.__value = self.property("position_x")
+		self.__value.add_trigger(action)
+	
+	def drag(self, mouse_offset):
+		value = self.__value + mouse_offset[0]
+		value = self.__clamp(value)
+		
+		self.__value.set(value)
+	
+	def __clamp(self, value):
+		return 0 if value < 0 else value if value < self.__range else self.__range

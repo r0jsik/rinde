@@ -1,12 +1,13 @@
 class Property(object):
 	def __init__(self, value=None):
-		self.__value = value
-		self.__bound_properties = []
+		self._value = value
+		
 		self.__bound_to = None
+		self.__bound_properties = []
 		self.__triggers = []
 	
 	def reset(self, value):
-		self.__value = value
+		self._value = value
 		
 		for property in self.__bound_properties:
 			property.reset(value)
@@ -24,11 +25,11 @@ class Property(object):
 		self.__bound_to = None
 	
 	def set(self, value):
-		if self.__value != value:
+		if self._value != value:
 			self.__change(value)
 	
 	def __change(self, value):
-		self.__value = value
+		self._value = value
 		self.invoke_triggers()
 		
 		for property in self.__bound_properties:
@@ -45,7 +46,7 @@ class Property(object):
 		self.__triggers.remove(action)
 	
 	def get(self):
-		return self.__value
+		return self._value
 
 
 class IntegerProperty(Property):
@@ -53,10 +54,25 @@ class IntegerProperty(Property):
 		super(IntegerProperty, self).__init__(value)
 	
 	def increase(self, value):
-		self.set(self.get() + value)
+		self.set(self._value + value)
 	
 	def decrease(self, value):
-		self.set(self.get() - value)
+		self.set(self._value - value)
+	
+	def __add__(self, other):
+		return self._value + other
+	
+	def __sub__(self, other):
+		return self._value - other
+	
+	def __mul__(self, other):
+		return self._value * other
+	
+	def __div__(self, other):
+		return self._value / other
+	
+	def __mod__(self, other):
+		return self._value % other
 
 
 class BooleanProperty(Property):
@@ -64,7 +80,7 @@ class BooleanProperty(Property):
 		super(BooleanProperty, self).__init__(value)
 	
 	def toggle(self):
-		self.set(not self.get())
+		self.set(not self._value)
 	
 	def true(self):
 		self.set(True)
@@ -73,4 +89,4 @@ class BooleanProperty(Property):
 		self.set(False)
 	
 	def get(self):
-		return super(BooleanProperty, self).get() in [True, "true"]
+		return self._value in [True, "true"]

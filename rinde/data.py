@@ -1,4 +1,5 @@
 import os
+import re
 
 
 class Resources:
@@ -6,4 +7,9 @@ class Resources:
 	
 	@staticmethod
 	def get_path(resource):
-		return os.path.join(Resources.__PATH, "res", resource)
+		external_resource = re.match("^src\([\'\"]([\w\s./\\\\]+)[\'\"]\)$", resource)
+		
+		if external_resource:
+			return external_resource.group(1)
+		else:
+			return os.path.join(Resources.__PATH, "res", resource)

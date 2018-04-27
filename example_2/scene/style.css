@@ -1,0 +1,19 @@
+vbox
+{
+	padding: 10;
+	spacing: 5;
+}
+
+hbox
+{
+	align: "middle";
+	spacing: 10;
+}
+
+label
+{
+	font: src("scene/Roboto Bold.ttf");
+	font-size: 15;
+	shadow-visible: false;
+	color: #333333;
+}

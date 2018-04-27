@@ -3,8 +3,6 @@
 <Scene controller="controller.Controller" width="320" height="480">
 	<TextButton text="Click to print Hello" action="say_hello" id="blabla" position_x="10" />
 
-	<VBox align="center" position_x="95" position_y="95">
-		<DraggableLabel text="Drag me" style_class="label_1" />
-		<DraggableLabel text="Drag me 2" />
-	</VBox>
+	<DraggableLabel text="Drag me 1" position_x="98" position_y="100" style_class="label_1" />
+	<DraggableLabel text="Drag me 2" position_x="96" position_y="140" />
 </Scene>

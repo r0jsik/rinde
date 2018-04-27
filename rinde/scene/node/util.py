@@ -103,10 +103,6 @@ class PositionBoundary(SpaceBoundary):
 	def position_y(self):
 		return self.__position_y
 	
-	def update_position(self):
-		self.update_absolute_position_x()
-		self.update_absolute_position_y()
-	
 	def get_absolute_position(self):
 		return self.__absolute_position_x, self.__absolute_position_y
 	
@@ -133,7 +129,7 @@ class SizeBoundary(SpaceBoundary):
 		self.__absolute_height = 0
 	
 	def update_absolute_width(self):
-		self.__absolute_width = self.__width.get() + 2*self.get_space()
+		self.__absolute_width = self.__width.get() + self.get_space()
 		self.update_parent_width()
 	
 	def update_parent_width(self):
@@ -149,7 +145,7 @@ class SizeBoundary(SpaceBoundary):
 		self.__width.set(width)
 	
 	def update_absolute_height(self):
-		self.__absolute_height = self.__height.get() + 2*self.get_space()
+		self.__absolute_height = self.__height.get() + self.get_space()
 		self.update_parent_height()
 	
 	def update_parent_height(self):
@@ -170,9 +166,6 @@ class SizeBoundary(SpaceBoundary):
 	def height(self):
 		return self.__height
 	
-	def get_absolute_size(self):
-		return self.__absolute_width, self.__absolute_height
-	
 	def get_absolute_width(self):
 		return self.__absolute_width
 	
@@ -192,6 +185,9 @@ class Boundary(PositionBoundary, SizeBoundary):
 class LayoutComputer(object):
 	def __init__(self, container):
 		self.__container = container
+	
+	def _compute_node_center(self, node, dimension):
+		return (self._get_container_property(dimension) - node.get_property(dimension))/2
 	
 	def _get_container_property(self, property_name):
 		return self.__container.get_property(property_name)
@@ -236,7 +232,7 @@ class VBoxLayoutComputer(BoxLayoutComputer):
 			return 0
 		
 		if align == "center":
-			return (self._get_container_property("width") - node.get_property("width"))/2
+			return self._compute_node_center(node, "width")
 		
 		if align == "right":
 			return self._get_container_property("width") - node.get_property("width")
@@ -248,7 +244,21 @@ class HBoxLayoutComputer(BoxLayoutComputer):
 			return 0
 		
 		if align == "middle":
-			return (self._get_container_property("height") - node.get_property("height"))/2
+			return self._compute_node_center(node, "height")
 		
 		if align == "bottom":
 			return self._get_container_property("height") - node.get_property("height")
+
+
+class SliderLayoutComputer(LayoutComputer):
+	def center_nodes(self, track, thumb):
+		self.__center_node(track)
+		self.__center_node(thumb)
+		
+		indent = thumb.get_property("width")/2 - track.get_left_corner_width()
+		
+		track.set_property("position_x", indent)
+	
+	def __center_node(self, node):
+		node_center = self._compute_node_center(node, "height")
+		node.set_property("position_y", node_center)

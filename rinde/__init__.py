@@ -1,9 +1,9 @@
 import pygame
 
-from rinde.error import RindeException
-from rinde.data import Resources
 from rinde.scene.util import Screen
 from rinde.scene.builder import SceneBuilder
+from rinde.data import Resources
+from rinde.error import RindeException
 
 
 class Application:
@@ -12,17 +12,12 @@ class Application:
 		
 		Screen.init_size()
 		
-		self.__window = Window(title, scene_directory, favicon, cursor)
-		self.__updating()
+		Window(title, scene_directory, favicon, cursor)
 	
 	def __init_pygame(self):
 		pygame.init()
 		pygame.mixer.init()
 		pygame.font.init()
-	
-	def __updating(self):
-		while True:
-			self.__window.update()
 
 
 class Window:
@@ -35,6 +30,8 @@ class Window:
 		self.set_title(title)
 		self.set_scene(scene_directory)
 		self.set_cursor(cursor)
+		
+		self.__updating()
 	
 	def __init_instance(self):
 		if Window.__INSTANCE:
@@ -89,11 +86,12 @@ class Window:
 		
 		pygame.mouse.set_visible(cursor is None)
 	
-	def update(self):
-		self.__scene.update(self.__surface)
-		self.__draw_cursor()
-		
-		pygame.display.update()
+	def __updating(self):
+		while True:
+			self.__scene.update(self.__surface)
+			self.__draw_cursor()
+			
+			pygame.display.update()
 	
 	def __draw_cursor(self):
 		if self.__cursor:

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<Scene controller="scene.Controller" width="255" height="255">
+	<Slider action="change_color" margin="20" />
+</Scene>
