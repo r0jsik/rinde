@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<Scene controller="scene.Controller" width="410" height="96">
+<Scene controller="scene.Controller" width="410" height="95">
 	<VBox>
 		<HBox>
 			<Label text="R:" /> <Slider range="255" action="change_color" id="r" />

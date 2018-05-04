@@ -53,10 +53,10 @@ class IntegerProperty(Property):
 	def __init__(self, value=0):
 		super(IntegerProperty, self).__init__(value)
 	
-	def increase(self, value):
+	def increase(self, value=1):
 		self.set(self._value + value)
 	
-	def decrease(self, value):
+	def decrease(self, value=1):
 		self.set(self._value - value)
 	
 	def __add__(self, other):
@@ -73,6 +73,9 @@ class IntegerProperty(Property):
 	
 	def __mod__(self, other):
 		return self._value % other
+	
+	def get(self):
+		return int(self._value)
 
 
 class BooleanProperty(Property):

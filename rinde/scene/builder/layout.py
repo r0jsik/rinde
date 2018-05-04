@@ -1,9 +1,9 @@
+import xml.etree.cElementTree as xml
 import importlib
-import xml.etree.cElementTree
-import rinde.scene.node
 
 from rinde.error import RindeException
 from rinde.scene import Scene
+from rinde.scene.node.creator import NodeCreator
 
 
 class XMLParserBase(object):
@@ -12,11 +12,11 @@ class XMLParserBase(object):
 			self.__root = self.__get_root(file)
 		except IOError:
 			raise RindeException("File '%s' not found" % file)
-		except xml.etree.cElementTree.ParseError as exception:
+		except xml.ParseError as exception:
 			raise RindeException("XML %s" % exception)
 	
 	def __get_root(self, file):
-		element_tree = xml.etree.cElementTree.parse(file)
+		element_tree = xml.parse(file)
 		element = element_tree.getroot()
 		
 		return element
@@ -63,6 +63,7 @@ class LayoutParserBase(XMLParserBase):
 	def __init__(self, scene_directory):
 		super(LayoutParserBase, self).__init__("%s/layout.xml" % scene_directory)
 		
+		self.__node_creator = NodeCreator()
 		self.__scene = self.parse_root()
 		self.__controller = self.__scene.get_controller()
 	
@@ -78,8 +79,6 @@ class LayoutParserBase(XMLParserBase):
 	def _parse_node(self, type, attributes, children):
 		try:
 			return self.__try_to_parse_node(type, attributes, children)
-		except AttributeError:
-			raise RindeException("Unknown node type: '%s'" % type)
 		except TypeError:
 			raise RindeException("Incorrect %s argumentation" % type)
 	
@@ -87,7 +86,7 @@ class LayoutParserBase(XMLParserBase):
 		if "action" in attributes:
 			self.__action_to_controller_method(attributes)
 		
-		node = self.__create_node(type, attributes, children)
+		node = self.__node_creator.create(type, attributes, children)
 		
 		if "id" in attributes:
 			self.__controller.add_node(attributes["id"], node)
@@ -99,14 +98,6 @@ class LayoutParserBase(XMLParserBase):
 			attributes["action"] = getattr(self.__controller, attributes["action"])
 		except AttributeError:
 			raise RindeException("Controller must implement method '%s'" % attributes["action"])
-	
-	def __create_node(self, type, attributes, children):
-		node_type = getattr(rinde.scene.node, type)
-		
-		if children:
-			return node_type(nodes=children, **attributes)
-		else:
-			return node_type(**attributes)
 	
 	def get_scene(self):
 		return self.__scene

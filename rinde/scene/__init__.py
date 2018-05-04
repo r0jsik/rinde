@@ -1,47 +1,45 @@
 import pygame
 
-from rinde.error import RindeException
-from rinde.scene.util import Image
 from rinde.scene.util import Screen
+from rinde.scene.util import Image
+from rinde.error import RindeException
 
 
-class Scene:
-	def __init__(self, controller, width=0, height=0):
-		self.__init_controller(controller)
-		self.__init_window(width, height)
+class SceneBase(object):
+	def __init__(self):
+		self._layout = None
+		self._styles = None
+	
+	def show(self, layout, styles):
+		self._layout = layout
+		self._styles = styles
+		
+		for node in layout:
+			node.set_scene(self)
+			node.reset()
+			node.update_absolute_position()
+	
+	def _repaint(self, surface):
+		surface.fill(0xEEEEEE)
+		
+		for node in self._layout:
+			node.repaint(surface)
+	
+	def update_style_request(self, node):
+		style = self._styles.get_style(node)
+		node.set_style(style)
+
+
+class InteractiveScene(SceneBase):
+	def __init__(self):
+		super(InteractiveScene, self).__init__()
+		
 		self.__focused_node = None
 		self.__hovered_node = None
 		self.__events_handler = EventsHandler(self)
 	
-	def __init_controller(self, controller):
-		if isinstance(controller, ControllerBase):
-			self.__controller = controller
-		else:
-			raise RindeException("Controller must be subclass of rinde.scene.ControllerBase")
-	
-	def __init_window(self, width, height):
-		if width and height:
-			self.__size = (width, height)
-			self.__mode = 0
-		else:
-			self.__size = Screen.SIZE
-			self.__mode = pygame.FULLSCREEN
-	
-	def show(self, layout, styles):
-		self.__layout = layout
-		self.__styles = styles
-		
-		for node in layout:
-			node.set_parent(self)
-			node.reset()
-			node.update_absolute_position()
-	
-	def update_style_request(self, node):
-		style = self.__styles.get_style(node)
-		node.set_style(style)
-	
-	def start_controller(self, window):
-		self.__controller.start(window)
+	def _handle_events(self):
+		self.__events_handler.handle_events()
 	
 	def hover(self, mouse_position):
 		hovered_node = self.__get_hovered_node(mouse_position)
@@ -57,7 +55,7 @@ class Scene:
 	def __get_hovered_node(self, mouse_position):
 		hovered_node = None
 		
-		for node in self.__layout:
+		for node in self._layout:
 			if node.can_be_hovered(mouse_position):
 				hovered_node = node.get_hovered_node(mouse_position)
 		
@@ -98,17 +96,37 @@ class Scene:
 	
 	def key_pressed(self, code, char):
 		pass
+
+
+class Scene(InteractiveScene):
+	def __init__(self, controller, width=0, height=0):
+		super(Scene, self).__init__()
+		
+		self.__init_controller(controller)
+		self.__init_window(width, height)
+	
+	def __init_controller(self, controller):
+		if isinstance(controller, ControllerBase):
+			self.__controller = controller
+		else:
+			raise RindeException("Controller must be subclass of rinde.scene.ControllerBase")
+	
+	def __init_window(self, width, height):
+		if width and height:
+			self.__size = (width, height)
+			self.__mode = 0
+		else:
+			self.__size = Screen.SIZE
+			self.__mode = pygame.FULLSCREEN
+	
+	def start_controller(self, window):
+		self.__controller.start(window)
 	
 	def update(self, surface):
 		self.__controller.update()
-		self.__events_handler.handle_events()
-		self.__repaint(surface)
-	
-	def __repaint(self, surface):
-		surface.fill(0xEEEEEE)
 		
-		for node in self.__layout:
-			node.repaint(surface)
+		self._handle_events()
+		self._repaint(surface)
 	
 	def get_size(self):
 		return self.__size

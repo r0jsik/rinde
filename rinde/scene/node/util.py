@@ -1,5 +1,18 @@
-from rinde.error import RindeException
 from rinde.scene.property import IntegerProperty
+
+
+class LayoutComputer(object):
+	def __init__(self, container):
+		self.__container = container
+	
+	def _compute_node_center(self, node, dimension):
+		return (self._get_container_property(dimension) - node.get_property(dimension))/2
+	
+	def _get_container_property(self, property_name):
+		return self.__container.get_property(property_name)
+	
+	def _get_container_nodes(self):
+		return self.__container.get_nodes()
 
 
 class BoundaryBase(object):
@@ -180,85 +193,3 @@ class Boundary(PositionBoundary, SizeBoundary):
 				return True
 		
 		return False
-
-
-class LayoutComputer(object):
-	def __init__(self, container):
-		self.__container = container
-	
-	def _compute_node_center(self, node, dimension):
-		return (self._get_container_property(dimension) - node.get_property(dimension))/2
-	
-	def _get_container_property(self, property_name):
-		return self.__container.get_property(property_name)
-	
-	def _get_container_nodes(self):
-		return self.__container.get_nodes()
-
-
-class BoxLayoutComputer(LayoutComputer):
-	def update_nodes_spacing(self, dimension, axis):
-		spacing = self._get_container_property("spacing")
-		position = 0
-		
-		for node in self._get_container_nodes():
-			property = node.property("position_%s" % axis)
-			property.set(position)
-			position += node.get_property(dimension) + spacing
-	
-	def update_nodes_align(self, axis):
-		align = self._get_container_property("align")
-		
-		for node in self._get_container_nodes():
-			property = node.property("position_%s" % axis)
-			position = self.__get_aligned_position(node, align)
-			property.set(position)
-	
-	def __get_aligned_position(self, node, align):
-		position = self._compute_aligned_position(node, align)
-		
-		if position is None:
-			raise RindeException("Unknown alignment: '%s'" % align)
-		
-		return position
-	
-	def _compute_aligned_position(self, node, align):
-		return 0
-
-
-class VBoxLayoutComputer(BoxLayoutComputer):
-	def _compute_aligned_position(self, node, align):
-		if align == "left":
-			return 0
-		
-		if align == "center":
-			return self._compute_node_center(node, "width")
-		
-		if align == "right":
-			return self._get_container_property("width") - node.get_property("width")
-
-
-class HBoxLayoutComputer(BoxLayoutComputer):
-	def _compute_aligned_position(self, node, align):
-		if align == "top":
-			return 0
-		
-		if align == "middle":
-			return self._compute_node_center(node, "height")
-		
-		if align == "bottom":
-			return self._get_container_property("height") - node.get_property("height")
-
-
-class SliderLayoutComputer(LayoutComputer):
-	def center_nodes(self, track, thumb):
-		self.__center_node(track)
-		self.__center_node(thumb)
-		
-		indent = thumb.get_property("width")/2 - track.get_left_corner_width()
-		
-		track.set_property("position_x", indent)
-	
-	def __center_node(self, node):
-		node_center = self._compute_node_center(node, "height")
-		node.set_property("position_y", node_center)

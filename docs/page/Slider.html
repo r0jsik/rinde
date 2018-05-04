@@ -1,10 +1,11 @@
-﻿<!DOCTYPE html>
+﻿
+<!DOCTYPE html>
 
 <html>
 	<head>
 		<title>Rinde documentation</title>
 		<meta charset="UTF-8" />
-		<link rel="Stylesheet" type="text/css" href="style.css" />
+		<link rel="Stylesheet" type="text/css" href="../style.css" />
 	</head>
 	
 	<body>
@@ -18,28 +19,28 @@
 		<div id="main">
 			
 <h1>
-	CanvasView</h1>
+	Slider</h1>
 
 <p>
-	CanvasView displays canvas on which You can draw.</p>
+	Slider consists of a track and a draggable thumb.</p>
 
 <div>
 	<h2>XML</h2>
 
-	<dl><dt>Obligatory attributes:</dt><dd>width</dd><dd>height</dd></dl><dl><dt>Optional attributes:</dt><dd>id</dd><dd>style_class</dd><dd>position_x</dd><dd>position_y</dd><dd>width</dd><dd>height</dd><dd>visible</dd><dd>enabled</dd></dl></div>
+	<dl><dt>Obligatory attributes:</dt><dd>action</dd></dl><dl><dt>Optional attributes:</dt><dd>id</dd><dd>style_class</dd><dd>position_x</dd><dd>position_y</dd><dd>width</dd><dd>height</dd><dd>visible</dd><dd>enabled</dd><dd>margin</dd><dd>padding</dd><dd>model</dd><dd>range</dd></dl></div>
 <div>
 	<h2>CSS</h2>
 
 	<span>
-		Selector: <kbd>canvas-view</kbd>
+		Selector: <kbd>slider</kbd>
 	</span>
 
-	<dl><dt>Properties</dt><dd>position-x</dd><dd>position-y</dd><dd>width</dd><dd>height</dd><dd>visible</dd><dd>enabled</dd></dl></div>
+	<dl><dt>Properties</dt><dd>position-x</dd><dd>position-y</dd><dd>width</dd><dd>height</dd><dd>visible</dd><dd>enabled</dd><dd>margin</dd><dd>padding</dd></dl></div>
 
 <h2>Example</h2>
 <p>
 	<code>
-		&lt;CanvasView width=&quot;100&quot; height=&quot;100&quot; /&gt;	</code>
+		&lt;Slider range=&quot;255&quot; action=&quot;value_changed&quot; /&gt;	</code>
 </p>
 		</div>
 	</body>

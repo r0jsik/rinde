@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<Scene controller="scene.Controller" width="255" height="255">
+	<Pane padding="10">
+		<TextButton text="Start animation" action="start_animation" />
+		<Label text="Animation" id="label" position_y="50" />
+	</Pane>
+</Scene>
