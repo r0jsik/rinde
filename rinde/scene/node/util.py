@@ -51,11 +51,11 @@ class SpaceBoundary(BoundaryBase):
 	def __init__(self, margin=0, padding=0):
 		super(SpaceBoundary, self).__init__()
 		
-		self.__margin = self._create_property(margin, self.__update_space)
-		self.__padding = self._create_property(padding, self.__update_space)
-		self.__space = margin + padding
+		self.__margin = self._create_property(margin, self.update)
+		self.__padding = self._create_property(padding, self.update)
+		self.__space = 0
 	
-	def __update_space(self):
+	def update(self):
 		self.__space = self.__margin.get() + self.__padding.get()
 		self.update_position()
 	
@@ -109,6 +109,10 @@ class PositionBoundary(SpaceBoundary):
 	def update_children_position_y(self):
 		for children in self._get_children():
 			children.update_absolute_position_y()
+	
+	def update_position(self):
+		self.update_absolute_position_x()
+		self.update_absolute_position_y()
 	
 	def position_x(self):
 		return self.__position_x
@@ -193,3 +197,14 @@ class Boundary(PositionBoundary, SizeBoundary):
 				return True
 		
 		return False
+	
+	def __str__(self):
+		data = (
+			self.get_absolute_position_x(),
+			self.get_absolute_position_y(),
+			self.get_absolute_width(),
+			self.get_absolute_height(),
+			self.get_space()
+		)
+		
+		return "Boundary(x: %d, y: %d, w: %d, h: %d, s: %s)" % data

@@ -137,7 +137,7 @@ class LayoutParserWithCreatingController(LayoutParserBase):
 			raise RindeException("Controller constructor cannot take any argument")
 	
 	def __try_to_create_controller(self, controller):
-		module_name, class_name = controller.rsplit(".", 1)
+		module_name, class_name = controller.rsplit(".", -1)
 		module = importlib.import_module(module_name)
 		controller = getattr(module, class_name)
 		

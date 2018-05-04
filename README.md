@@ -13,7 +13,6 @@ Requires:
 Coming soon:
 <ul>
 	<li>Many more node types</li>
-	<li>Animations</li>
 	<li>Independence from pygame</li>
 	<li>Version for Python 3.x</li>
 </ul>

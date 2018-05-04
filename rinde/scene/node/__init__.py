@@ -72,9 +72,8 @@ class BoundaryNode(NodeBase):
 		self._property["width"] = self._boundary.width()
 		self._property["height"] = self._boundary.height()
 	
-	def update_absolute_position(self):
-		self._boundary.update_absolute_position_x()
-		self._boundary.update_absolute_position_y()
+	def update_boundary(self):
+		self._boundary.update()
 	
 	def set_size(self, width, height):
 		self.set_property("width", width)
@@ -187,6 +186,7 @@ class Node(InteractiveNode, SceneNode):
 		for node in self._nodes:
 			node.reset()
 		
+		self.update_boundary()
 		self.update()
 	
 	def update_style(self):

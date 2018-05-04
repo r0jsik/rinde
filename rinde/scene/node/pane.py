@@ -26,7 +26,6 @@ class Pane(Node):
 		
 		node.set_scene(self._scene)
 		node.reset()
-		node.update_absolute_position()
 	
 	def get_nodes(self):
 		return self._nodes

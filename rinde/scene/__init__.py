@@ -17,7 +17,6 @@ class SceneBase(object):
 		for node in layout:
 			node.set_scene(self)
 			node.reset()
-			node.update_absolute_position()
 	
 	def _repaint(self, surface):
 		surface.fill(0xEEEEEE)
