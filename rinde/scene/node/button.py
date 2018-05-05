@@ -1,4 +1,4 @@
-from rinde.scene.node.label import Label
+from rinde.scene.node.text import Label
 
 
 class TextButton(Label):

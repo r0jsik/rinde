@@ -3,15 +3,15 @@
 <Scene controller="scene.Controller" width="410" height="95">
 	<VBox>
 		<HBox>
-			<Label text="R:" /> <Slider range="255" action="change_color" id="r" />
+			<Text text="R:" /> <Slider range="255" action="change_color" id="r" />
 		</HBox>
 		
 		<HBox>
-			<Label text="G:" /> <Slider range="255" action="change_color" id="g" />
+			<Text text="G:" /> <Slider range="255" action="change_color" id="g" />
 		</HBox>
 		
 		<HBox>
-			<Label text="B:" /> <Slider range="255" action="change_color" id="b" />
+			<Text text="B:" /> <Slider range="255" action="change_color" id="b" />
 		</HBox>
 	</VBox>
 	

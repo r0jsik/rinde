@@ -23,7 +23,7 @@ class HBoxLayoutComputer(BoxLayoutComputer):
 			return 0
 		
 		if align == "middle":
-			return self._compute_node_center(node, "height")
+			return self.compute_node_center(node, "height")
 		
 		if align == "bottom":
-			return self._get_container_property("height") - node.get_property("height")
+			return self.get_property("height") - node.get_property("height")

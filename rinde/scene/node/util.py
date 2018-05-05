@@ -2,17 +2,31 @@ from rinde.scene.property import IntegerProperty
 
 
 class LayoutComputer(object):
-	def __init__(self, container):
-		self.__container = container
+	def __init__(self, node):
+		self._node = node
 	
-	def _compute_node_center(self, node, dimension):
-		return (self._get_container_property(dimension) - node.get_property(dimension))/2
+	def center_node(self, node):
+		self.center_node_vertically(node)
+		self.center_node_horizontally(node)
 	
-	def _get_container_property(self, property_name):
-		return self.__container.get_property(property_name)
+	def center_node_horizontally(self, node):
+		position = self.compute_node_center(node, "width")
+		node.set_property("position_x", position)
 	
-	def _get_container_nodes(self):
-		return self.__container.get_nodes()
+	def center_node_vertically(self, node):
+		position = self.compute_node_center(node, "height")
+		node.set_property("position_y", position)
+	
+	def compute_node_center(self, node, dimension):
+		return (self.get_property(dimension) - node.get_property(dimension))/2
+	
+	def get_property(self, property_name):
+		return self._node.get_property(property_name)
+
+
+class PaneLayoutComputer(LayoutComputer):
+	def get_nodes(self):
+		return self._node.get_nodes()
 
 
 class BoundaryBase(object):
@@ -53,7 +67,7 @@ class SpaceBoundary(BoundaryBase):
 		
 		self.__margin = self._create_property(margin, self.update)
 		self.__padding = self._create_property(padding, self.update)
-		self.__space = 0
+		self.__space = margin + padding
 	
 	def update(self):
 		self.__space = self.__margin.get() + self.__padding.get()
@@ -197,14 +211,3 @@ class Boundary(PositionBoundary, SizeBoundary):
 				return True
 		
 		return False
-	
-	def __str__(self):
-		data = (
-			self.get_absolute_position_x(),
-			self.get_absolute_position_y(),
-			self.get_absolute_width(),
-			self.get_absolute_height(),
-			self.get_space()
-		)
-		
-		return "Boundary(x: %d, y: %d, w: %d, h: %d, s: %s)" % data

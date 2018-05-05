@@ -1,5 +1,5 @@
 from rinde.scene.node.pane import Pane
-from rinde.scene.node.util import LayoutComputer
+from rinde.scene.node.util import PaneLayoutComputer
 from rinde.error import RindeException
 
 
@@ -21,20 +21,20 @@ class Box(Pane):
 		self._update_nodes_align()
 
 
-class BoxLayoutComputer(LayoutComputer):
+class BoxLayoutComputer(PaneLayoutComputer):
 	def update_nodes_spacing(self, dimension, axis):
-		spacing = self._get_container_property("spacing")
+		spacing = self.get_property("spacing")
 		position = 0
 		
-		for node in self._get_container_nodes():
+		for node in self.get_nodes():
 			property = node.property("position_%s" % axis)
 			property.set(position)
 			position += node.get_property(dimension) + spacing
 	
 	def update_nodes_align(self, axis):
-		align = self._get_container_property("align")
+		align = self.get_property("align")
 		
-		for node in self._get_container_nodes():
+		for node in self.get_nodes():
 			property = node.property("position_%s" % axis)
 			position = self.__get_aligned_position(node, align)
 			property.set(position)

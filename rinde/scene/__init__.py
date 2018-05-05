@@ -15,18 +15,22 @@ class SceneBase(object):
 		self._styles = styles
 		
 		for node in layout:
-			node.set_scene(self)
-			node.reset()
+			node.set_parent(self)
+			self.insert_to_scene(node)
+	
+	def insert_to_scene(self, node):
+		self.update_style(node)
+		node.reset()
+	
+	def update_style(self, node):
+		style = self._styles.get_style(node)
+		node.set_style(style)
 	
 	def _repaint(self, surface):
 		surface.fill(0xEEEEEE)
 		
 		for node in self._layout:
 			node.repaint(surface)
-	
-	def update_style_request(self, node):
-		style = self._styles.get_style(node)
-		node.set_style(style)
 
 
 class InteractiveScene(SceneBase):

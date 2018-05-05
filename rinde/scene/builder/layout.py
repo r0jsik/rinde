@@ -6,7 +6,7 @@ from rinde.scene import Scene
 from rinde.scene.node.creator import NodeCreator
 
 
-class XMLParserBase(object):
+class AbstractXMLParser(object):
 	def __init__(self, file):
 		try:
 			self.__root = self.__get_root(file)
@@ -59,9 +59,9 @@ class XMLParserBase(object):
 		pass
 
 
-class LayoutParserBase(XMLParserBase):
+class AbstractLayoutParser(AbstractXMLParser):
 	def __init__(self, scene_directory):
-		super(LayoutParserBase, self).__init__("%s/layout.xml" % scene_directory)
+		super(AbstractLayoutParser, self).__init__("%s/layout.xml" % scene_directory)
 		
 		self.__node_creator = NodeCreator()
 		self.__scene = self.parse_root()
@@ -103,7 +103,7 @@ class LayoutParserBase(XMLParserBase):
 		return self.__scene
 
 
-class LayoutParserWithExistingController(LayoutParserBase):
+class LayoutParserWithExistingController(AbstractLayoutParser):
 	def __init__(self, scene_directory, controller):
 		super(LayoutParserWithExistingController, self).__init__(scene_directory)
 		
@@ -113,7 +113,7 @@ class LayoutParserWithExistingController(LayoutParserBase):
 		return Scene(self.__controller, **attributes)
 
 
-class LayoutParserWithCreatingController(LayoutParserBase):
+class LayoutParserWithCreatingController(AbstractLayoutParser):
 	def _create_scene(self, attributes):
 		controller = self.__extract_controller_from_attributes(attributes)
 		controller = self.__create_controller(controller)

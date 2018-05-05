@@ -23,7 +23,7 @@ class VBoxLayoutComputer(BoxLayoutComputer):
 			return 0
 		
 		if align == "center":
-			return self._compute_node_center(node, "width")
+			return self.compute_node_center(node, "width")
 		
 		if align == "right":
-			return self._get_container_property("width") - node.get_property("width")
+			return self.get_property("width") - node.get_property("width")

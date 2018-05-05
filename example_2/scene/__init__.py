@@ -13,4 +13,4 @@ class Controller(ControllerBase):
 		self.__display.fill(r, g, b)
 	
 	def __get_slider_value(self, id):
-		return self._nodes[id].get_value()
+		return self._nodes[id].get_property("value")

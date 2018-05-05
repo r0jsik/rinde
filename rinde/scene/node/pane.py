@@ -24,8 +24,8 @@ class Pane(Node):
 	def insert_node(self, node):
 		self._insert_node(node)
 		
-		node.set_scene(self._scene)
-		node.reset()
+		if self._parent:
+			self.insert_to_scene(node)
 	
 	def get_nodes(self):
 		return self._nodes

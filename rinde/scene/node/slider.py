@@ -1,10 +1,10 @@
-from rinde.scene.node.pane import Pane
+from rinde.scene.node import Node
 from rinde.scene.node.box.hbox import HBox
 from rinde.scene.node.view import ImageView
 from rinde.scene.node.util import LayoutComputer
 
 
-class Slider(Pane):
+class Slider(Node):
 	def __init__(self, model="default_slider", range=100, action=None, **kwargs):
 		super(Slider, self).__init__(**kwargs)
 		
@@ -25,13 +25,28 @@ class Slider(Pane):
 	def __init_thumb(self):
 		self.__thumb = SliderThumb(self.__model, self.__range, self.__action)
 		self._insert_node(self.__thumb)
+		
+		self._property["value"] = self.__thumb.value()
 	
 	def update(self):
 		self.__layout_computer.center_nodes(self.__track, self.__thumb)
 		self.__track.resize_content()
 	
-	def get_value(self):
-		return self.__thumb.get_property("position_x")
+	def get_hovered_node(self, mouse_position):
+		if self.__thumb.can_be_hovered(mouse_position):
+			return self.__thumb
+
+
+class SliderLayoutComputer(LayoutComputer):
+	def center_nodes(self, track, thumb):
+		self.center_node_vertically(track)
+		self.center_node_vertically(thumb)
+		
+		self.__indent_track(track, thumb)
+	
+	def __indent_track(self, track, thumb):
+		position_x = thumb.get_property("width")/2 - track.get_left_corner_width()
+		track.set_property("position_x", position_x)
 
 
 class SliderTrack(HBox):
@@ -74,7 +89,14 @@ class SliderThumb(ImageView):
 	
 	def __init_value_property(self, action):
 		self.__value = self.property("position_x")
+		self.__value.add_trigger(self.control_value)
 		self.__value.add_trigger(action)
+	
+	def control_value(self):
+		value = self.__value.get()
+		value = self.__clamp(value)
+		
+		self.__value.reset(value)
 	
 	def drag(self, mouse_offset):
 		value = self.__value + mouse_offset[0]
@@ -84,16 +106,6 @@ class SliderThumb(ImageView):
 	
 	def __clamp(self, value):
 		return 0 if value < 0 else value if value < self.__range else self.__range
-
-
-class SliderLayoutComputer(LayoutComputer):
-	def center_nodes(self, track, thumb):
-		self.__center_node(track)
-		self.__center_node(thumb)
-		
-		indent = thumb.get_property("width")/2 - track.get_left_corner_width()
-		track.set_property("position_x", indent)
 	
-	def __center_node(self, node):
-		node_center = self._compute_node_center(node, "height")
-		node.set_property("position_y", node_center)
+	def value(self):
+		return self.__value

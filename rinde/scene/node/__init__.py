@@ -75,6 +75,10 @@ class BoundaryNode(NodeBase):
 	def update_boundary(self):
 		self._boundary.update()
 	
+	def set_position(self, position_x, position_y):
+		self.set_property("position_x", position_x)
+		self.set_property("position_y", position_y)
+	
 	def set_size(self, width, height):
 		self.set_property("width", width)
 		self.set_property("height", height)
@@ -124,7 +128,6 @@ class SceneNode(StylizableNode, BoundaryNode):
 		
 		self._nodes = []
 		self._parent = None
-		self._scene = None
 	
 	def _insert_node(self, node):
 		node.set_parent(self)
@@ -141,12 +144,6 @@ class SceneNode(StylizableNode, BoundaryNode):
 		node.set_parent(None)
 		node.set_boundary_parent(None)
 		self._nodes.remove(node)
-	
-	def set_scene(self, scene):
-		self._scene = scene
-		
-		for node in self._nodes:
-			node.set_scene(scene)
 	
 	def get_hovered_node(self, mouse_position):
 		return self
@@ -181,16 +178,14 @@ class Node(InteractiveNode, SceneNode):
 		return property
 	
 	def reset(self):
-		self.update_style()
-		
 		for node in self._nodes:
-			node.reset()
+			self.insert_to_scene(node)
 		
 		self.update_boundary()
 		self.update()
 	
-	def update_style(self):
-		self._scene.update_style_request(self)
+	def insert_to_scene(self, node):
+		self._parent.insert_to_scene(node)
 	
 	def update(self):
 		pass

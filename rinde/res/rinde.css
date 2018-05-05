@@ -1,3 +1,10 @@
+text
+{
+	font: "Roboto Condensed Regular.ttf";
+    font-size: 16;
+    color: #333333;
+}
+
 label, draggable-label, text-button
 {
 	font: "Roboto Condensed Regular.ttf";
@@ -16,4 +23,10 @@ text-button:hover
 text-button:focus
 {
 	color: #615432;
+}
+
+checkbox
+{
+    align: "right";
+    spacing: 5;
 }

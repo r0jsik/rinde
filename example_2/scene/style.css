@@ -10,10 +10,7 @@ hbox
 	spacing: 10;
 }
 
-label
+text
 {
 	font: src("file/Roboto Bold.ttf");
-	font-size: 15;
-	shadow-visible: false;
-	color: #333333;
 }

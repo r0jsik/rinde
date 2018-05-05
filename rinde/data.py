@@ -7,7 +7,7 @@ class Resources:
 	
 	@staticmethod
 	def get_path(resource):
-		external_resource = Resources.is_external_resource(resource)
+		external_resource = Resources.__as_external(resource)
 		
 		if external_resource:
 			return external_resource.group(1)
@@ -15,7 +15,7 @@ class Resources:
 			return os.path.join(Resources.__ROOT, "res", resource)
 	
 	@staticmethod
-	def is_external_resource(resource):
+	def __as_external(resource):
 		
 		# Resource looks like: src('path/to/resource/foo.bar')
 		regex = re.compile("^src\([\'\"]([\w\s./\\\\]+)[\'\"]\)$")

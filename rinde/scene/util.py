@@ -47,6 +47,13 @@ class Font:
 class Image:
 	__CACHE = {}
 	
+	@staticmethod
+	def remove_from_cache(resource):
+		try:
+			Image.__CACHE.pop(resource)
+		except KeyError:
+			raise RindeException("File '%s' is not cached")
+	
 	def __init__(self, resource):
 		try:
 			self.__image = self.__load(resource)
@@ -68,13 +75,6 @@ class Image:
 	
 	def get(self):
 		return self.__image.convert_alpha()
-	
-	@staticmethod
-	def remove_from_cache(resource):
-		try:
-			Image.__CACHE.pop(resource)
-		except KeyError:
-			raise RindeException("File '%s' is not cached")
 
 
 class Canvas:
