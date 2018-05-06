@@ -1,5 +1,5 @@
 from rinde.scene.node import Node
-from rinde.scene.node.text import Label
+from rinde.scene.node.text import Text
 
 
 class TextField(Node):
@@ -13,5 +13,16 @@ class TextField(Node):
 		pass
 	
 	def __init_content(self, text):
-		self.__content = Label(text)
+		self.__content = Text(text)
 		self._insert_node(self.__content)
+	
+	def key_pressed(self, code, char):
+		text_property = self.__content.property("text")
+		text = text_property.get()
+		
+		if code == 8:
+			text = text[:-1]
+		else:
+			text += char
+		
+		text_property.set(text)

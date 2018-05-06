@@ -30,6 +30,7 @@ class StylizableNode(NodeBase):
 		self.style_name = None
 		
 		self._property["hovered"] = self.__create_state_property()
+		self._property["active"] = self.__create_state_property()
 		self._property["focused"] = self.__create_state_property()
 		
 		self.__style = None
@@ -45,6 +46,9 @@ class StylizableNode(NodeBase):
 		
 		if self.get_property("hovered"):
 			self.__apply_style("hover")
+		
+		if self.get_property("active"):
+			self.__apply_style("active")
 		
 		if self.get_property("focused"):
 			self.__apply_style("focus")
@@ -103,6 +107,12 @@ class InteractiveNode(StylizableNode, BoundaryNode):
 	def leave(self):
 		self.set_property("hovered", False)
 	
+	def activate(self):
+		self.set_property("active", True)
+	
+	def deactivate(self):
+		self.set_property("active", False)
+	
 	def focus(self):
 		self.set_property("focused", True)
 	
@@ -119,6 +129,9 @@ class InteractiveNode(StylizableNode, BoundaryNode):
 		pass
 	
 	def scroll_down(self):
+		pass
+	
+	def key_pressed(self, code, char):
 		pass
 
 
@@ -185,7 +198,10 @@ class Node(InteractiveNode, SceneNode):
 		self.update()
 	
 	def insert_to_scene(self, node):
-		self._parent.insert_to_scene(node)
+		if isinstance(self._parent, Node):
+			self._parent.insert_to_scene(node)
+		else:
+			self._parent.insert(node)
 	
 	def update(self):
 		pass

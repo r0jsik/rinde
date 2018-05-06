@@ -16,9 +16,9 @@ class SceneBase(object):
 		
 		for node in layout:
 			node.set_parent(self)
-			self.insert_to_scene(node)
+			self.insert(node)
 	
-	def insert_to_scene(self, node):
+	def insert(self, node):
 		self.update_style(node)
 		node.reset()
 	
@@ -26,22 +26,48 @@ class SceneBase(object):
 		style = self._styles.get_style(node)
 		node.set_style(style)
 	
-	def _repaint(self, surface):
+	def repaint(self, surface):
 		surface.fill(0xEEEEEE)
 		
 		for node in self._layout:
 			node.repaint(surface)
 
 
-class InteractiveScene(SceneBase):
-	def __init__(self):
-		super(InteractiveScene, self).__init__()
+class ControllableScene(SceneBase):
+	def __init__(self, controller):
+		super(ControllableScene, self).__init__()
 		
-		self.__focused_node = None
+		self._controller = controller
+	
+	def __init_controller(self, controller):
+		if isinstance(controller, ControllerBase):
+			self._controller = controller
+		else:
+			raise RindeException("Controller must be subclass of rinde.scene.ControllerBase")
+	
+	def start_controller(self, window):
+		self._controller.start(window)
+	
+	def update_controller(self):
+		self._controller.update()
+	
+	def key_pressed(self, code, char):
+		self._controller.key_pressed(code, char)
+	
+	def get_controller(self):
+		return self._controller
+
+
+class InteractiveScene(ControllableScene):
+	def __init__(self, controller):
+		super(InteractiveScene, self).__init__(controller)
+		
 		self.__hovered_node = None
+		self.__active_node = None
+		self.__focused_node = None
 		self.__events_handler = EventsHandler(self)
 	
-	def _handle_events(self):
+	def handle_events(self):
 		self.__events_handler.handle_events()
 	
 	def hover(self, mouse_position):
@@ -78,43 +104,51 @@ class InteractiveScene(SceneBase):
 			self.__hovered_node.scroll_down()
 	
 	def press(self):
+		self.__unfocus()
+		self.__activate()
+		self.__focus()
+	
+	def __unfocus(self):
+		if self.__focused_node:
+			self.__focused_node.unfocus()
+			self.__focused_node = None
+	
+	def __activate(self):
 		if self.__hovered_node:
-			self.__focused_node = self.__hovered_node
+			self.__active_node = self.__hovered_node
+			self.__active_node.activate()
+	
+	def __focus(self):
+		if self.__active_node:
+			self.__focused_node = self.__active_node
 			self.__focused_node.focus()
 	
 	def drag(self, mouse_offset):
-		if self.__focused_node:
-			self.__focused_node.drag(mouse_offset)
+		if self.__active_node:
+			self.__active_node.drag(mouse_offset)
 	
 	def release(self):
-		if self.__focused_node:
-			self.__focused_node.unfocus()
+		if self.__active_node:
+			self.__active_node.deactivate()
 			
-			if self.__focused_node is self.__hovered_node:
-				self.__focused_node.click()
+			if self.__active_node is self.__hovered_node:
+				self.__active_node.click()
 			else:
-				self.__focused_node.leave()
+				self.__active_node.leave()
 			
-			self.__focused_node = None
+			self.__active_node = None
 	
 	def key_pressed(self, code, char):
-		pass
+		if self.__focused_node:
+			self.__focused_node.key_pressed(code, char)
+		else:
+			super(InteractiveScene, self).key_pressed(code, char)
 
 
 class Scene(InteractiveScene):
 	def __init__(self, controller, width=0, height=0):
-		super(Scene, self).__init__()
+		super(Scene, self).__init__(controller)
 		
-		self.__init_controller(controller)
-		self.__init_window(width, height)
-	
-	def __init_controller(self, controller):
-		if isinstance(controller, ControllerBase):
-			self.__controller = controller
-		else:
-			raise RindeException("Controller must be subclass of rinde.scene.ControllerBase")
-	
-	def __init_window(self, width, height):
 		if width and height:
 			self.__size = (width, height)
 			self.__mode = 0
@@ -122,23 +156,16 @@ class Scene(InteractiveScene):
 			self.__size = Screen.SIZE
 			self.__mode = pygame.FULLSCREEN
 	
-	def start_controller(self, window):
-		self.__controller.start(window)
-	
 	def update(self, surface):
-		self.__controller.update()
-		
-		self._handle_events()
-		self._repaint(surface)
+		self.update_controller()
+		self.handle_events()
+		self.repaint(surface)
 	
 	def get_size(self):
 		return self.__size
 	
 	def get_mode(self):
 		return self.__mode
-	
-	def get_controller(self):
-		return self.__controller
 
 
 class ControllerBase(object):
@@ -152,6 +179,9 @@ class ControllerBase(object):
 		pass
 	
 	def update(self):
+		pass
+	
+	def key_pressed(self, code, char):
 		pass
 
 

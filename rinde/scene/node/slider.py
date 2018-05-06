@@ -29,7 +29,7 @@ class Slider(Node):
 		self._property["value"] = self.__thumb.value()
 	
 	def update(self):
-		self.__layout_computer.center_nodes(self.__track, self.__thumb)
+		self.__layout_computer.align_nodes(self.__track, self.__thumb)
 		self.__track.resize_content()
 	
 	def get_hovered_node(self, mouse_position):
@@ -38,7 +38,7 @@ class Slider(Node):
 
 
 class SliderLayoutComputer(LayoutComputer):
-	def center_nodes(self, track, thumb):
+	def align_nodes(self, track, thumb):
 		self.center_node_vertically(track)
 		self.center_node_vertically(thumb)
 		
@@ -89,10 +89,10 @@ class SliderThumb(ImageView):
 	
 	def __init_value_property(self, action):
 		self.__value = self.property("position_x")
-		self.__value.add_trigger(self.control_value)
+		self.__value.add_trigger(self.__keep_value_in_limit)
 		self.__value.add_trigger(action)
 	
-	def control_value(self):
+	def __keep_value_in_limit(self):
 		value = self.__value.get()
 		value = self.__clamp(value)
 		

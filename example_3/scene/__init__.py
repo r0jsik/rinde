@@ -8,5 +8,5 @@ class Controller(ControllerBase):
 	
 	def start_animation(self):
 		property = self.__label.property("position_y")
-		animation = AnimationTo(property, 180)
+		animation = AnimationTo(property, 150)
 		animation.play()

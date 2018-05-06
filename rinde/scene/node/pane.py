@@ -25,7 +25,7 @@ class Pane(Node):
 		self._insert_node(node)
 		
 		if self._parent:
-			self.insert_to_scene(node)
+			self._parent.insert_to_scene(node)
 	
 	def get_nodes(self):
 		return self._nodes

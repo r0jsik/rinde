@@ -40,13 +40,13 @@ class NodeTypes:
 	
 	def __import_submodules(self, module_name):
 		loader = pkgutil.get_loader(module_name)
-		submodules = []
+		modules = []
 		
 		for importer, submodule_name, is_package in pkgutil.walk_packages([loader.filename]):
-			submodule = self.__import_modules(module_name + "." + submodule_name)
-			submodules.extend(submodule)
+			submodules = self.__import_modules(module_name + "." + submodule_name)
+			modules.extend(submodules)
 		
-		return submodules
+		return modules
 	
 	def get_node_type(self, type_name):
 		for module in self.__modules:
