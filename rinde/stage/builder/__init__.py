@@ -1,5 +1,5 @@
-from rinde.stage.builder.layout import LayoutParserWithExistingController
 from rinde.stage.builder.layout import LayoutParserWithCreatingController
+from rinde.stage.builder.layout import LayoutParserWithExistingController
 from rinde.stage.builder.styles import StylesParser
 
 

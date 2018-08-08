@@ -1,7 +1,7 @@
 import cssutils
 
-from rinde.error import RindeException
 from rinde.data import Resources
+from rinde.error import RindeException
 
 
 class StylesParser:

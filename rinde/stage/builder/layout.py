@@ -1,5 +1,5 @@
-import xml.etree.cElementTree as xml
 import importlib
+import xml.etree.cElementTree as xml
 
 from rinde.error import RindeException
 from rinde.stage import StageFactory

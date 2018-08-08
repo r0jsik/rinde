@@ -1,6 +1,6 @@
+from rinde.error import RindeException
 from rinde.stage.node.pane import Pane
 from rinde.stage.node.util import PaneLayoutComputer
-from rinde.error import RindeException
 
 
 class Box(Pane):

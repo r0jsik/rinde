@@ -1,7 +1,7 @@
-from rinde.stage.property import Property
-from rinde.stage.property import BooleanProperty
-from rinde.stage.node.util import Boundary
 from rinde.error import RindeException
+from rinde.stage.node.util import Boundary
+from rinde.stage.property import BooleanProperty
+from rinde.stage.property import Property
 
 
 class NodeBase(object):

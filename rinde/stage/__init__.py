@@ -1,8 +1,8 @@
 import pygame
 
-from rinde.stage.util import Screen
-from rinde.stage.util import Image
 from rinde.error import RindeException
+from rinde.stage.util import Image
+from rinde.stage.util import Screen
 
 
 class StageBase(object):
