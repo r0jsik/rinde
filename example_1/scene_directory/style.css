@@ -3,7 +3,7 @@
 	color: #80AAFF;
 }
 
-draggable-label:focus
+draggable-label:active
 {
 	color: #FF0000;
 }
