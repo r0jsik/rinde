@@ -1,4 +1,4 @@
-from rinde.scene import ControllerBase
+from rinde.stage import ControllerBase
 
 
 class Controller(ControllerBase):

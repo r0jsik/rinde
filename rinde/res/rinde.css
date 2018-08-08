@@ -1,8 +1,8 @@
 text
 {
 	font: "Roboto Condensed Regular.ttf";
-    font-size: 16;
-    color: #333333;
+	font-size: 16;
+	color: #333333;
 }
 
 label, draggable-label, text-button
@@ -27,6 +27,6 @@ text-button:active
 
 checkbox
 {
-    align: "right";
-    spacing: 5;
+	align: "right";
+	spacing: 5;
 }

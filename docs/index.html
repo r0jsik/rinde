@@ -14,6 +14,7 @@
 	</dt>
 	
 	<dd><a href="page/Scene.html">Scene</a></dd>
+	<dd><a href='page/Fullscreen.html'>Fullscreen</a></dd>
 	<dd><a href="page/CanvasView.html">CanvasView</a></dd>
 	<dd><a href="page/Checkbox.html">Checkbox</a></dd>
 	<dd><a href="page/DraggableLabel.html">DraggableLabel</a></dd>
@@ -39,14 +40,14 @@
 			import rinde<br/>
 			<br/>
 			if __name__ == '__main__':<br/>
-			&nbsp;&nbsp;&nbsp;&nbsp;rinde.Application("Window title", "scene_directory")
+			&nbsp;&nbsp;&nbsp;&nbsp;rinde.Application("Window title", "stage_directory")
 		</code>
 		
-		Then create new directory next to script and name it as <kbd>scene_directory</kbd>.
+		Then create new directory next to script and name it as <kbd>stage_directory</kbd>.
 	</p>
 	
-	<h2>Prepare scene directory</h2>
-	Scene directory has to contain two files:
+	<h2>Prepare stage directory</h2>
+	Stage directory has to contain two files:
 	
 	<h3>layout.xml</h3>
 	<p>
@@ -88,16 +89,16 @@
 		</code>
 	</p>
 	
-	<h2>Scene controller</h2>
+	<h2>Stage controller</h2>
 	<p>
-		Controller is object controlling scene. Create new Python script next to <kbd>__init__.py</kbd>, name it as
+		Controller is object controlling stage. Create new Python script next to <kbd>__init__.py</kbd>, name it as
 		<kbd>controller.py</kbd> and write following code:
 		
 		<code>
-			from rinde.scene import ControllerBase<br/>
+			from rinde.stage import ControllerBase<br/>
 			<br/>
 			class Controller(ControllerBase): # Controller must be subclass of ControllerBase<br/>
-			&nbsp;&nbsp;&nbsp;&nbsp;def start(self, window): # Method invoked when scene gets ready<br/>
+			&nbsp;&nbsp;&nbsp;&nbsp;def start(self, window): # Method invoked when stage gets ready<br/>
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print self.nodes["blabla"] # Access to node with id="blabla"
 			(id is defined in XML)<br/>
 			<br/>
@@ -108,7 +109,7 @@
 		</code>
 		
 		<strong>Important!</strong>
-		Controller can be bound to scene using layout.xml file through <kbd>controller</kbd> attribute in Scene tag.
+		Controller can be bound to stage using layout.xml file through <kbd>controller</kbd> attribute in Scene tag.
 		Notice that in this example <kbd>controller="controller.Controller"</kbd> means <kbd>controller="path.to.module.ControllerClass"</kbd>.
 	</p>
 </div>

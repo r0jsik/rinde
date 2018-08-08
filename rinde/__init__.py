@@ -1,18 +1,18 @@
 import pygame
 
-from rinde.scene.util import Screen
-from rinde.scene.builder import SceneBuilder
+from rinde.stage.util import Screen
+from rinde.stage.builder import StageBuilder
 from rinde.data import Resources
 from rinde.error import RindeException
 
 
 class Application:
-	def __init__(self, title, scene_directory, favicon=None, cursor=None):
+	def __init__(self, title, stage_directory, favicon=None, cursor=None):
 		self.__init_pygame()
 		
 		Screen.init_size()
 		
-		Window(title, scene_directory, favicon, cursor)
+		Window(title, stage_directory, favicon, cursor)
 	
 	def __init_pygame(self):
 		pygame.init()
@@ -23,12 +23,12 @@ class Application:
 class Window:
 	__INSTANCE = None
 	
-	def __init__(self, title, scene_directory, favicon, cursor):
+	def __init__(self, title, stage_directory, favicon, cursor):
 		self.__init_instance()
 		self.__init_favicon(favicon)
 		
 		self.set_title(title)
-		self.set_scene(scene_directory)
+		self.set_stage(stage_directory)
 		self.set_cursor(cursor)
 		
 		self.__updating()
@@ -55,22 +55,22 @@ class Window:
 	def set_title(self, title):
 		pygame.display.set_caption(title)
 	
-	def set_scene(self, scene_directory, controller=None):
-		scene_builder = SceneBuilder(scene_directory, controller)
-		self.__scene = scene_builder.get_scene()
+	def set_stage(self, stage_directory, controller=None):
+		stage_builder = StageBuilder(stage_directory, controller)
+		self.__stage = stage_builder.get_stage()
 		
 		self.__set_up_display()
 		
-		scene_builder.finalize(self)
+		stage_builder.finalize(self)
 	
 	def __set_up_display(self):
-		scene_size = self.__scene.get_size()
-		scene_mode = self.__scene.get_mode()
+		stage_size = self.__stage.get_size()
+		stage_mode = self.__stage.get_mode()
 		
 		try:
-			self.__surface = pygame.display.set_mode(scene_size, scene_mode)
+			self.__surface = pygame.display.set_mode(stage_size, stage_mode)
 		except TypeError:
-			raise RindeException("Incorrect scene size")
+			raise RindeException("Incorrect stage size")
 	
 	def set_cursor(self, cursor):
 		try:
@@ -88,7 +88,7 @@ class Window:
 	
 	def __updating(self):
 		while True:
-			self.__scene.update(self.__surface)
+			self.__stage.update(self.__surface)
 			self.__draw_cursor()
 			
 			pygame.display.update()

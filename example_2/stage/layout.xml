@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Scene controller="stage.Controller" width="410" height="95">
+	<VBox>
+		<HBox>
+			<Text text="R:" /> <Slider range="255" action="change_color" id="r" />
+		</HBox>
+		
+		<HBox>
+			<Text text="G:" /> <Slider range="255" action="change_color" id="g" />
+		</HBox>
+		
+		<HBox>
+			<Text text="B:" /> <Slider range="255" action="change_color" id="b" />
+		</HBox>
+	</VBox>
+	
+	<CanvasView id="display" position_x="325" position_y="10" width="75" height="75" />
+</Scene>
