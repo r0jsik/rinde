@@ -1,6 +1,7 @@
 from rinde.error import RindeException
 from rinde.stage.node.util import Boundary
 from rinde.stage.property import BooleanProperty
+from rinde.stage.property import IntegerProperty
 from rinde.stage.property import Property
 
 
@@ -86,6 +87,9 @@ class BoundaryNode(NodeBase):
 	def set_size(self, width, height):
 		self.set_property("width", width)
 		self.set_property("height", height)
+	
+	def get_size(self):
+		return self.get_property("width"), self.get_property("height")
 	
 	def set_boundary_parent(self, boundary):
 		self._boundary.set_parent(boundary)
@@ -186,6 +190,12 @@ class Node(InteractiveNode, StageNode):
 	
 	def _create_property(self, trigger, value=None):
 		property = Property(value)
+		property.add_trigger(trigger)
+		
+		return property
+	
+	def _create_integer_property(self, trigger, value=0):
+		property = IntegerProperty(value)
 		property.add_trigger(trigger)
 		
 		return property

@@ -51,7 +51,7 @@ class TextDisplay(Node):
 		self._property["text"] = self._borrow_property(text, "text")
 		self._property["font"] = self._borrow_property(text, "font")
 		self._property["font_size"] = self._borrow_property(text, "font_size")
-		self._property["color"] = self._create_property(self.update)
+		self._property["color"] = self._create_integer_property(self.update)
 	
 	def update(self):
 		text = self.get_property("text")

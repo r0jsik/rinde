@@ -10,7 +10,7 @@ class Checkbox(Node):
 		super(Checkbox, self).__init__(**kwargs)
 		
 		self._property["align"] = self._create_property(self.update)
-		self._property["spacing"] = self._create_property(self.update)
+		self._property["spacing"] = self._create_integer_property(self.update)
 		
 		self.__init_input(model, selected)
 		self.__init_label(text)

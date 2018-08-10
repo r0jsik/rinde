@@ -7,7 +7,7 @@ class Box(Pane):
 	def __init__(self, nodes, align, spacing=0, **kwargs):
 		super(Box, self).__init__(nodes, **kwargs)
 		
-		self._property["spacing"] = self._create_property(self._update_nodes_spacing, spacing)
+		self._property["spacing"] = self._create_integer_property(self._update_nodes_spacing, spacing)
 		self._property["align"] = self._create_property(self._update_nodes_align, align)
 	
 	def _update_nodes_spacing(self):
