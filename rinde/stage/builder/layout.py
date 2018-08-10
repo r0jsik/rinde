@@ -21,11 +21,11 @@ class AbstractXMLParser(object):
 		
 		return element
 	
-	def parse_root(self):
+	def _parse_root(self):
 		attributes = self.__parse_attributes(self.__root)
-		parent = self._parse_root(attributes, self.__root.tag)
+		root = self._create_root(attributes, self.__root.tag)
 		
-		return parent
+		return root
 	
 	def __parse_attributes(self, element):
 		return {property: self.__parse_value(value) for property, value in element.attrib.iteritems()}
@@ -36,26 +36,26 @@ class AbstractXMLParser(object):
 		else:
 			return value
 	
-	def _parse_root(self, attributes, tag):
+	def _create_root(self, attributes, tag):
 		pass
 	
 	def parse(self):
-		return self.__parse_nodes(self.__root)
+		return self.__parse_elements(self.__root)
 	
-	def __parse_nodes(self, elements):
+	def __parse_elements(self, elements):
 		nodes = []
 		
 		for element in elements:
 			attributes, children = self.__parse_element(element)
-			node = self._parse_node(element.tag, attributes, children)
+			node = self._parse_element(element.tag, attributes, children)
 			nodes.append(node)
 		
 		return nodes
 	
 	def __parse_element(self, element):
-		return self.__parse_attributes(element), self.__parse_nodes(element)
+		return self.__parse_attributes(element), self.__parse_elements(element)
 	
-	def _parse_node(self, type, attributes, children):
+	def _parse_element(self, type, attributes, children):
 		pass
 
 
@@ -64,10 +64,10 @@ class AbstractLayoutParser(AbstractXMLParser):
 		super(AbstractLayoutParser, self).__init__("%s/layout.xml" % stage_directory)
 		
 		self.__node_creator = NodeCreator()
-		self.__stage = self.parse_root()
+		self.__stage = self._parse_root()
 		self.__controller = self.__stage.get_controller()
 	
-	def _parse_root(self, attributes, tag):
+	def _create_root(self, attributes, tag):
 		try:
 			return self._create_stage(attributes, tag)
 		except TypeError:
@@ -76,24 +76,27 @@ class AbstractLayoutParser(AbstractXMLParser):
 	def _create_stage(self, attributes, tag):
 		pass
 	
-	def _parse_node(self, type, attributes, children):
+	def _parse_element(self, type, attributes, children):
 		try:
-			return self.__try_to_parse_node(type, attributes, children)
+			return self.__parse_node(type, attributes, children)
 		except TypeError:
 			raise RindeException("Incorrect %s argumentation" % type)
 	
-	def __try_to_parse_node(self, type, attributes, children):
+	def __parse_node(self, type, attributes, children):
 		if "action" in attributes:
-			self.__action_to_controller_method(attributes)
+			self.__convert_action_to_controller_method(attributes)
 		
 		node = self.__node_creator.create(type, attributes, children)
 		
 		if "id" in attributes:
-			self.__controller.add_node(attributes["id"], node)
+			self.__insert_node_to_controller(attributes["id"], node)
 		
 		return node
 	
-	def __action_to_controller_method(self, attributes):
+	def __insert_node_to_controller(self, id, node):
+		self.__controller.nodes[id] = node
+	
+	def __convert_action_to_controller_method(self, attributes):
 		try:
 			attributes["action"] = getattr(self.__controller, attributes["action"])
 		except AttributeError:

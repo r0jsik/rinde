@@ -97,10 +97,18 @@
 		<code>
 			from rinde.stage import ControllerBase<br/>
 			<br/>
-			class Controller(ControllerBase): # Controller must be subclass of ControllerBase<br/>
-			&nbsp;&nbsp;&nbsp;&nbsp;def start(self, window): # Method invoked when stage gets ready<br/>
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print self.nodes["blabla"] # Access to node with id="blabla"
-			(id is defined in XML)<br/>
+			<br/>
+			# Controller must be subclass of rinde.stage.ControllerBase<br/>
+			class Controller(ControllerBase):
+			<br/>
+			<br/>
+			&nbsp;&nbsp;&nbsp;&nbsp;# Method invoked when stage gets ready<br/>
+			&nbsp;&nbsp;&nbsp;&nbsp;def start(self, window):
+			<br/>
+			<br/>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# Access to node with id="blabla" (defined in XML)<br/>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print self.nodes["blabla"]
+			<br/>
 			<br/>
 			&nbsp;&nbsp;&nbsp;&nbsp;# Method invoked when button with action="say_hello" (defined in XML) is
 			clicked<br/>

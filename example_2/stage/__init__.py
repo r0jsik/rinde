@@ -3,7 +3,7 @@ from rinde.stage import ControllerBase
 
 class Controller(ControllerBase):
 	def start(self, window):
-		self.__display = self._nodes["display"].get_content()
+		self.__display = self.nodes["display"].get_content()
 	
 	def change_color(self):
 		r = self.__get_slider_value("r")
@@ -13,4 +13,4 @@ class Controller(ControllerBase):
 		self.__display.fill(r, g, b)
 	
 	def __get_slider_value(self, id):
-		return self._nodes[id].get_property("value")
+		return self.nodes[id].get_property("value")

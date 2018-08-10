@@ -7,12 +7,12 @@ from rinde.stage.util import Screen
 
 class StageBase(object):
 	def __init__(self):
-		self._layout = None
-		self._styles = None
+		self.__layout = None
+		self.__styles = None
 	
 	def show(self, layout, styles):
-		self._layout = layout
-		self._styles = styles
+		self.__layout = layout
+		self.__styles = styles
 		
 		for node in layout:
 			node.set_parent(self)
@@ -23,47 +23,47 @@ class StageBase(object):
 		node.reset()
 	
 	def update_style(self, node):
-		style = self._styles.get_style(node)
+		style = self.__styles.get_style(node)
 		node.set_style(style)
 	
 	def repaint(self, surface):
 		surface.fill(0xEEEEEE)
 		
-		for node in self._layout:
+		for node in self.__layout:
 			node.repaint(surface)
+	
+	def get_nodes(self):
+		return self.__layout
 
 
 class ControllableStage(StageBase):
 	def __init__(self, controller):
 		super(ControllableStage, self).__init__()
 		
-		self._controller = controller
+		self.__controller = controller
 	
 	def __init_controller(self, controller):
 		if isinstance(controller, ControllerBase):
-			self._controller = controller
+			self.__controller = controller
 		else:
 			raise RindeException("Controller must be subclass of rinde.stage.ControllerBase")
 	
 	def start_controller(self, window):
-		self._controller.start(window)
+		self.__controller.start(window)
 	
 	def update_controller(self):
-		self._controller.update()
+		self.__controller.update()
 	
 	def key_pressed(self, code, char):
-		self._controller.key_pressed(code, char)
+		self.__controller.key_pressed(code, char)
 	
 	def get_controller(self):
-		return self._controller
+		return self.__controller
 
 
 class ControllerBase(object):
 	def __init__(self):
-		self._nodes = {}
-	
-	def add_node(self, node_id, node):
-		self._nodes[node_id] = node
+		self.nodes = {}
 	
 	def start(self, window):
 		pass
@@ -101,7 +101,7 @@ class InteractiveStage(ControllableStage):
 	def __get_hovered_node(self, mouse_position):
 		hovered_node = None
 		
-		for node in self._layout:
+		for node in self.get_nodes():
 			if node.can_be_hovered(mouse_position):
 				hovered_node = node.get_hovered_node(mouse_position)
 		
