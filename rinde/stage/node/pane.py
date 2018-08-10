@@ -23,9 +23,7 @@ class Pane(Node):
 	
 	def insert_node(self, node):
 		self._insert_node(node)
-		
-		if self._parent:
-			self._parent.insert_to_stage(node)
+		node.reset()
 	
 	def get_nodes(self):
 		return self._nodes

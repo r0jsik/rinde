@@ -4,7 +4,7 @@
 setup(
 	name="rinde",
 	description="Library used for creating GUI based on XML and CSS.",
-	version="0.53",
+	version="0.54",
 	license="MIT License",
 	author="Marcin Rajs",
 	

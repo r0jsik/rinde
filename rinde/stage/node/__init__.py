@@ -91,7 +91,7 @@ class BoundaryNode(NodeBase):
 	def get_size(self):
 		return self.get_property("width"), self.get_property("height")
 	
-	def set_boundary_parent(self, boundary):
+	def _set_boundary_parent(self, boundary):
 		self._boundary.set_parent(boundary)
 
 
@@ -147,19 +147,19 @@ class StageNode(StylizableNode, BoundaryNode):
 		self._parent = None
 	
 	def _insert_node(self, node):
-		node.set_parent(self)
-		node.set_boundary_parent(self._boundary)
+		node._set_parent(self)
+		node._set_boundary_parent(self._boundary)
 		self._nodes.append(node)
 	
-	def set_parent(self, parent):
+	def _set_parent(self, parent):
 		if None not in [self._parent, parent]:
 			raise RindeException("Node has already got parent")
 		
 		self._parent = parent
 	
 	def _remove_node(self, node):
-		node.set_parent(None)
-		node.set_boundary_parent(None)
+		node._set_parent(None)
+		node._set_boundary_parent(None)
 		self._nodes.remove(node)
 	
 	def get_hovered_node(self, mouse_position):
@@ -182,12 +182,6 @@ class Node(InteractiveNode, StageNode):
 			for node in self._nodes:
 				node.repaint(surface)
 	
-	def _borrow_property(self, node, property_name):
-		property = node.property(property_name)
-		property.add_trigger(self.update)
-		
-		return property
-	
 	def _create_property(self, trigger, value=None):
 		property = Property(value)
 		property.add_trigger(trigger)
@@ -201,17 +195,23 @@ class Node(InteractiveNode, StageNode):
 		return property
 	
 	def reset(self):
-		for node in self._nodes:
-			self.insert_to_stage(node)
+		self.update_style()
 		
-		self.update_boundary()
+		for node in self._nodes:
+			node.reset()
+		
 		self.update()
+		self.update_boundary()
 	
-	def insert_to_stage(self, node):
-		if isinstance(self._parent, Node):
-			self._parent.insert_to_stage(node)
+	def update_style(self):
+		self._update_style_request(self)
+	
+	# Chain of responsibility
+	def _update_style_request(self, node):
+		if self._parent:
+			self._parent._update_style_request(node)
 		else:
-			self._parent.insert(node)
+			raise RindeException("Parent is not inserted to the stage")
 	
 	def update(self):
 		pass

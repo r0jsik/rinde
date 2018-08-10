@@ -48,10 +48,16 @@ class TextDisplay(Node):
 	def __init__(self, text):
 		super(TextDisplay, self).__init__()
 		
-		self._property["text"] = self._borrow_property(text, "text")
-		self._property["font"] = self._borrow_property(text, "font")
-		self._property["font_size"] = self._borrow_property(text, "font_size")
+		self._property["text"] = self.__borrow_property(text, "text")
+		self._property["font"] = self.__borrow_property(text, "font")
+		self._property["font_size"] = self.__borrow_property(text, "font_size")
 		self._property["color"] = self._create_integer_property(self.update)
+	
+	def __borrow_property(self, node, property_name):
+		property = node.property(property_name)
+		property.add_trigger(self.update)
+		
+		return property
 	
 	def update(self):
 		text = self.get_property("text")
@@ -69,8 +75,8 @@ class TextDisplay(Node):
 
 
 class DraggableLabel(Label):
-	def __init__(self, **kwargs):
-		super(DraggableLabel, self).__init__(**kwargs)
+	def __init__(self, text, **kwargs):
+		super(DraggableLabel, self).__init__(text, **kwargs)
 		
 		self.style_name = "draggable-label"
 	
