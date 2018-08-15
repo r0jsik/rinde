@@ -1,25 +1,20 @@
 from rinde.error import RindeException
 from rinde.stage.node.util import Boundary
-from rinde.stage.property import BooleanProperty
-from rinde.stage.property import IntegerProperty
-from rinde.stage.property import Property
+from rinde.stage.property import Properties
 
 
 class NodeBase(object):
 	def __init__(self, **kwargs):
-		self._property = {}
+		self.properties = Properties()
+	
+	def _borrow_property(self, node, name, trigger=None):
+		self.properties.insert(node.properties[name], name, trigger)
 	
 	def set_property(self, name, value):
-		self.property(name).set(value)
-	
-	def property(self, name):
-		try:
-			return self._property[name]
-		except KeyError:
-			raise RindeException("Unknown property: '%s'" % name)
+		return self.properties[name].set(value)
 	
 	def get_property(self, name):
-		return self.property(name).get()
+		return self.properties[name].get()
 
 
 class StylizableNode(NodeBase):
@@ -30,28 +25,25 @@ class StylizableNode(NodeBase):
 		self.style_class = style_class
 		self.style_name = None
 		
-		self._property["hovered"] = self.__create_state_property()
-		self._property["active"] = self.__create_state_property()
-		self._property["focused"] = self.__create_state_property()
+		self.__create_state_property("hover")
+		self.__create_state_property("active")
+		self.__create_state_property("focus")
 		
 		self.__style = None
 	
-	def __create_state_property(self):
-		property = BooleanProperty()
-		property.add_trigger(self.__update_state)
-		
-		return property
+	def __create_state_property(self, name):
+		self.properties.create_boolean(name, self.__update_state)
 	
 	def __update_state(self):
 		self.__apply_style(None)
 		
-		if self.get_property("hovered"):
+		if self.get_property("hover"):
 			self.__apply_style("hover")
 		
 		if self.get_property("active"):
 			self.__apply_style("active")
 		
-		if self.get_property("focused"):
+		if self.get_property("focus"):
 			self.__apply_style("focus")
 	
 	def __apply_style(self, state):
@@ -63,22 +55,39 @@ class StylizableNode(NodeBase):
 		self.__style = style
 		
 		for property_name, value in style[None].iteritems():
-			self.property(property_name).reset(value)
+			self.properties[property_name].reset(value)
 
 
 class BoundaryNode(NodeBase):
 	def __init__(self, **kwargs):
 		super(BoundaryNode, self).__init__(**kwargs)
 		
-		self._boundary = Boundary(**kwargs)
+		self.__boundary = Boundary(**kwargs)
 		
-		self._property["position_x"] = self._boundary.position_x()
-		self._property["position_y"] = self._boundary.position_y()
-		self._property["width"] = self._boundary.width()
-		self._property["height"] = self._boundary.height()
+		self.__borrow_boundary_property("position_x")
+		self.__borrow_boundary_property("position_y")
+		self.__borrow_boundary_property("width")
+		self.__borrow_boundary_property("height")
+		self.__borrow_boundary_property("margin")
+		self.__borrow_boundary_property("padding")
+	
+	def __borrow_boundary_property(self, name):
+		self.properties.borrow(self.__boundary.properties, name)
 	
 	def update_boundary(self):
-		self._boundary.update()
+		self.__boundary.update()
+	
+	def set_boundary_parent(self, node):
+		if node:
+			self.__boundary.set_parent(node.__boundary)
+		else:
+			self.__boundary.set_parent(None)
+	
+	def is_mouse_over(self, mouse_position):
+		return self.__boundary.is_mouse_over(mouse_position)
+	
+	def get_absolute_position(self):
+		return self.__boundary.get_absolute_position()
 	
 	def set_position(self, position_x, position_y):
 		self.set_property("position_x", position_x)
@@ -90,26 +99,26 @@ class BoundaryNode(NodeBase):
 	
 	def get_size(self):
 		return self.get_property("width"), self.get_property("height")
-	
-	def _set_boundary_parent(self, boundary):
-		self._boundary.set_parent(boundary)
 
 
 class InteractiveNode(StylizableNode, BoundaryNode):
 	def __init__(self, visible=True, enabled=True, **kwargs):
 		super(InteractiveNode, self).__init__(**kwargs)
 		
-		self._property["visible"] = BooleanProperty(visible)
-		self._property["enabled"] = BooleanProperty(enabled)
+		self.properties.create_boolean("visible", value=visible)
+		self.properties.create_boolean("enabled", value=enabled)
 	
 	def can_be_hovered(self, mouse_position):
-		return self.get_property("visible") and self.get_property("enabled") and self._boundary.is_mouse_over(mouse_position)
+		visible = self.get_property("visible")
+		enabled = self.get_property("enabled")
+		
+		return visible and enabled and self.is_mouse_over(mouse_position)
 	
 	def hover(self):
-		self.set_property("hovered", True)
+		self.set_property("hover", True)
 	
 	def leave(self):
-		self.set_property("hovered", False)
+		self.set_property("hover", False)
 	
 	def activate(self):
 		self.set_property("active", True)
@@ -118,10 +127,10 @@ class InteractiveNode(StylizableNode, BoundaryNode):
 		self.set_property("active", False)
 	
 	def focus(self):
-		self.set_property("focused", True)
+		self.set_property("focus", True)
 	
 	def unfocus(self):
-		self.set_property("focused", False)
+		self.set_property("focus", False)
 	
 	def drag(self, mouse_offset):
 		pass
@@ -144,22 +153,32 @@ class StageNode(StylizableNode, BoundaryNode):
 		super(StageNode, self).__init__(**kwargs)
 		
 		self._nodes = []
-		self._parent = None
+		
+		self.__parent = None
 	
-	def _insert_node(self, node):
-		node._set_parent(self)
-		node._set_boundary_parent(self._boundary)
-		self._nodes.append(node)
+	# Chain of responsibility
+	def update_style_request(self, node):
+		if self.__parent:
+			self.__parent.update_style_request(node)
+		else:
+			raise RindeException("Parent is not inserted to the stage")
 	
-	def _set_parent(self, parent):
-		if None not in [self._parent, parent]:
+	def set_parent(self, node):
+		if None not in [self.__parent, node]:
 			raise RindeException("Node has already got parent")
 		
-		self._parent = parent
+		self.set_boundary_parent(node)
+		self.__parent = node
+	
+	def set_stage_as_parent(self, stage):
+		self.__parent = stage
+	
+	def _insert_node(self, node):
+		node.set_parent(self)
+		self._nodes.append(node)
 	
 	def _remove_node(self, node):
-		node._set_parent(None)
-		node._set_boundary_parent(None)
+		node.set_parent(None)
 		self._nodes.remove(node)
 	
 	def get_hovered_node(self, mouse_position):
@@ -177,22 +196,10 @@ class Node(InteractiveNode, StageNode):
 	def repaint(self, surface):
 		if self.get_property("visible"):
 			if self.__canvas:
-				surface.blit(self.__canvas, self._boundary.get_absolute_position())
+				surface.blit(self.__canvas, self.get_absolute_position())
 			
 			for node in self._nodes:
 				node.repaint(surface)
-	
-	def _create_property(self, trigger, value=None):
-		property = Property(value)
-		property.add_trigger(trigger)
-		
-		return property
-	
-	def _create_integer_property(self, trigger, value=0):
-		property = IntegerProperty(value)
-		property.add_trigger(trigger)
-		
-		return property
 	
 	def reset(self):
 		self.update_style()
@@ -204,14 +211,7 @@ class Node(InteractiveNode, StageNode):
 		self.update_boundary()
 	
 	def update_style(self):
-		self._update_style_request(self)
-	
-	# Chain of responsibility
-	def _update_style_request(self, node):
-		if self._parent:
-			self._parent._update_style_request(node)
-		else:
-			raise RindeException("Parent is not inserted to the stage")
+		self.update_style_request(self)
 	
 	def update(self):
 		pass

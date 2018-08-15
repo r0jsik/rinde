@@ -1,4 +1,4 @@
-from rinde.stage.property import IntegerProperty
+from rinde.stage.property import Properties
 
 
 class LayoutComputer(object):
@@ -34,6 +34,8 @@ class BoundaryBase(object):
 		self.__children = []
 		
 		self._parent = None
+		
+		self.properties = Properties()
 	
 	def update_position(self):
 		pass
@@ -44,12 +46,6 @@ class BoundaryBase(object):
 	def update_parent_height(self):
 		pass
 	
-	def _create_property(self, value, trigger):
-		property = IntegerProperty(value)
-		property.add_trigger(trigger)
-		
-		return property
-	
 	def set_parent(self, parent):
 		if self._parent:
 			self._parent.__children.remove(self)
@@ -57,7 +53,13 @@ class BoundaryBase(object):
 			self._parent = parent
 			self._parent.__children.append(self)
 	
-	def _get_children(self):
+	def set_property(self, name, value):
+		self.properties[name].set(value)
+	
+	def get_property(self, name):
+		return self.properties[name].get()
+	
+	def get_children(self):
 		return self.__children
 
 
@@ -65,25 +67,14 @@ class SpaceBoundary(BoundaryBase):
 	def __init__(self, margin=0, padding=0):
 		super(SpaceBoundary, self).__init__()
 		
-		self.__margin = self._create_property(margin, self.update)
-		self.__padding = self._create_property(padding, self.update)
+		self.properties.create_integer("margin", self.update, margin)
+		self.properties.create_integer("padding", self.update, padding)
+		
 		self.__space = margin + padding
 	
 	def update(self):
-		self.__space = self.__margin.get() + self.__padding.get()
+		self.__space = self.get_property("margin") + self.get_property("padding")
 		self.update_position()
-	
-	def margin(self):
-		return self.__margin
-	
-	def get_margin(self):
-		return self.__margin.get()
-	
-	def padding(self):
-		return self.__padding
-	
-	def get_padding(self):
-		return self.__padding.get()
 	
 	def get_space(self):
 		return self.__space
@@ -93,46 +84,41 @@ class PositionBoundary(SpaceBoundary):
 	def __init__(self, position_x=0, position_y=0, **kwargs):
 		super(PositionBoundary, self).__init__(**kwargs)
 		
-		self.__position_x = self._create_property(position_x, self.update_absolute_position_x)
-		self.__position_y = self._create_property(position_y, self.update_absolute_position_y)
+		self.properties.create_integer("position_x", self.update_absolute_position_x, position_x)
+		self.properties.create_integer("position_y", self.update_absolute_position_y, position_y)
+		
 		self.__absolute_position_x = 0
 		self.__absolute_position_y = 0
 	
 	def update_absolute_position_x(self):
-		self.__absolute_position_x = self.__position_x.get() + self.get_margin()
+		self.__absolute_position_x = self.get_property("position_x") + self.get_property("margin")
 		
 		if self._parent:
-			self.__absolute_position_x += self._parent.__absolute_position_x + self._parent.get_padding()
+			self.__absolute_position_x += self._parent.__absolute_position_x + self._parent.get_property("padding")
 		
 		self.update_children_position_x()
 		self.update_parent_width()
 	
 	def update_children_position_x(self):
-		for children in self._get_children():
-			children.update_absolute_position_x()
+		for child in self.get_children():
+			child.update_absolute_position_x()
 	
 	def update_absolute_position_y(self):
-		self.__absolute_position_y = self.__position_y.get() + self.get_margin()
+		self.__absolute_position_y = self.get_property("position_y") + self.get_property("margin")
 		
 		if self._parent:
-			self.__absolute_position_y += self._parent.__absolute_position_y + self._parent.get_padding()
+			self.__absolute_position_y += self._parent.__absolute_position_y + self._parent.get_property("padding")
 		
 		self.update_children_position_y()
 		self.update_parent_height()
 	
 	def update_children_position_y(self):
-		for children in self._get_children():
-			children.update_absolute_position_y()
+		for child in self.get_children():
+			child.update_absolute_position_y()
 	
 	def update_position(self):
 		self.update_absolute_position_x()
 		self.update_absolute_position_y()
-	
-	def position_x(self):
-		return self.__position_x
-	
-	def position_y(self):
-		return self.__position_y
 	
 	def get_absolute_position(self):
 		return self.__absolute_position_x, self.__absolute_position_y
@@ -142,25 +128,20 @@ class PositionBoundary(SpaceBoundary):
 	
 	def get_absolute_position_y(self):
 		return self.__absolute_position_y
-	
-	def get_position_x(self):
-		return self.__position_x.get()
-	
-	def get_position_y(self):
-		return self.__position_y.get()
 
 
 class SizeBoundary(SpaceBoundary):
 	def __init__(self, width=0, height=0, **kwargs):
 		super(SizeBoundary, self).__init__(**kwargs)
 		
-		self.__width = self._create_property(width, self.update_absolute_width)
-		self.__height = self._create_property(height, self.update_absolute_height)
+		self.properties.create_integer("width", self.update_absolute_width, width)
+		self.properties.create_integer("height", self.update_absolute_height, height)
+		
 		self.__absolute_width = 0
 		self.__absolute_height = 0
 	
 	def update_absolute_width(self):
-		self.__absolute_width = self.__width.get() + self.get_space()
+		self.__absolute_width = self.get_property("width") + self.get_space()
 		self.update_parent_width()
 	
 	def update_parent_width(self):
@@ -170,13 +151,13 @@ class SizeBoundary(SpaceBoundary):
 	def update_width(self):
 		width = 0
 		
-		for children in self._get_children():
-			width = max(children.get_position_x() + children.__absolute_width, width)
-		
-		self.__width.set(width)
+		for child in self.get_children():
+			width = max(child.get_property("position_x") + child.__absolute_width, width)
+			
+		self.set_property("width", width)
 	
 	def update_absolute_height(self):
-		self.__absolute_height = self.__height.get() + self.get_space()
+		self.__absolute_height = self.get_property("height") + self.get_space()
 		self.update_parent_height()
 	
 	def update_parent_height(self):
@@ -186,16 +167,10 @@ class SizeBoundary(SpaceBoundary):
 	def update_height(self):
 		height = 0
 		
-		for children in self._get_children():
-			height = max(children.get_position_y() + children.__absolute_height, height)
+		for child in self.get_children():
+			height = max(child.get_property("position_y") + child.__absolute_height, height)
 		
-		self.__height.set(height)
-	
-	def width(self):
-		return self.__width
-	
-	def height(self):
-		return self.__height
+		self.set_property("height", height)
 	
 	def get_absolute_width(self):
 		return self.__absolute_width

@@ -9,8 +9,8 @@ class Checkbox(Node):
 	def __init__(self, text, model="default_checkbox", selected=False, **kwargs):
 		super(Checkbox, self).__init__(**kwargs)
 		
-		self._property["align"] = self._create_property(self.update)
-		self._property["spacing"] = self._create_integer_property(self.update)
+		self.properties.create("align", self.update)
+		self.properties.create_integer("spacing", self.update)
 		
 		self.__init_input(model, selected)
 		self.__init_label(text)
@@ -21,22 +21,26 @@ class Checkbox(Node):
 	def __init_input(self, model, selected):
 		self.__input = CheckboxInput(model)
 		
-		self._property["selected"] = self.__input.selected()
-		self._property["selected"].set(selected)
+		property = self.__input.selected()
+		property.set(selected)
+		self.properties.insert(property, "selected")
 		
 		self._insert_node(self.__input)
 	
 	def __init_label(self, text):
 		self.__label = Text(text)
 		
-		self._property["label_font"] = self.__label.property("font")
-		self._property["label_font_size"] = self.__label.property("font_size")
-		self._property["label_color"] = self.__label.property("color")
+		self.__create_label_property("font", "label_font")
+		self.__create_label_property("font_size", "label_font_size")
+		self.__create_label_property("color", "label_color")
 		
 		self._insert_node(self.__label)
 	
+	def __create_label_property(self, name, name_as):
+		self.properties.insert(self.__label.properties[name], name_as)
+	
 	def click(self):
-		self._property["selected"].toggle()
+		self.properties["selected"].toggle()
 	
 	def update(self):
 		self.__layout_computer.align_nodes(self.__input, self.__label)
@@ -91,4 +95,4 @@ class CheckboxInput(Node):
 		self.__layout_computer.center_node(self.__pipe)
 	
 	def selected(self):
-		return self.__pipe.property("visible")
+		return self.__pipe.properties["visible"]

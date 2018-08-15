@@ -26,7 +26,7 @@ class Slider(Node):
 		self.__thumb = SliderThumb(self.__model, self.__range, self.__action)
 		self._insert_node(self.__thumb)
 		
-		self._property["value"] = self.__thumb.value()
+		self.properties.insert(self.__thumb.value(), "value")
 	
 	def update(self):
 		self.__layout_computer.align_nodes(self.__track, self.__thumb)
@@ -88,7 +88,7 @@ class SliderThumb(ImageView):
 		self.style_name = None
 	
 	def __init_value_property(self, action):
-		self.__value = self.property("position_x")
+		self.__value = self.properties["position_x"]
 		self.__value.add_trigger(self.__keep_value_in_limit)
 		self.__value.add_trigger(action)
 	

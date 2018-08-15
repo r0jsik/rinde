@@ -1,13 +1,52 @@
+from rinde.error import RindeException
+
+
+class Properties:
+	def __init__(self):
+		self.__data = {}
+	
+	def create(self, name, trigger=None, value=None):
+		self[name] = Property(value)
+		self.add_trigger(name, trigger)
+	
+	def add_trigger(self, name, trigger):
+		if trigger:
+			self[name].add_trigger(trigger)
+	
+	def insert(self, property, name, trigger=None):
+		self[name] = property
+		self.add_trigger(name, trigger)
+	
+	def create_integer(self, name, trigger=None, value=0):
+		self[name] = IntegerProperty(value)
+		self.add_trigger(name, trigger)
+	
+	def create_boolean(self, name, trigger=None, value=False):
+		self[name] = BooleanProperty(value)
+		self.add_trigger(name, trigger)
+	
+	def borrow(self, properties, name):
+		self[name] = properties[name]
+	
+	def __setitem__(self, name, property):
+		self.__data[name] = property
+	
+	def __getitem__(self, name):
+		try:
+			return self.__data[name]
+		except KeyError:
+			raise RindeException("Unknown property: '%s'" % name)
+
+
 class Property(object):
 	def __init__(self, value=None):
-		self._value = value
-		
+		self.__value = value
 		self.__bound_to = None
-		self.__bound_properties = []
-		self.__triggers = []
+		self.__bound_properties = set()
+		self.__triggers = set()
 	
 	def reset(self, value):
-		self._value = value
+		self.__value = value
 		
 		for property in self.__bound_properties:
 			property.reset(value)
@@ -17,7 +56,7 @@ class Property(object):
 			self.unbind()
 		
 		self.__bound_to = property
-		self.__bound_to.__bound_properties.append(self)
+		self.__bound_to.__bound_properties.add(self)
 		self.reset(property.__value)
 	
 	def unbind(self):
@@ -25,11 +64,11 @@ class Property(object):
 		self.__bound_to = None
 	
 	def set(self, value):
-		if self._value != value:
+		if self.__value != value:
 			self.__change(value)
 	
 	def __change(self, value):
-		self._value = value
+		self.__value = value
 		self.invoke_triggers()
 		
 		for property in self.__bound_properties:
@@ -40,13 +79,13 @@ class Property(object):
 			trigger()
 	
 	def add_trigger(self, action):
-		self.__triggers.append(action)
+		self.__triggers.add(action)
 	
 	def remove_trigger(self, action):
 		self.__triggers.remove(action)
 	
 	def get(self):
-		return self._value
+		return self.__value
 
 
 class IntegerProperty(Property):
@@ -54,28 +93,28 @@ class IntegerProperty(Property):
 		super(IntegerProperty, self).__init__(value)
 	
 	def increase(self, value=1):
-		self.set(self._value + value)
+		self.set(self.get() + value)
 	
 	def decrease(self, value=1):
-		self.set(self._value - value)
+		self.set(self.get() - value)
 	
 	def __add__(self, other):
-		return self._value + other
+		return self.get() + other
 	
 	def __sub__(self, other):
-		return self._value - other
+		return self.get() - other
 	
 	def __mul__(self, other):
-		return self._value * other
+		return self.get() * other
 	
 	def __div__(self, other):
-		return self._value / other
+		return self.get() / other
 	
 	def __mod__(self, other):
-		return self._value % other
+		return self.get() % other
 	
 	def get(self):
-		return int(self._value)
+		return int(super(IntegerProperty, self).get())
 
 
 class BooleanProperty(Property):
@@ -83,7 +122,7 @@ class BooleanProperty(Property):
 		super(BooleanProperty, self).__init__(value)
 	
 	def toggle(self):
-		self.set(not self._value)
+		self.set(not self.get())
 	
 	def true(self):
 		self.set(True)
@@ -92,4 +131,4 @@ class BooleanProperty(Property):
 		self.set(False)
 	
 	def get(self):
-		return self._value in [True, "true"]
+		return super(BooleanProperty, self).get() in [True, "true"]

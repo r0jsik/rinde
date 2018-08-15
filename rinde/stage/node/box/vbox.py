@@ -10,15 +10,15 @@ class VBox(Box):
 		
 		self.__layout_computer = VBoxLayoutComputer(self)
 	
-	def _update_nodes_spacing(self):
+	def update_nodes_spacing(self):
 		self.__layout_computer.update_nodes_spacing("height", "y")
 	
-	def _update_nodes_align(self):
+	def update_nodes_align(self):
 		self.__layout_computer.update_nodes_align("x")
 
 
 class VBoxLayoutComputer(BoxLayoutComputer):
-	def _compute_aligned_position(self, node, align):
+	def compute_aligned_position(self, node, align):
 		if align == "left":
 			return 0
 		

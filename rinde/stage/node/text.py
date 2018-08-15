@@ -7,9 +7,9 @@ class Text(Node):
 	def __init__(self, text, **kwargs):
 		super(Text, self).__init__(**kwargs)
 		
-		self._property["text"] = Property(text)
-		self._property["font"] = Property()
-		self._property["font_size"] = Property()
+		self.properties.create("text", value=text)
+		self.properties.create("font")
+		self.properties.create("font_size")
 		
 		self.__init_display()
 		
@@ -18,7 +18,7 @@ class Text(Node):
 	def __init_display(self):
 		display = TextDisplay(self)
 		
-		self._property["color"] = display.property("color")
+		self._borrow_property(display, "color")
 		
 		self._insert_node(display)
 
@@ -34,30 +34,28 @@ class Label(Text):
 		self.style_name = "label"
 	
 	def __init_shadow(self):
-		shadow = TextDisplay(self)
+		self.__shadow = TextDisplay(self)
 		
-		self._property["shadow_offset_x"] = shadow.property("position_x")
-		self._property["shadow_offset_y"] = shadow.property("position_y")
-		self._property["shadow_color"] = shadow.property("color")
-		self._property["shadow_visible"] = shadow.property("visible")
+		self.__borrow_shadow_property("position_x", "shadow_offset_x")
+		self.__borrow_shadow_property("position_y", "shadow_offset_y")
+		self.__borrow_shadow_property("color", "shadow_color")
+		self.__borrow_shadow_property("visible", "shadow_visible")
 		
-		self._insert_node(shadow)
+		self._insert_node(self.__shadow)
+	
+	def __borrow_shadow_property(self, name, name_as):
+		self.properties.insert(self.__shadow.properties[name], name_as)
 
 
 class TextDisplay(Node):
 	def __init__(self, text):
 		super(TextDisplay, self).__init__()
 		
-		self._property["text"] = self.__borrow_property(text, "text")
-		self._property["font"] = self.__borrow_property(text, "font")
-		self._property["font_size"] = self.__borrow_property(text, "font_size")
-		self._property["color"] = self._create_integer_property(self.update)
-	
-	def __borrow_property(self, node, property_name):
-		property = node.property(property_name)
-		property.add_trigger(self.update)
+		self._borrow_property(text, "text")
+		self._borrow_property(text, "font")
+		self._borrow_property(text, "font_size")
 		
-		return property
+		self.properties.create("color", self.update)
 	
 	def update(self):
 		text = self.get_property("text")
@@ -81,5 +79,5 @@ class DraggableLabel(Label):
 		self.style_name = "draggable-label"
 	
 	def drag(self, mouse_offset):
-		self.property("position_x").increase(mouse_offset[0])
-		self.property("position_y").increase(mouse_offset[1])
+		self.properties["position_x"].increase(mouse_offset[0])
+		self.properties["position_y"].increase(mouse_offset[1])

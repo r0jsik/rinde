@@ -7,6 +7,6 @@ class Controller(ControllerBase):
 		self.__label = self.nodes["label"]
 	
 	def start_animation(self):
-		property = self.__label.property("position_y")
+		property = self.__label.properties["position_y"]
 		animation = AnimationTo(property, 150)
-		animation.play()
+		animation.start()

@@ -15,10 +15,10 @@ class StageBase(object):
 		self.__styles = styles
 		
 		for node in layout:
-			node._set_parent(self)
+			node.set_stage_as_parent(self)
 			node.reset()
 	
-	def _update_style_request(self, node):
+	def update_style_request(self, node):
 		style = self.__styles.get_style(node)
 		node.set_style(style)
 	

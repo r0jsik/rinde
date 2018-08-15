@@ -21,9 +21,9 @@ class AbstractXMLParser(object):
 		
 		return element
 	
-	def _parse_root(self):
+	def parse_root(self):
 		attributes = self.__parse_attributes(self.__root)
-		root = self._create_root(attributes, self.__root.tag)
+		root = self.create_root(attributes, self.__root.tag)
 		
 		return root
 	
@@ -36,7 +36,7 @@ class AbstractXMLParser(object):
 		else:
 			return value
 	
-	def _create_root(self, attributes, tag):
+	def create_root(self, attributes, tag):
 		pass
 	
 	def parse(self):
@@ -47,7 +47,7 @@ class AbstractXMLParser(object):
 		
 		for element in elements:
 			attributes, children = self.__parse_element(element)
-			node = self._parse_element(element.tag, attributes, children)
+			node = self.parse_element(element.tag, attributes, children)
 			nodes.append(node)
 		
 		return nodes
@@ -55,7 +55,7 @@ class AbstractXMLParser(object):
 	def __parse_element(self, element):
 		return self.__parse_attributes(element), self.__parse_elements(element)
 	
-	def _parse_element(self, type, attributes, children):
+	def parse_element(self, type, attributes, children):
 		pass
 
 
@@ -64,19 +64,19 @@ class AbstractLayoutParser(AbstractXMLParser):
 		super(AbstractLayoutParser, self).__init__("%s/layout.xml" % stage_directory)
 		
 		self.__node_creator = NodeCreator()
-		self.__stage = self._parse_root()
+		self.__stage = self.parse_root()
 		self.__controller = self.__stage.get_controller()
 	
-	def _create_root(self, attributes, tag):
+	def create_root(self, attributes, tag):
 		try:
-			return self._create_stage(attributes, tag)
+			return self.create_stage(attributes, tag)
 		except TypeError:
 			raise RindeException("Incorrect stage argumentation")
 	
-	def _create_stage(self, attributes, tag):
+	def create_stage(self, attributes, tag):
 		pass
 	
-	def _parse_element(self, type, attributes, children):
+	def parse_element(self, type, attributes, children):
 		try:
 			return self.__parse_node(type, attributes, children)
 		except TypeError:
@@ -112,12 +112,12 @@ class LayoutParserWithExistingController(AbstractLayoutParser):
 		
 		self.__controller = controller
 	
-	def _create_stage(self, attributes, tag):
+	def create_stage(self, attributes, tag):
 		return StageFactory.create(tag, attributes, self.__controller)
 
 
 class LayoutParserWithCreatingController(AbstractLayoutParser):
-	def _create_stage(self, attributes, tag):
+	def create_stage(self, attributes, tag):
 		controller = self.__extract_controller_from_attributes(attributes)
 		controller = self.__create_controller(controller)
 		

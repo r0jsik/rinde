@@ -5,9 +5,6 @@ class Pane(Node):
 	def __init__(self, nodes=(), **kwargs):
 		super(Pane, self).__init__(**kwargs)
 		
-		self._property["margin"] = self._boundary.margin()
-		self._property["padding"] = self._boundary.padding()
-		
 		self.style_name = "pane"
 		
 		map(self._insert_node, nodes)

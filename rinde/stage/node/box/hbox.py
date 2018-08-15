@@ -10,15 +10,15 @@ class HBox(Box):
 		
 		self.__layout_computer = HBoxLayoutComputer(self)
 	
-	def _update_nodes_spacing(self):
+	def update_nodes_spacing(self):
 		self.__layout_computer.update_nodes_spacing("width", "x")
 	
-	def _update_nodes_align(self):
+	def update_nodes_align(self):
 		self.__layout_computer.update_nodes_align("y")
 
 
 class HBoxLayoutComputer(BoxLayoutComputer):
-	def _compute_aligned_position(self, node, align):
+	def compute_aligned_position(self, node, align):
 		if align == "top":
 			return 0
 		

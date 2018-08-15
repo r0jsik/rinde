@@ -5,34 +5,30 @@ from rinde.error import RindeException
 
 
 class Animation(object):
-	def __init__(self, property, value):
-		self._property = property
-		self._value = value
-		
+	def __init__(self):
 		self.__running = False
 	
-	def play(self):
-		self.__start()
+	def start(self):
+		if self.__running:
+			raise RindeException("Animation is already running")
 		
+		self.__running = True
+		self.__start()
+	
+	def __start(self):
 		thread = threading.Thread(target=self.__updating)
 		thread.setDaemon(True)
 		thread.start()
-	
-	def __start(self):
-		if self.__running:
-			raise RindeException("Animation is already being played")
-		
-		self.__running = True
 	
 	def __updating(self):
 		clock = pygame.time.Clock()
 		
 		while self.__running:
-			self._update()
+			self.next_frame()
 			
 			clock.tick(60)
 	
-	def _update(self):
+	def next_frame(self):
 		pass
 	
 	def stop(self):
@@ -40,14 +36,20 @@ class Animation(object):
 
 
 class AnimationTo(Animation):
-	def _update(self):
-		difference = self._value - self._property.get()
+	def __init__(self, property, value):
+		super(AnimationTo, self).__init__()
+		
+		self.__property = property
+		self.__value = value
+	
+	def next_frame(self):
+		difference = self.__value - self.__property.get()
 		
 		if difference < 0:
-			self._property.decrease()
+			self.__property.decrease()
 		
 		elif difference > 0:
-			self._property.increase()
+			self.__property.increase()
 		
 		else:
 			self.stop()
