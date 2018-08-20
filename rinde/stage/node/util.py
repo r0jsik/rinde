@@ -3,7 +3,7 @@ from rinde.stage.property import Properties
 
 class LayoutComputer(object):
 	def __init__(self, node):
-		self._node = node
+		self.__node = node
 	
 	def center_node(self, node):
 		self.center_node_vertically(node)
@@ -21,12 +21,17 @@ class LayoutComputer(object):
 		return (self.get_property(dimension) - node.get_property(dimension))/2
 	
 	def get_property(self, property_name):
-		return self._node.get_property(property_name)
+		return self.__node.get_property(property_name)
 
 
 class PaneLayoutComputer(LayoutComputer):
+	def __init__(self, pane):
+		super(PaneLayoutComputer, self).__init__(pane)
+		
+		self.__pane = pane
+	
 	def get_nodes(self):
-		return self._node.get_nodes()
+		return self.__pane.get_nodes()
 
 
 class BoundaryBase(object):

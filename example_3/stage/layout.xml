@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
-<Scene controller="stage.Controller" width="255" height="255">
+<Fullscreen controller="stage.Controller">
 	<Pane padding="10">
 		<TextButton text="Start animation" action="start_animation" />
 		<Label text="Animation" id="label" position_y="50" />
@@ -10,4 +10,4 @@
 		<Checkbox text="Checkbox 1" selected="true" />
 		<Checkbox text="Checkbox 2" />
 	</VBox>
-</Scene>
+</Fullscreen>

@@ -20,12 +20,20 @@ class ImageView(Node):
 
 
 class CanvasView(Node):
-	def __init__(self, width, height, **kwargs):
+	def __init__(self, **kwargs):
 		super(CanvasView, self).__init__(**kwargs)
 		
-		self.style_name = "canvas-view"
+		self.__reset_content()
+		self.__reset_content_when_resized()
 		
-		self.__content = Canvas(width, height)
+		self.style_name = "canvas-view"
+	
+	def __reset_content(self):
+		self.__content = Canvas(*self.get_size())
+	
+	def __reset_content_when_resized(self):
+		self.properties.add_trigger("width", self.__reset_content)
+		self.properties.add_trigger("height", self.__reset_content)
 	
 	def update(self):
 		self._set_canvas(self.__content.get())

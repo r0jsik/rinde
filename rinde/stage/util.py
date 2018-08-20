@@ -79,13 +79,19 @@ class Image:
 
 class Canvas:
 	def __init__(self, width, height):
-		self.__canvas = pygame.Surface((width, height))
+		try:
+			self.__canvas = pygame.Surface((width, height))
+		except pygame.error:
+			raise RindeException("Invalid canvas size")
 	
 	def fill(self, red, green, blue):
 		self.__canvas.fill((red, green, blue))
 	
-	def draw_line(self, color, start, end, width=1):
-		pygame.draw.line(self.__canvas, color, start, end, width)
+	def draw_line(self, color, start, end, stroke=1):
+		pygame.draw.line(self.__canvas, color, start, end, stroke)
+	
+	def draw_rect(self, color, rect, stroke=1):
+		pygame.draw.rect(self.__canvas, color, rect, stroke)
 	
 	def get(self):
 		return self.__canvas
