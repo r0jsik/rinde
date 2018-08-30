@@ -17,7 +17,7 @@ class TextField(Node):
 		self._insert_node(self.__content)
 	
 	def key_pressed(self, code, char):
-		text_property = self.__content.property("text")
+		text_property = self.__content.properties["text"]
 		text = text_property.get()
 		
 		if code == 8:

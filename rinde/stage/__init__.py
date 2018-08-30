@@ -1,8 +1,15 @@
 import pygame
 
 from rinde.error import RindeException
-from rinde.stage.util import Image
-from rinde.stage.util import Screen
+
+
+class Screen:
+	SIZE = None
+	
+	@staticmethod
+	def init_size():
+		screen_size = pygame.display.Info()
+		Screen.SIZE = (screen_size.current_w, screen_size.current_h)
 
 
 class StageBase(object):
@@ -253,8 +260,7 @@ class StageFactory:
 		if tag == "Scene":
 			return Scene(controller, **attributes)
 		
-		elif tag == "Fullscreen":
+		if tag == "Fullscreen":
 			return Fullscreen(controller)
 		
-		else:
-			raise RindeException("Invalid stage type")
+		raise RindeException("Invalid stage type")

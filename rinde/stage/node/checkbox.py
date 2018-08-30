@@ -1,7 +1,7 @@
 from rinde.error import RindeException
 from rinde.stage.node import Node
 from rinde.stage.node.text import Text
-from rinde.stage.node.util import LayoutComputer
+from rinde.stage.node.util.layout import LayoutComputer
 from rinde.stage.node.view import ImageView
 
 

@@ -1,5 +1,5 @@
 from rinde.error import RindeException
-from rinde.stage.node.util import Boundary
+from rinde.stage.node.util.boundary import Boundary
 from rinde.stage.property import Properties
 
 

@@ -1,6 +1,6 @@
 from rinde.stage.node import Node
 from rinde.stage.node.box.hbox import HBox
-from rinde.stage.node.util import LayoutComputer
+from rinde.stage.node.util.layout import LayoutComputer
 from rinde.stage.node.view import ImageView
 
 

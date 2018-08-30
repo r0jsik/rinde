@@ -2,8 +2,8 @@ import pygame
 
 from rinde.data import Resources
 from rinde.error import RindeException
+from rinde.stage import Screen
 from rinde.stage.builder import StageBuilder
-from rinde.stage.util import Screen
 
 
 class Application:

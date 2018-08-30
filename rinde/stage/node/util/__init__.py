@@ -4,15 +4,6 @@ from rinde.data import Resources
 from rinde.error import RindeException
 
 
-class Screen:
-	SIZE = None
-	
-	@staticmethod
-	def init_size():
-		screen_size = pygame.display.Info()
-		Screen.SIZE = (screen_size.current_w, screen_size.current_h)
-
-
 class Font:
 	__CACHE = {}
 	

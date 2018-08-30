@@ -1,6 +1,5 @@
 from rinde.stage.node import Node
-from rinde.stage.property import Property
-from rinde.stage.util import Font
+from rinde.stage.node.util import Font
 
 
 class Text(Node):

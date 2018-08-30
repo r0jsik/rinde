@@ -3,7 +3,7 @@ import xml.etree.cElementTree as xml
 
 from rinde.error import RindeException
 from rinde.stage import StageFactory
-from rinde.stage.node.creator import NodeCreator
+from rinde.stage.builder.node_creator import NodeCreator
 
 
 class AbstractXMLParser(object):

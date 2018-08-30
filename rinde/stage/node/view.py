@@ -1,6 +1,6 @@
 from rinde.stage.node import Node
-from rinde.stage.util import Canvas
-from rinde.stage.util import Image
+from rinde.stage.node.util import Canvas
+from rinde.stage.node.util import Image
 
 
 class ImageView(Node):
