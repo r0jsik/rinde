@@ -16,7 +16,7 @@ class Slider(Node):
 		self.__init_track()
 		self.__init_thumb()
 		
-		self.style_name = "slider"
+		self.set_style_name("slider")
 	
 	def __init_track(self):
 		self.__track = SliderTrack(self.__model, self.__range)
@@ -60,7 +60,7 @@ class SliderTrack(HBox):
 		self.__content = self.__init_part("content")
 		self.__init_part("r_corner")
 		
-		self.style_name = None
+		self.set_style_name(None)
 	
 	def __init_part(self, name):
 		part = ImageView("%s/%s.png" % (self.__model, name))
@@ -85,7 +85,7 @@ class SliderThumb(ImageView):
 		self.__range = range
 		self.__init_value_property(action)
 		
-		self.style_name = None
+		self.set_style_name(None)
 	
 	def __init_value_property(self, action):
 		self.__value = self.properties["position_x"]

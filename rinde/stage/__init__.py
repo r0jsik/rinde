@@ -14,29 +14,29 @@ class Screen:
 
 class StageBase(object):
 	def __init__(self):
-		self.__layout = None
-		self.__styles = None
+		self.__nodes = None
+		self.__style = None
 	
 	def show(self, layout, styles):
-		self.__layout = layout
-		self.__styles = styles
+		self.__nodes = layout
+		self.__style = styles
 		
 		for node in layout:
 			node.set_parent(self)
 			node.reset()
 	
 	def update_style_request(self, node):
-		style = self.__styles.get_style(node)
+		style = self.__style.get_declarations_for(node)
 		node.set_style(style)
 	
 	def repaint(self, surface):
 		surface.fill(0xEEEEEE)
 		
-		for node in self.__layout:
+		for node in self.__nodes:
 			node.repaint(surface)
 	
 	def get_nodes(self):
-		return self.__layout
+		return self.__nodes
 
 
 class ControllableStage(StageBase):

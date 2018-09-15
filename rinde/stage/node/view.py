@@ -7,9 +7,9 @@ class ImageView(Node):
 	def __init__(self, resource, **kwargs):
 		super(ImageView, self).__init__(**kwargs)
 		
-		self.style_name = "image-view"
-		
 		self.__content = Image(resource)
+		
+		self.set_style_name("image-view")
 	
 	def update(self):
 		self._set_canvas(self.__content.get())
@@ -26,7 +26,7 @@ class CanvasView(Node):
 		self.__reset_content()
 		self.__reset_content_when_resized()
 		
-		self.style_name = "canvas-view"
+		self.set_style_name("canvas-view")
 	
 	def __reset_content(self):
 		self.__content = Canvas(*self.get_size())

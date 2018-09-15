@@ -1,5 +1,6 @@
 from rinde.error import RindeException
 from rinde.stage.node.util.boundary import Boundary
+from rinde.stage.node.util.style import Style
 from rinde.stage.property import Properties
 
 
@@ -21,41 +22,42 @@ class StylizableNode(NodeBase):
 	def __init__(self, id=None, style_class=None, **kwargs):
 		super(StylizableNode, self).__init__(**kwargs)
 		
-		self.id = id
-		self.style_class = style_class
-		self.style_name = None
-		
 		self.__create_state_property("hover")
 		self.__create_state_property("active")
 		self.__create_state_property("focus")
 		
-		self.__style = None
+		self.__style = Style(self, id, style_class)
 	
 	def __create_state_property(self, name):
 		self.properties.create_boolean(name, self.__update_state)
 	
 	def __update_state(self):
-		self.__apply_style(None)
+		self.__style.apply(None)
 		
 		if self.get_property("hover"):
-			self.__apply_style("hover")
+			self.__style.apply("hover")
 		
 		if self.get_property("active"):
-			self.__apply_style("active")
+			self.__style.apply("active")
 		
 		if self.get_property("focus"):
-			self.__apply_style("focus")
+			self.__style.apply("focus")
 	
-	def __apply_style(self, state):
-		if state in self.__style:
-			for property_name, value in self.__style[state].iteritems():
-				self.set_property(property_name, value)
+	def set_style(self, declarations):
+		self.__style.set_declarations(declarations)
+		self.__style.apply_default()
 	
-	def set_style(self, style):
-		self.__style = style
-		
-		for property_name, value in style[None].iteritems():
-			self.properties[property_name].reset(value)
+	def set_id(self, value):
+		self.__style.set_id(value)
+	
+	def set_style_class(self, value):
+		self.__style.set_style_class(value)
+	
+	def set_style_name(self, value):
+		self.__style.set_style_name(value)
+	
+	def get_style_selectors(self):
+		return self.__style.get_selectors()
 
 
 class BoundaryNode(NodeBase):
@@ -192,7 +194,7 @@ class Node(InteractiveNode, StageNode):
 		
 		self.__canvas = None
 		
-		self.style_name = "node"
+		self.set_style_name("node")
 	
 	def repaint(self, surface):
 		if self.get_property("visible"):

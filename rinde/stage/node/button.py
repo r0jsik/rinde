@@ -6,4 +6,5 @@ class TextButton(Label):
 		super(TextButton, self).__init__(**kwargs)
 		
 		self.click = action
-		self.style_name = "text-button"
+		
+		self.set_style_name("text-button")

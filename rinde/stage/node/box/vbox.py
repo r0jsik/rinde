@@ -6,7 +6,7 @@ class VBox(Box):
 	def __init__(self, nodes=(), align="left", **kwargs):
 		super(VBox, self).__init__(nodes, align, **kwargs)
 		
-		self.style_name = "vbox"
+		self.set_style_name("vbox")
 		
 		self.__layout_computer = VBoxLayoutComputer(self)
 	

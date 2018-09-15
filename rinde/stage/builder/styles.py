@@ -101,23 +101,20 @@ class Styles:
 		except IndexError:
 			return part[0], None
 	
-	def get_style(self, node):
-		resultant_style = {None: {}}
+	def get_declarations_for(self, node):
+		declarations = {None: {}}
 		
-		self.__update_style(resultant_style, "", node.style_name)
-		self.__update_style(resultant_style, ".", node.style_class)
-		self.__update_style(resultant_style, "#", node.id)
+		for selector in node.get_style_selectors():
+			self.__update_declarations(declarations, selector)
 		
-		return resultant_style
+		return declarations
 	
-	def __update_style(self, resultant_style, prefix, variable):
-		selector = "%s%s" % (prefix, variable)
-		
-		if variable and selector in self.__styles:
+	def __update_declarations(self, declarations, selector):
+		if selector in self.__styles:
 			styles = self.__styles[selector]
 			
 			for state, style in styles.iteritems():
-				if state in resultant_style:
-					resultant_style[state].update(style)
+				if state in declarations:
+					declarations[state].update(style)
 				else:
-					resultant_style[state] = style
+					declarations[state] = style

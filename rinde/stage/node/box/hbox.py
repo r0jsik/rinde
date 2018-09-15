@@ -6,7 +6,7 @@ class HBox(Box):
 	def __init__(self, nodes=(), align="top", **kwargs):
 		super(HBox, self).__init__(nodes, align, **kwargs)
 		
-		self.style_name = "hbox"
+		self.set_style_name("hbox")
 		
 		self.__layout_computer = HBoxLayoutComputer(self)
 	

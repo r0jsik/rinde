@@ -16,7 +16,7 @@ class Checkbox(Node):
 		self.__init_label(text)
 		self.__layout_computer = CheckboxLayoutComputer(self)
 		
-		self.style_name = "checkbox"
+		self.set_style_name("checkbox")
 	
 	def __init_input(self, model, selected):
 		self.__input = CheckboxInput(model)
@@ -83,7 +83,7 @@ class CheckboxInput(Node):
 		self.__init_part("background")
 		self.__pipe = self.__init_part("pipe")
 		
-		self.style_name = None
+		self.set_style_name(None)
 	
 	def __init_part(self, name):
 		part = ImageView(self.__model + "/" + name + ".png")

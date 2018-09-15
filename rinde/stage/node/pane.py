@@ -5,7 +5,7 @@ class Pane(Node):
 	def __init__(self, nodes=(), **kwargs):
 		super(Pane, self).__init__(**kwargs)
 		
-		self.style_name = "pane"
+		self.set_style_name("pane")
 		
 		map(self._insert_node, nodes)
 	

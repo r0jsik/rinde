@@ -12,7 +12,7 @@ class Text(Node):
 		
 		self.__init_display()
 		
-		self.style_name = "text"
+		self.set_style_name("text")
 	
 	def __init_display(self):
 		display = TextDisplay(self)
@@ -30,7 +30,7 @@ class Label(Text):
 		
 		self._nodes = self._nodes[::-1]
 		
-		self.style_name = "label"
+		self.set_style_name("label")
 	
 	def __init_shadow(self):
 		self.__shadow = TextDisplay(self)
@@ -75,7 +75,7 @@ class DraggableLabel(Label):
 	def __init__(self, text, **kwargs):
 		super(DraggableLabel, self).__init__(text, **kwargs)
 		
-		self.style_name = "draggable-label"
+		self.set_style_name("draggable-label")
 	
 	def drag(self, mouse_offset):
 		self.properties["position_x"].increase(mouse_offset[0])
