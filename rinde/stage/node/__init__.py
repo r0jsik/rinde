@@ -62,7 +62,7 @@ class BoundaryNode(NodeBase):
 	def __init__(self, **kwargs):
 		super(BoundaryNode, self).__init__(**kwargs)
 		
-		self.__boundary = Boundary(**kwargs)
+		self.__boundary = Boundary(self, **kwargs)
 		
 		self.__borrow_boundary_property("position_x")
 		self.__borrow_boundary_property("position_y")
@@ -76,12 +76,6 @@ class BoundaryNode(NodeBase):
 	
 	def update_boundary(self):
 		self.__boundary.update()
-	
-	def set_boundary_parent(self, node):
-		if node:
-			self.__boundary.set_parent(node.__boundary)
-		else:
-			self.__boundary.set_parent(None)
 	
 	def is_mouse_over(self, mouse_position):
 		return self.__boundary.is_mouse_over(mouse_position)
@@ -99,6 +93,9 @@ class BoundaryNode(NodeBase):
 	
 	def get_size(self):
 		return self.get_property("width"), self.get_property("height")
+	
+	def get_boundary(self):
+		return self.__boundary
 
 
 class InteractiveNode(StylizableNode, BoundaryNode):
@@ -167,11 +164,7 @@ class StageNode(StylizableNode, BoundaryNode):
 		if None not in [self.__parent, node]:
 			raise RindeException("Node has already got parent")
 		
-		self.set_boundary_parent(node)
 		self.__parent = node
-	
-	def set_stage_as_parent(self, stage):
-		self.__parent = stage
 	
 	def _insert_node(self, node):
 		node.set_parent(self)
@@ -183,6 +176,14 @@ class StageNode(StylizableNode, BoundaryNode):
 	
 	def get_hovered_node(self, mouse_position):
 		return self
+	
+	def children_boundaries_generator(self):
+		for node in self._nodes:
+			yield node.get_boundary()
+	
+	def get_parent_boundary(self):
+		if isinstance(self.__parent, Node):
+			return self.__parent.get_boundary()
 
 
 class Node(InteractiveNode, StageNode):

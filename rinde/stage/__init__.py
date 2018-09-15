@@ -22,7 +22,7 @@ class StageBase(object):
 		self.__styles = styles
 		
 		for node in layout:
-			node.set_stage_as_parent(self)
+			node.set_parent(self)
 			node.reset()
 	
 	def update_style_request(self, node):
