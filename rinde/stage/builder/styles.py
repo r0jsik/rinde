@@ -54,9 +54,8 @@ class StylesheetParser(object):
 		declarations = {}
 		
 		for declaration in rule.style:
-			name = declaration.name.replace("-", "_")
 			value = self.__parse_value(declaration.value)
-			declarations[name] = value
+			declarations[declaration.name] = value
 		
 		return declarations
 	

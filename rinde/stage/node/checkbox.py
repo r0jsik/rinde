@@ -30,9 +30,9 @@ class Checkbox(Node):
 	def __init_label(self, text):
 		self.__label = Text(text)
 		
-		self.__create_label_property("font", "label_font")
-		self.__create_label_property("font_size", "label_font_size")
-		self.__create_label_property("color", "label_color")
+		self.__create_label_property("font", "label-font")
+		self.__create_label_property("font-size", "label-font-size")
+		self.__create_label_property("color", "label-color")
 		
 		self._insert_node(self.__label)
 	

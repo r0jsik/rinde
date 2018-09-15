@@ -46,7 +46,7 @@ class SliderLayoutComputer(LayoutComputer):
 	
 	def __indent_track(self, track, thumb):
 		position_x = thumb.get_property("width")/2 - track.get_left_corner_width()
-		track.set_property("position_x", position_x)
+		track.set_property("position-x", position_x)
 
 
 class SliderTrack(HBox):
@@ -88,7 +88,7 @@ class SliderThumb(ImageView):
 		self.set_style_name(None)
 	
 	def __init_value_property(self, action):
-		self.__value = self.properties["position_x"]
+		self.__value = self.properties["position-x"]
 		self.__value.add_trigger(self.__keep_value_in_limit)
 		self.__value.add_trigger(action)
 	

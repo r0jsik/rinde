@@ -27,7 +27,7 @@ class BoxLayoutComputer(PaneLayoutComputer):
 		position = 0
 		
 		for node in self.get_nodes():
-			property = node.properties["position_%s" % axis]
+			property = node.properties["position-%s" % axis]
 			property.set(position)
 			position += node.get_property(dimension) + spacing
 	
@@ -35,7 +35,7 @@ class BoxLayoutComputer(PaneLayoutComputer):
 		align = self.get_property("align")
 		
 		for node in self.get_nodes():
-			property = node.properties["position_%s" % axis]
+			property = node.properties["position-%s" % axis]
 			position = self.__get_aligned_position(node, align)
 			property.set(position)
 	

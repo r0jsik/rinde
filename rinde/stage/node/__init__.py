@@ -66,8 +66,8 @@ class BoundaryNode(NodeBase):
 		
 		self.__boundary = Boundary(self, **kwargs)
 		
-		self.__borrow_boundary_property("position_x")
-		self.__borrow_boundary_property("position_y")
+		self.__borrow_boundary_property("position-x")
+		self.__borrow_boundary_property("position-y")
 		self.__borrow_boundary_property("width")
 		self.__borrow_boundary_property("height")
 		self.__borrow_boundary_property("margin")
@@ -86,8 +86,8 @@ class BoundaryNode(NodeBase):
 		return self.__boundary.get_absolute_position()
 	
 	def set_position(self, position_x, position_y):
-		self.set_property("position_x", position_x)
-		self.set_property("position_y", position_y)
+		self.set_property("position-x", position_x)
+		self.set_property("position-y", position_y)
 	
 	def set_size(self, width, height):
 		self.set_property("width", width)

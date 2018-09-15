@@ -56,8 +56,8 @@ class PositionBoundary(SpaceBoundary):
 	def __init__(self, node, position_x=0, position_y=0, **kwargs):
 		super(PositionBoundary, self).__init__(node, **kwargs)
 		
-		self.properties.create_integer("position_x", self.update_absolute_position_x, position_x)
-		self.properties.create_integer("position_y", self.update_absolute_position_y, position_y)
+		self.properties.create_integer("position-x", self.update_absolute_position_x, position_x)
+		self.properties.create_integer("position-y", self.update_absolute_position_y, position_y)
 		
 		self.__absolute_position_x = 0
 		self.__absolute_position_y = 0
@@ -77,7 +77,7 @@ class PositionBoundary(SpaceBoundary):
 		return 0
 	
 	def __get_local_origin(self, axis):
-		return self.get_property("position_%s" % axis) + self.get_property("margin")
+		return self.get_property("position-%s" % axis) + self.get_property("margin")
 	
 	def update_children_position_x(self):
 		for child in self.children_boundaries():
@@ -127,7 +127,7 @@ class SizeBoundary(SpaceBoundary):
 		width = 0
 		
 		for child in self.children_boundaries():
-			width = max(child.get_property("position_x") + child.__absolute_width, width)
+			width = max(child.get_property("position-x") + child.__absolute_width, width)
 		
 		self.set_property("width", width)
 	
@@ -139,7 +139,7 @@ class SizeBoundary(SpaceBoundary):
 		height = 0
 		
 		for child in self.children_boundaries():
-			height = max(child.get_property("position_y") + child.__absolute_height, height)
+			height = max(child.get_property("position-y") + child.__absolute_height, height)
 		
 		self.set_property("height", height)
 	

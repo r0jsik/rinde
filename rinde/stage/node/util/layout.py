@@ -8,11 +8,11 @@ class LayoutComputer(object):
 	
 	def center_node_horizontally(self, node):
 		position = self.compute_node_center(node, "width")
-		node.set_property("position_x", position)
+		node.set_property("position-x", position)
 	
 	def center_node_vertically(self, node):
 		position = self.compute_node_center(node, "height")
-		node.set_property("position_y", position)
+		node.set_property("position-y", position)
 	
 	def compute_node_center(self, node, dimension):
 		return (self.get_property(dimension) - node.get_property(dimension))/2
