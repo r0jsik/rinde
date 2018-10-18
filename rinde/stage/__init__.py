@@ -17,11 +17,11 @@ class StageBase(object):
 		self.__nodes = None
 		self.__style = None
 	
-	def show(self, layout, styles):
-		self.__nodes = layout
-		self.__style = styles
+	def show(self, nodes, style):
+		self.__nodes = nodes
+		self.__style = style
 		
-		for node in layout:
+		for node in nodes:
 			node.set_parent(self)
 			node.reset()
 	

@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
+<?import rinde.stage.node.box.vbox.VBox ?>
+<?import rinde.stage.node.button.TextButton ?>
+<?import rinde.stage.node.checkbox.Checkbox ?>
+<?import rinde.stage.node.text.Label ?>
+<?import rinde.stage.node.pane.Pane ?>
+
 <Fullscreen controller="stage.Controller">
 	<Pane padding="10">
 		<TextButton text="Start animation" action="start_animation" />

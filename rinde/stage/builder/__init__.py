@@ -17,10 +17,10 @@ class StageBuilder:
 			return LayoutParserWithCreatingController(stage_directory)
 	
 	def finalize(self, window):
-		layout = self.__layout_parser.parse()
-		styles = self.__styles_parser.parse()
+		nodes = self.__layout_parser.parse()
+		style = self.__styles_parser.parse()
 		
-		self.__stage.show(layout, styles)
+		self.__stage.show(nodes, style)
 		self.__stage.start_controller(window)
 	
 	def get_stage(self):

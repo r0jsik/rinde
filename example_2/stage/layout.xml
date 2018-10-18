@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
+<?import rinde.stage.node.box.vbox.VBox ?>
+<?import rinde.stage.node.box.hbox.HBox ?>
+<?import rinde.stage.node.slider.Slider ?>
+<?import rinde.stage.node.text.Text ?>
+<?import rinde.stage.node.view.CanvasView ?>
+
 <Scene controller="stage.Controller" width="410" height="95">
 	<VBox>
 		<HBox>

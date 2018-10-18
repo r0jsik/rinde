@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
+<?import rinde.stage.node.button.TextButton ?>
+<?import rinde.stage.node.text.DraggableLabel ?>
+
 <Scene controller="controller.Controller" width="320" height="320">
 	<TextButton text="Click to print Hello" action="say_hello" id="blabla" position_x="10" />
 	
