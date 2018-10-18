@@ -11,7 +11,7 @@ class Style:
 			self.__node.properties[property_name].reset(value)
 	
 	def __get_declarations(self, state):
-		return self.__declarations[state].iteritems()
+		return self.__declarations[state].items()
 	
 	def apply(self, state):
 		if state in self.__declarations:

@@ -36,7 +36,7 @@ class AbstractXMLParser(object):
 		return root
 	
 	def __parse_attributes(self, element):
-		return {property: self.__parse_value(value) for property, value in element.attrib.iteritems()}
+		return {property: self.__parse_value(value) for property, value in element.attrib.items()}
 	
 	def __parse_value(self, value):
 		if value.lstrip("-").isdigit():

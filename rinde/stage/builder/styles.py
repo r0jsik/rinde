@@ -78,7 +78,7 @@ class Styles:
 		self.__styles = {}
 		
 		for stylesheet in stylesheets:
-			for selector, style in stylesheet.iteritems():
+			for selector, style in stylesheet.items():
 				self.__insert_style(selector, style)
 	
 	def __insert_style(self, selector, style):
@@ -112,7 +112,7 @@ class Styles:
 		if selector in self.__styles:
 			styles = self.__styles[selector]
 			
-			for state, style in styles.iteritems():
+			for state, style in styles.items():
 				if state in declarations:
 					declarations[state].update(style)
 				else:
