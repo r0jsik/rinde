@@ -28,8 +28,6 @@ class Label(Text):
 		
 		self.__init_shadow()
 		
-		self._nodes = self._nodes[::-1]
-		
 		self.set_style_name("label")
 	
 	def __init_shadow(self):
@@ -40,7 +38,7 @@ class Label(Text):
 		self.__borrow_shadow_property("color", "shadow-color")
 		self.__borrow_shadow_property("visible", "shadow-visible")
 		
-		self._insert_node(self.__shadow)
+		self._insert_node(self.__shadow, 0)
 	
 	def __borrow_shadow_property(self, name, name_as):
 		self.properties.insert(self.__shadow.properties[name], name_as)

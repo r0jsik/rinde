@@ -23,4 +23,4 @@ class Pane(Node):
 		node.reset()
 	
 	def get_nodes(self):
-		return self._nodes
+		return self._get_nodes()

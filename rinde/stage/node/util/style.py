@@ -30,9 +30,7 @@ class Style:
 	def set_style_name(self, value):
 		self.__style_name = value
 	
-	def get_selectors(self):
-		return [
-			self.__style_name,
-			".%s" % self.__style_class,
-			"#%s" % self.__id
-		]
+	def style_selectors(self):
+		yield self.__style_name
+		yield ".%s" % self.__style_class
+		yield "#%s" % self.__id

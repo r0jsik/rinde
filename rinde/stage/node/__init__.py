@@ -56,8 +56,8 @@ class StylizableNode(NodeBase):
 	def set_style_name(self, value):
 		self.__style.set_style_name(value)
 	
-	def get_style_selectors(self):
-		return self.__style.get_selectors()
+	def style_selectors(self):
+		return self.__style.style_selectors()
 
 
 class BoundaryNode(NodeBase):
@@ -151,8 +151,7 @@ class StageNode(StylizableNode, BoundaryNode):
 	def __init__(self, **kwargs):
 		super(StageNode, self).__init__(**kwargs)
 		
-		self._nodes = []
-		
+		self.__nodes = []
 		self.__parent = None
 	
 	# Chain of responsibility
@@ -168,24 +167,31 @@ class StageNode(StylizableNode, BoundaryNode):
 		
 		self.__parent = node
 	
-	def _insert_node(self, node):
+	def _insert_node(self, node, index=None):
 		node.set_parent(self)
-		self._nodes.append(node)
+		
+		if index is None:
+			self.__nodes.append(node)
+		else:
+			self.__nodes.insert(index, node)
 	
 	def _remove_node(self, node):
 		node.set_parent(None)
-		self._nodes.remove(node)
+		self.__nodes.remove(node)
 	
 	def get_hovered_node(self, mouse_position):
 		return self
 	
 	def children_boundaries_generator(self):
-		for node in self._nodes:
+		for node in self.__nodes:
 			yield node.get_boundary()
 	
 	def get_parent_boundary(self):
 		if isinstance(self.__parent, Node):
 			return self.__parent.get_boundary()
+	
+	def _get_nodes(self):
+		return self.__nodes
 
 
 class Node(InteractiveNode, StageNode):
@@ -201,13 +207,13 @@ class Node(InteractiveNode, StageNode):
 			if self.__canvas:
 				surface.blit(self.__canvas, self.get_absolute_position())
 			
-			for node in self._nodes:
+			for node in self._get_nodes():
 				node.repaint(surface)
 	
 	def reset(self):
 		self.update_style()
 		
-		for node in self._nodes:
+		for node in self._get_nodes():
 			node.reset()
 		
 		self.update()

@@ -103,7 +103,7 @@ class Styles:
 	def get_declarations_for(self, node):
 		declarations = {None: {}}
 		
-		for selector in node.get_style_selectors():
+		for selector in node.style_selectors():
 			self.__update_declarations(declarations, selector)
 		
 		return declarations
