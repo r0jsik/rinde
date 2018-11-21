@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<?import rinde.stage.node.box.vbox.VBox ?>
 <?import rinde.stage.node.box.hbox.HBox ?>
+<?import rinde.stage.node.box.vbox.VBox ?>
 <?import rinde.stage.node.slider.Slider ?>
 <?import rinde.stage.node.text.Text ?>
 <?import rinde.stage.node.view.CanvasView ?>
@@ -9,15 +9,15 @@
 <Scene controller="stage.Controller" width="410" height="95">
 	<VBox>
 		<HBox>
-			<Text text="R:" /> <Slider range="255" action="change_color" id="r" />
+			<Text text="R:" /> <Slider range="256" action="change_color" id="r" />
 		</HBox>
 		
 		<HBox>
-			<Text text="G:" /> <Slider range="255" action="change_color" id="g" />
+			<Text text="G:" /> <Slider range="256" action="change_color" id="g" />
 		</HBox>
 		
 		<HBox>
-			<Text text="B:" /> <Slider range="255" action="change_color" id="b" />
+			<Text text="B:" /> <Slider range="256" action="change_color" id="b" />
 		</HBox>
 	</VBox>
 	

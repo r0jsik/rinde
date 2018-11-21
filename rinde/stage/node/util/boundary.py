@@ -29,7 +29,7 @@ class BoundaryBase(object):
 		return self.properties[name].get()
 	
 	def children_boundaries(self):
-		return self.__node.children_boundaries_generator()
+		return self.__node.children_boundaries()
 	
 	def get_parent(self):
 		return self.__node.get_parent_boundary()

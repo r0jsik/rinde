@@ -26,7 +26,7 @@ class StageBase(object):
 			node.reset()
 	
 	def update_style_request(self, node):
-		style = self.__style.get_declarations_for(node)
+		style = self.__style.get_for(node)
 		node.set_style(style)
 	
 	def repaint(self, surface):

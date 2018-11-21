@@ -9,16 +9,19 @@ from rinde.stage import StageFactory
 class AbstractXMLParser(object):
 	def __init__(self, file):
 		try:
-			document = open(file).read()
-			
-			self.__types = self.__parse_imports(document)
-			self.__root = xml.fromstring(document)
+			self.__parse_file(file)
 		except IOError:
 			raise RindeException("File '%s' not found" % file)
 		except xml.ParseError as exception:
 			raise RindeException("XML %s" % exception)
 	
-	def __parse_imports(self, document):
+	def __parse_file(self, file):
+		document = open(file).read()
+		
+		self.__imported_types = self.__import_types(document)
+		self.__root = xml.fromstring(document)
+	
+	def __import_types(self, document):
 		types = {}
 		regex = re.compile("<\?import (\w.+) \?>")
 		
@@ -68,7 +71,7 @@ class AbstractXMLParser(object):
 	
 	def get_imported(self, type_name):
 		try:
-			return self.__types[type_name]
+			return self.__imported_types[type_name]
 		except KeyError:
 			raise RindeException("Unknown type: '%s'" % type_name)
 
@@ -158,7 +161,7 @@ class LayoutParserWithCreatingController(AbstractLayoutParser):
 			raise RindeException("Controller constructor cannot take any argument")
 	
 	def __try_to_create_controller(self, controller):
-		module_name, class_name = controller.rsplit(".", -1)
+		module_name, class_name = controller.rsplit(".", 1)
 		module = importlib.import_module(module_name)
 		controller = getattr(module, class_name)
 		

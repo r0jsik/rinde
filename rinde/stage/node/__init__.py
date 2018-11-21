@@ -1,6 +1,6 @@
 from rinde.error import RindeException
+from rinde.stage.node.util.appearance import Appearance
 from rinde.stage.node.util.boundary import Boundary
-from rinde.stage.node.util.style import Style
 from rinde.stage.property import Properties
 
 
@@ -22,42 +22,45 @@ class StylizableNode(NodeBase):
 	def __init__(self, id=None, style_class=None, **kwargs):
 		super(StylizableNode, self).__init__(**kwargs)
 		
+		self.__appearance = Appearance(self, id, style_class)
+		
 		self.__create_state_property("hover")
 		self.__create_state_property("active")
 		self.__create_state_property("focus")
-		
-		self.__style = Style(self, id, style_class)
 	
 	def __create_state_property(self, name):
 		self.properties.create_boolean(name, self.__update_state)
 	
 	def __update_state(self):
-		self.__style.apply(None)
+		self.__appearance.apply(None)
 		
 		if self.get_property("hover"):
-			self.__style.apply("hover")
+			self.__appearance.apply("hover")
 		
 		if self.get_property("active"):
-			self.__style.apply("active")
+			self.__appearance.apply("active")
 		
 		if self.get_property("focus"):
-			self.__style.apply("focus")
+			self.__appearance.apply("focus")
 	
-	def set_style(self, declarations):
-		self.__style.set_declarations(declarations)
-		self.__style.apply_default()
+	def set_style(self, style):
+		self.__appearance.set_style(style)
+		self.__appearance.apply_default()
+	
+	def get_appearance(self):
+		return self.__appearance
 	
 	def set_id(self, value):
-		self.__style.set_id(value)
+		self.__appearance.set_id(value)
 	
 	def set_style_class(self, value):
-		self.__style.set_style_class(value)
+		self.__appearance.set_style_class(value)
 	
 	def set_style_name(self, value):
-		self.__style.set_style_name(value)
+		self.__appearance.set_style_name(value)
 	
 	def style_selectors(self):
-		return self.__style.style_selectors()
+		return self.__appearance.style_selectors()
 
 
 class BoundaryNode(NodeBase):
@@ -182,13 +185,17 @@ class StageNode(StylizableNode, BoundaryNode):
 	def get_hovered_node(self, mouse_position):
 		return self
 	
-	def children_boundaries_generator(self):
+	def children_boundaries(self):
 		for node in self.__nodes:
 			yield node.get_boundary()
 	
 	def get_parent_boundary(self):
 		if isinstance(self.__parent, Node):
 			return self.__parent.get_boundary()
+	
+	def children_appearances(self):
+		for node in self.__nodes:
+			yield node.get_appearance()
 	
 	def _get_nodes(self):
 		return self.__nodes
@@ -199,8 +206,6 @@ class Node(InteractiveNode, StageNode):
 		super(Node, self).__init__(**kwargs)
 		
 		self.__canvas = None
-		
-		self.set_style_name("node")
 	
 	def repaint(self, surface):
 		if self.get_property("visible"):

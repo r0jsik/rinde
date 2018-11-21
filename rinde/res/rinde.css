@@ -1,18 +1,22 @@
 text
 {
-	font: "Roboto Condensed Regular.ttf";
-	font-size: 16;
+	font: "Roboto Condensed Regular";
+	font-size: 14;
 	color: #333333;
 }
 
 label, draggable-label, text-button
 {
-	font: "Roboto Condensed Regular.ttf";
+	font: "Roboto Condensed Regular";
 	font-size: 32;
 	color: #837654;
-	shadow-color: #111111;
-	shadow-offset-x: 1;
-	shadow-offset-y: 1;
+}
+
+label shadow, draggable-label shadow, text-button shadow
+{
+	color: #111111;
+	position-x: 1;
+	position-y: 1;
 }
 
 text-button:hover
@@ -25,8 +29,43 @@ text-button:active
 	color: #615432;
 }
 
-checkbox
+slider thumb
+{
+	width: 10;
+	height: 10;
+	content-color: #615432;
+}
+
+slider track
+{
+	height: 12;
+	border-stroke: 1;
+	border-color: #837654;
+	content-color: #EEEEEE;
+}
+
+check-box
 {
 	align: "right";
 	spacing: 5;
+}
+
+check-box selector
+{
+	width: 14;
+	height: 14;
+}
+
+check-box selector background
+{
+	border-stroke: 1;
+	border-color: #837654;
+	content-color: #EEEEEE;
+}
+
+check-box selector pipe
+{
+	width: 6;
+	height: 6;
+	content-color: #615432;
 }

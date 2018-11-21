@@ -2,9 +2,9 @@
 
 <?import rinde.stage.node.box.vbox.VBox ?>
 <?import rinde.stage.node.button.TextButton ?>
-<?import rinde.stage.node.checkbox.Checkbox ?>
-<?import rinde.stage.node.text.Label ?>
+<?import rinde.stage.node.input.CheckBox ?>
 <?import rinde.stage.node.pane.Pane ?>
+<?import rinde.stage.node.text.Label ?>
 
 <Fullscreen controller="stage.Controller">
 	<Pane padding="10">
@@ -13,7 +13,7 @@
 	</Pane>
 	
 	<VBox position_x="150" position_y="200">
-		<Checkbox text="Checkbox 1" selected="true" />
-		<Checkbox text="Checkbox 2" />
+		<CheckBox text="CheckBox 1" selected="true" />
+		<CheckBox text="CheckBox 2" />
 	</VBox>
 </Fullscreen>

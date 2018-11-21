@@ -5,19 +5,21 @@ from rinde.error import RindeException
 
 
 class StylesParser:
-	__RINDE_STYLESHEET = Resources.get_path("rinde.css")
+	__PATH_TO_RINDE_STYLESHEET = Resources.get_path("rinde.css")
 	
 	def __init__(self, stage_directory):
-		self.__stage_stylesheet = "%s/style.css" % stage_directory
+		self.__path_to_stage_stylesheet = "%s/style.css" % stage_directory
 	
 	def parse(self):
-		rinde_stylesheet = self.__parse_stylesheet(self.__RINDE_STYLESHEET)
-		stage_stylesheet = self.__parse_stylesheet(self.__stage_stylesheet)
+		data = {}
 		
-		return Styles(rinde_stylesheet, stage_stylesheet)
-	
-	def __parse_stylesheet(self, stylesheet):
-		return StylesheetParser(stylesheet).parse()
+		stylesheet_parser = StylesheetParser(self.__PATH_TO_RINDE_STYLESHEET)
+		stylesheet_parser.parse_to(data)
+		
+		stylesheet_parser = StylesheetParser(self.__path_to_stage_stylesheet)
+		stylesheet_parser.parse_to(data)
+		
+		return Styles(data)
 
 
 class StylesheetParser(object):
@@ -28,36 +30,46 @@ class StylesheetParser(object):
 		try:
 			self.__stylesheet = cssutils.parseFile(file)
 		except IOError:
-			raise RindeException("File %s not found" % file)
+			raise RindeException("File '%s' not found" % file)
 	
-	def parse(self):
-		stylesheet = {}
+	def parse_to(self, data):
+		for rule_group in self.__stylesheet.cssRules:
+			if self.__not_comment(rule_group):
+				self.__parse_rule(rule_group, data)
+	
+	def __not_comment(self, rule_group):
+		return not isinstance(rule_group, cssutils.css.CSSComment)
+	
+	def __parse_rule(self, rule_group, data):
+		declarations = self.__get_declarations(rule_group)
 		
-		for rule in self.__stylesheet.cssRules:
-			if isinstance(rule, cssutils.css.CSSComment):
-				continue
+		for rule in self.__get_subrules(rule_group):
+			selector_groups = rule.strip().split()
+			selector, state = self.__split_selector_group(selector_groups.pop(0))
 			
-			for selector in self.__get_selectors(rule):
-				declarations = self.__get_declarations(rule)
+			if selector not in data:
+				data[selector] = Style(selector)
+			
+			style = data[selector]
+			continuous = True
+			
+			for selector_group in selector_groups:
+				child_selector, child_state = self.__split_selector_group(selector_group)
 				
-				if selector in stylesheet:
-					stylesheet[selector].update(declarations)
+				if continuous and style.has_child(state, child_selector):
+					child = style.get_child(state, child_selector)
 				else:
-					stylesheet[selector] = declarations
-		
-		return stylesheet
+					child = Style(child_selector)
+					style.add_child(state, child)
+					continuous = False
+				
+				style = child
+				state = child_state
+			
+			style.add_declarations(state, declarations)
 	
-	def __get_selectors(self, rule):
-		return [selector.strip() for selector in rule.selectorText.split(",")]
-	
-	def __get_declarations(self, rule):
-		declarations = {}
-		
-		for declaration in rule.style:
-			value = self.__parse_value(declaration.value)
-			declarations[declaration.name] = value
-		
-		return declarations
+	def __get_declarations(self, rule_group):
+		return {declaration.name: self.__parse_value(declaration.value) for declaration in rule_group.style}
 	
 	def __parse_value(self, value):
 		if value.startswith("#"):
@@ -71,49 +83,65 @@ class StylesheetParser(object):
 			return value[1:-1]
 		
 		return value.strip()
+	
+	def __get_subrules(self, rule_group):
+		return rule_group.selectorText.split(",")
+	
+	def __split_selector_group(self, selector_group):
+		if ":" in selector_group:
+			return selector_group.split(":", 1)
+		else:
+			return selector_group, None
 
 
 class Styles:
-	def __init__(self, *stylesheets):
-		self.__styles = {}
-		
-		for stylesheet in stylesheets:
-			for selector, style in stylesheet.items():
-				self.__insert_style(selector, style)
+	def __init__(self, data):
+		self.__data = data
 	
-	def __insert_style(self, selector, style):
-		style_name, pseudoclass = self.__split_selector(selector)
-		
-		if style_name not in self.__styles:
-			self.__styles[style_name] = {}
-		
-		if pseudoclass in self.__styles[style_name]:
-			self.__styles[style_name][pseudoclass].update(style)
-		else:
-			self.__styles[style_name][pseudoclass] = style
-	
-	def __split_selector(self, selector):
-		part = selector.split(":")
-		
-		try:
-			return part[0], part[1]
-		except IndexError:
-			return part[0], None
-	
-	def get_declarations_for(self, node):
-		declarations = {None: {}}
+	def get_for(self, node):
+		style = []
 		
 		for selector in node.style_selectors():
-			self.__update_declarations(declarations, selector)
+			if selector in self.__data:
+				style.append(self.__data[selector])
 		
-		return declarations
+		return style
+
+
+class Style:
+	def __init__(self, selector):
+		self.__selector = selector
+		self.__children = {}
+		self.__declarations = {}
 	
-	def __update_declarations(self, declarations, selector):
-		if selector in self.__styles:
-			styles = self.__styles[selector]
-			
-			for state, style in styles.items():
-				if state in declarations:
-					declarations[state].update(style)
-				else:
-					declarations[state] = style
+	def add_child(self, state, child):
+		if state in self.__children:
+			self.__children[state].append(child)
+		else:
+			self.__children[state] = [child]
+	
+	def has_child(self, state, selector):
+		return state in self.__children and selector in self.__children[state]
+	
+	def get_child(self, state, selector):
+		for child in self.get_children(state):
+			if child == selector:
+				return child
+	
+	def get_children(self, state):
+		return self.__children.get(state, [])
+	
+	def add_declarations(self, state, declarations):
+		if state in self.__declarations:
+			self.__declarations[state].update(declarations)
+		else:
+			self.__declarations[state] = declarations
+	
+	def get_declarations(self, state):
+		if state in self.__declarations:
+			return self.__declarations[state].items()
+		
+		return []
+	
+	def __eq__(self, object):
+		return object == self.__selector

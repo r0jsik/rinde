@@ -32,7 +32,7 @@ class Font:
 		return self.__pygame_font.render(str(text), True, self.__int_to_rgb(color))
 	
 	def __int_to_rgb(self, color):
-		return [(color >> offset) & 255 for offset in (16, 8, 0)]
+		return tuple((color >> offset) & 255 for offset in (16, 8, 0))
 
 
 class Image:

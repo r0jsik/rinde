@@ -5,9 +5,10 @@ class Pane(Node):
 	def __init__(self, nodes=(), **kwargs):
 		super(Pane, self).__init__(**kwargs)
 		
-		self.set_style_name("pane")
+		for node in nodes:
+			self._insert_node(node)
 		
-		map(self._insert_node, nodes)
+		self.set_style_name("pane")
 	
 	def get_hovered_node(self, mouse_position):
 		hovered_node = self

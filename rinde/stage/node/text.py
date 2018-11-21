@@ -18,7 +18,6 @@ class Text(Node):
 		display = TextDisplay(self)
 		
 		self._borrow_property(display, "color")
-		
 		self._insert_node(display)
 
 
@@ -31,17 +30,10 @@ class Label(Text):
 		self.set_style_name("label")
 	
 	def __init_shadow(self):
-		self.__shadow = TextDisplay(self)
+		shadow = TextDisplay(self)
+		shadow.set_style_name("shadow")
 		
-		self.__borrow_shadow_property("position-x", "shadow-offset-x")
-		self.__borrow_shadow_property("position-y", "shadow-offset-y")
-		self.__borrow_shadow_property("color", "shadow-color")
-		self.__borrow_shadow_property("visible", "shadow-visible")
-		
-		self._insert_node(self.__shadow, 0)
-	
-	def __borrow_shadow_property(self, name, name_as):
-		self.properties.insert(self.__shadow.properties[name], name_as)
+		self._insert_node(shadow, 0)
 
 
 class TextDisplay(Node):
@@ -70,8 +62,8 @@ class TextDisplay(Node):
 
 
 class DraggableLabel(Label):
-	def __init__(self, text, **kwargs):
-		super(DraggableLabel, self).__init__(text, **kwargs)
+	def __init__(self, **kwargs):
+		super(DraggableLabel, self).__init__(**kwargs)
 		
 		self.set_style_name("draggable-label")
 	

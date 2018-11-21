@@ -1,111 +1,69 @@
 from rinde.stage.node import Node
-from rinde.stage.node.box.hbox import HBox
+from rinde.stage.node.region import Region
 from rinde.stage.node.util.layout import LayoutComputer
-from rinde.stage.node.view import ImageView
 
 
 class Slider(Node):
-	def __init__(self, model="default_slider", range=100, action=None, **kwargs):
+	def __init__(self, range=100, action=None, **kwargs):
 		super(Slider, self).__init__(**kwargs)
 		
-		self.__model = model
-		self.__range = range
-		self.__action = action
-		self.__layout_computer = SliderLayoutComputer(self)
+		self.properties.create_integer("range", value=range)
+		self.properties.create_integer("value", action)
 		
 		self.__init_track()
 		self.__init_thumb()
+		self.__layout_computer = LayoutComputer(self)
 		
 		self.set_style_name("slider")
 	
 	def __init_track(self):
-		self.__track = SliderTrack(self.__model, self.__range)
+		self.__track = Track(self)
 		self._insert_node(self.__track)
 	
 	def __init_thumb(self):
-		self.__thumb = SliderThumb(self.__model, self.__range, self.__action)
+		self.__thumb = Thumb(self)
 		self._insert_node(self.__thumb)
-		
-		self.properties.insert(self.__thumb.value(), "value")
 	
 	def update(self):
-		self.__layout_computer.align_nodes(self.__track, self.__thumb)
-		self.__track.resize_content()
-	
-	def get_hovered_node(self, mouse_position):
-		if self.__thumb.can_be_hovered(mouse_position):
-			return self.__thumb
+		self.__layout_computer.center_node_vertically(self.__track)
+		self.__layout_computer.center_node_vertically(self.__thumb)
 
 
-class SliderLayoutComputer(LayoutComputer):
-	def align_nodes(self, track, thumb):
-		self.center_node_vertically(track)
-		self.center_node_vertically(thumb)
+class Track(Region):
+	def __init__(self, slider):
+		super(Track, self).__init__()
 		
-		self.__indent_track(track, thumb)
-	
-	def __indent_track(self, track, thumb):
-		position_x = thumb.get_property("width")/2 - track.get_left_corner_width()
-		track.set_property("position-x", position_x)
+		self._borrow_property(slider, "range")
+		
+		self.set_style_name("track")
 
 
-class SliderTrack(HBox):
-	def __init__(self, model, range):
-		super(SliderTrack, self).__init__(align="middle")
+class Thumb(Region):
+	def __init__(self, slider):
+		super(Thumb, self).__init__()
 		
-		self.__model = model
-		self.__range = range
+		self.__slider = slider
+		self.__init_value_property()
 		
-		self.__left_corner = self.__init_part("l_corner")
-		self.__content = self.__init_part("content")
-		self.__init_part("r_corner")
-		
-		self.set_style_name(None)
+		self.set_style_name("thumb")
 	
-	def __init_part(self, name):
-		part = ImageView("%s/%s.png" % (self.__model, name))
-		self._insert_node(part)
-		
-		return part
-	
-	def resize_content(self):
-		height = self.get_property("height")
-		
-		self.__content.resize_content(self.__range, height)
-		self.update()
-	
-	def get_left_corner_width(self):
-		return self.__left_corner.get_property("width")
-
-
-class SliderThumb(ImageView):
-	def __init__(self, model, range, action):
-		super(SliderThumb, self).__init__("%s/thumb.png" % model)
-		
-		self.__range = range
-		self.__init_value_property(action)
-		
-		self.set_style_name(None)
-	
-	def __init_value_property(self, action):
+	def __init_value_property(self):
 		self.__value = self.properties["position-x"]
 		self.__value.add_trigger(self.__keep_value_in_limit)
-		self.__value.add_trigger(action)
 	
 	def __keep_value_in_limit(self):
-		value = self.__value.get()
-		value = self.__clamp(value)
+		range = self.__slider.get_property("range")
+		value = self.__slider.get_property("value")
+		value = self.__clamp(value, range)
 		
 		self.__value.reset(value)
 	
+	def __clamp(self, value, range):
+		return 0 if value < 0 else value if value < range else range
+	
 	def drag(self, mouse_offset):
+		range = self.__slider.get_property("range")
 		value = self.__value + mouse_offset[0]
-		value = self.__clamp(value)
+		value = self.__clamp(value, range)
 		
-		self.__value.set(value)
-	
-	def __clamp(self, value):
-		return 0 if value < 0 else value if value < self.__range else self.__range
-	
-	def value(self):
-		return self.__value
+		self.__value.set_value(value)
