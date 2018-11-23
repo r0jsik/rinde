@@ -9,7 +9,7 @@
 <Fullscreen controller="stage.Controller">
 	<Pane>
 		<TextButton text="Start animation" action="start_animation" />
-		<Label id="label" text="Animation" />
+		<Label id="label" text="Animation" position_y="50" />
 	</Pane>
 	
 	<VBox>

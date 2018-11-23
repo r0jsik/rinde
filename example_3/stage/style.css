@@ -3,11 +3,6 @@ pane
     padding: 10;
 }
 
-label
-{
-    position-y: 50;
-}
-
 vbox
 {
     position-x: 150;

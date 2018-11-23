@@ -7,8 +7,8 @@ class Controller(ControllerBase):
 	# Method invoked when stage gets ready
 	def start(self, window):
 		
-		# Access to node with id="blabla" (defined in XML)
-		print("TextButton: ", self.nodes["blabla"])
+		# Access to node with id="button" (defined in XML)
+		print("TextButton: ", self.nodes["button"])
 	
 	# Method invoked when button with action="say_hello" (defined in XML) is clicked
 	def say_hello(self):
