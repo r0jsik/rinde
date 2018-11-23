@@ -1,28 +1,29 @@
 from rinde.error import RindeException
 
 
+# Facade design pattern
 class Properties:
 	def __init__(self):
 		self.__data = {}
 	
 	def create(self, name, trigger=None, value=None):
-		self[name] = Property(value)
+		self.__data[name] = Property(value)
 		self.add_trigger(name, trigger)
 	
 	def add_trigger(self, name, trigger):
 		if trigger:
-			self[name].add_trigger(trigger)
+			self.__data[name].add_trigger(trigger)
 	
 	def insert(self, property, name, trigger=None):
-		self[name] = property
+		self.__data[name] = property
 		self.add_trigger(name, trigger)
 	
 	def create_number(self, name, trigger=None, value=0):
-		self[name] = NumberProperty(value)
+		self.__data[name] = NumberProperty(value)
 		self.add_trigger(name, trigger)
 	
 	def create_boolean(self, name, trigger=None, value=False):
-		self[name] = BooleanProperty(value)
+		self.__data[name] = BooleanProperty(value)
 		self.add_trigger(name, trigger)
 	
 	def __setitem__(self, name, property):
@@ -90,7 +91,7 @@ class Property(object):
 
 class NumberProperty(Property):
 	def __init__(self, value=0):
-		super(NumberProperty, self).__init__(float(value))
+		super(NumberProperty, self).__init__(value)
 	
 	def __add__(self, other):
 		return self._value + other
@@ -139,16 +140,19 @@ class NumberProperty(Property):
 
 class BooleanProperty(Property):
 	def __init__(self, value=False):
-		super(BooleanProperty, self).__init__(bool(value))
+		super(BooleanProperty, self).__init__(value)
 	
 	def toggle(self):
-		self._value = not self.get()
+		self.set(not self.get())
 	
 	def true(self):
-		self._value = True
+		self.set(True)
 	
 	def false(self):
-		self._value = False
+		self.set(False)
+	
+	def __bool__(self):
+		return self.get()
 	
 	def get(self):
 		return self._value in [True, "true"]

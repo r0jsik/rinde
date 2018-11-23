@@ -25,10 +25,10 @@ class Slider(Node):
 		self._insert_node(self.__track)
 	
 	def __init_range(self, range):
-		track_width = self.__track.properties["width"]
-		track_width.set(range)
+		property = self.__track.properties["width"]
+		property.set(range)
 		
-		self.properties.insert(track_width, "range", self.__clamp_value)
+		self.properties.insert(property, "range", self.__clamp_value)
 	
 	# Prevents thumb from getting out of slider range
 	def __clamp_value(self):
@@ -42,10 +42,10 @@ class Slider(Node):
 		self._insert_node(self.__thumb)
 	
 	def __init_value(self, action):
-		thumb_position = self.__thumb.properties["position-x"]
-		thumb_position.add_trigger(action)
+		property = self.__thumb.properties["position-x"]
+		property.add_trigger(action)
 		
-		self.properties.insert(thumb_position, "value")
+		self.properties.insert(property, "value")
 	
 	def __update_layout(self):
 		self.__layout_computer.center_node_vertically(self.__track)
@@ -69,4 +69,4 @@ class Thumb(Region):
 	def drag(self, mouse_offset):
 		range = self.__slider.get_property("range")
 		value = self.properties["position-x"]
-		value.set_in_range(0, value.get() + mouse_offset[0], range)
+		value.set_in_range(0, value + mouse_offset[0], range)

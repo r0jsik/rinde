@@ -8,8 +8,8 @@ class NodeBase(object):
 	def __init__(self, **kwargs):
 		self.properties = Properties()
 	
-	def _borrow_property(self, node, name, trigger=None):
-		self.properties.insert(node.properties[name], name, trigger)
+	def _borrow_property(self, node, name):
+		self.properties.insert(node.properties[name], name)
 	
 	def set_property(self, name, value):
 		self.properties[name].set(value)
@@ -77,7 +77,7 @@ class BoundaryNode(NodeBase):
 		self.__borrow_boundary_property("padding")
 	
 	def __borrow_boundary_property(self, name):
-		self.properties.borrow(self.__boundary.properties, name)
+		self.properties[name] = self.__boundary.properties[name]
 	
 	def update_boundary(self):
 		self.__boundary.update_space()
