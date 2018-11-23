@@ -10,7 +10,7 @@ class Input(Node):
 		super(Input, self).__init__(**kwargs)
 		
 		self.properties.create("align", self.update)
-		self.properties.create_integer("spacing", self.update)
+		self.properties.create_number("spacing", self.update)
 		
 		self.__init_selector(selected)
 		self.__init_text(text)
@@ -24,7 +24,6 @@ class Input(Node):
 	
 	def __init_text(self, text):
 		self.__text = Text(text)
-		
 		self._insert_node(self.__text)
 	
 	def update(self):
@@ -38,7 +37,8 @@ class Selector(Node):
 		self.__layout_computer = LayoutComputer(self)
 		
 		self.__init_background()
-		self.__init_pipe(selected)
+		self.__init_pipe()
+		self.__init_selected(selected)
 		
 		self.set_style_name("selector")
 	
@@ -50,15 +50,17 @@ class Selector(Node):
 		self._borrow_property(background, "height")
 		self._insert_node(background)
 	
-	def __init_pipe(self, selected):
+	def __init_pipe(self):
 		self.__pipe = Region()
 		self.__pipe.set_style_name("pipe")
 		
+		self._insert_node(self.__pipe)
+	
+	def __init_selected(self, selected):
 		property = self.__pipe.properties["visible"]
 		property.set(selected)
-		self.properties.insert(property, "selected")
 		
-		self._insert_node(self.__pipe)
+		self.properties.insert(property, "selected")
 	
 	def update(self):
 		self.__layout_computer.center_node(self.__pipe)

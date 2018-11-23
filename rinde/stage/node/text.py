@@ -8,7 +8,7 @@ class Text(Node):
 		
 		self.properties.create("text", value=text)
 		self.properties.create("font")
-		self.properties.create("font-size")
+		self.properties.create_number("font-size")
 		
 		self.__init_display()
 		
@@ -45,6 +45,8 @@ class TextDisplay(Node):
 		self._borrow_property(text, "font-size")
 		
 		self.properties.create("color", self.update)
+		
+		self.set_style_name("display")
 	
 	def update(self):
 		text = self.get_property("text")
@@ -68,5 +70,5 @@ class DraggableLabel(Label):
 		self.set_style_name("draggable-label")
 	
 	def drag(self, mouse_offset):
-		self.properties["position-x"].increase(mouse_offset[0])
-		self.properties["position-y"].increase(mouse_offset[1])
+		self.properties["position-x"] += mouse_offset[0]
+		self.properties["position-y"] += mouse_offset[1]

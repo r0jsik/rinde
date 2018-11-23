@@ -6,9 +6,9 @@ class Region(Node):
 	def __init__(self, **kwargs):
 		super(Region, self).__init__(**kwargs)
 		
-		self.properties.create_integer("border-stroke", self.update)
-		self.properties.create_integer("border-color", self.update)
-		self.properties.create_integer("content-color", self.update)
+		self.properties.create_number("border-stroke", self.update)
+		self.properties.create_number("border-color", self.update)
+		self.properties.create_number("content-color", self.update)
 		
 		self.__init_canvas_view()
 	

@@ -7,12 +7,12 @@
 <?import rinde.stage.node.text.Label ?>
 
 <Fullscreen controller="stage.Controller">
-	<Pane padding="10">
+	<Pane>
 		<TextButton text="Start animation" action="start_animation" />
-		<Label text="Animation" id="label" position_y="50" />
+		<Label id="label" text="Animation" />
 	</Pane>
 	
-	<VBox position_x="150" position_y="200">
+	<VBox>
 		<CheckBox text="CheckBox 1" selected="true" />
 		<CheckBox text="CheckBox 2" />
 	</VBox>

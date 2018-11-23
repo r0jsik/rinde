@@ -39,12 +39,12 @@ class SpaceBoundary(BoundaryBase):
 	def __init__(self, node, margin=0, padding=0):
 		super(SpaceBoundary, self).__init__(node)
 		
-		self.properties.create_integer("margin", self.update, margin)
-		self.properties.create_integer("padding", self.update, padding)
+		self.properties.create_number("margin", self.update_space, margin)
+		self.properties.create_number("padding", self.update_space, padding)
 		
 		self.__space = margin + padding
 	
-	def update(self):
+	def update_space(self):
 		self.__space = self.get_property("margin") + self.get_property("padding")
 		self.update_position()
 	
@@ -56,8 +56,8 @@ class PositionBoundary(SpaceBoundary):
 	def __init__(self, node, position_x=0, position_y=0, **kwargs):
 		super(PositionBoundary, self).__init__(node, **kwargs)
 		
-		self.properties.create_integer("position-x", self.update_absolute_position_x, position_x)
-		self.properties.create_integer("position-y", self.update_absolute_position_y, position_y)
+		self.properties.create_number("position-x", self.update_absolute_position_x, position_x)
+		self.properties.create_number("position-y", self.update_absolute_position_y, position_y)
 		
 		self.__absolute_position_x = 0
 		self.__absolute_position_y = 0
@@ -113,8 +113,8 @@ class SizeBoundary(SpaceBoundary):
 	def __init__(self, node, width=0, height=0, **kwargs):
 		super(SizeBoundary, self).__init__(node, **kwargs)
 		
-		self.properties.create_integer("width", self.update_absolute_width, width)
-		self.properties.create_integer("height", self.update_absolute_height, height)
+		self.properties.create_number("width", self.update_absolute_width, width)
+		self.properties.create_number("height", self.update_absolute_height, height)
 		
 		self.__absolute_width = 0
 		self.__absolute_height = 0

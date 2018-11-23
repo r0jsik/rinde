@@ -46,10 +46,10 @@ class AnimationTo(Animation):
 		difference = self.__value - self.__property.get()
 		
 		if difference < 0:
-			self.__property.decrease()
+			self.__property -= 1
 		
 		elif difference > 0:
-			self.__property.increase()
+			self.__property += 1
 		
 		else:
 			self.stop()

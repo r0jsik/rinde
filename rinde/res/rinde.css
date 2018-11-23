@@ -5,6 +5,11 @@ text
 	color: #333333;
 }
 
+text display
+{
+    position-y: -1;
+}
+
 label, draggable-label, text-button
 {
 	font: "Roboto Condensed Regular";
@@ -31,17 +36,20 @@ text-button:active
 
 slider thumb
 {
-	width: 10;
-	height: 10;
+	width: 12;
+	height: 12;
+	border-stroke: 1;
+	border-color: #837654;
 	content-color: #615432;
 }
 
 slider track
 {
-	height: 12;
+	height: 8;
 	border-stroke: 1;
 	border-color: #837654;
 	content-color: #EEEEEE;
+	position-x: 6;
 }
 
 check-box

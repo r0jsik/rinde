@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 setup(
 	name="rinde",
 	description="Library used for creating GUI based on XML and CSS.",
-	version="0.64.A",
+	version="0.64.A2",
 	license="MIT License",
 	author="Marcin Rajs",
 	

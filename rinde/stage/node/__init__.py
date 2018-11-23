@@ -12,7 +12,7 @@ class NodeBase(object):
 		self.properties.insert(node.properties[name], name, trigger)
 	
 	def set_property(self, name, value):
-		return self.properties[name].set(value)
+		self.properties[name].set(value)
 	
 	def get_property(self, name):
 		return self.properties[name].get()
@@ -80,7 +80,9 @@ class BoundaryNode(NodeBase):
 		self.properties.borrow(self.__boundary.properties, name)
 	
 	def update_boundary(self):
-		self.__boundary.update()
+		self.__boundary.update_space()
+		self.__boundary.update_absolute_width()
+		self.__boundary.update_absolute_height()
 	
 	def is_mouse_over(self, mouse_position):
 		return self.__boundary.is_mouse_over(mouse_position)
@@ -111,10 +113,7 @@ class InteractiveNode(StylizableNode, BoundaryNode):
 		self.properties.create_boolean("enabled", value=enabled)
 	
 	def can_be_hovered(self, mouse_position):
-		visible = self.get_property("visible")
-		enabled = self.get_property("enabled")
-		
-		return visible and enabled and self.is_mouse_over(mouse_position)
+		return self.get_property("visible") and self.get_property("enabled") and self.is_mouse_over(mouse_position)
 	
 	def hover(self):
 		self.set_property("hover", True)
@@ -159,24 +158,24 @@ class StageNode(StylizableNode, BoundaryNode):
 	
 	# Chain of responsibility
 	def update_style_request(self, node):
-		if self.__parent:
-			self.__parent.update_style_request(node)
-		else:
+		if self.__parent is None:
 			raise RindeException("Parent is not inserted to the stage")
+		
+		self.__parent.update_style_request(node)
 	
 	def set_parent(self, node):
-		if None not in [self.__parent, node]:
+		if self.__parent and node:
 			raise RindeException("Node has already got parent")
 		
 		self.__parent = node
 	
 	def _insert_node(self, node, index=None):
-		node.set_parent(self)
-		
 		if index is None:
 			self.__nodes.append(node)
 		else:
 			self.__nodes.insert(index, node)
+		
+		node.set_parent(self)
 	
 	def _remove_node(self, node):
 		node.set_parent(None)
