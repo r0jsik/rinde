@@ -10,17 +10,12 @@ class BoundaryBase(object):
 	def update_position(self):
 		pass
 	
-	def update_parent_width(self):
+	def update_parent_size(self, axis, dimension):
 		parent = self.get_parent()
-		
-		if parent:
-			parent.update_width()
+		parent.update_size(axis, dimension)
 	
-	def update_parent_height(self):
-		parent = self.get_parent()
-		
-		if parent:
-			parent.update_height()
+	def get_parent(self):
+		return self.__node.get_parent_boundary() or NullBoundary()
 	
 	def set_property(self, name, value):
 		self.properties[name].set(value)
@@ -30,9 +25,6 @@ class BoundaryBase(object):
 	
 	def children_boundaries(self):
 		return self.__node.children_boundaries()
-	
-	def get_parent(self):
-		return self.__node.get_parent_boundary()
 
 
 class SpaceBoundary(BoundaryBase):
@@ -56,98 +48,79 @@ class PositionBoundary(SpaceBoundary):
 	def __init__(self, node, position_x=0, position_y=0, **kwargs):
 		super(PositionBoundary, self).__init__(node, **kwargs)
 		
-		self.properties.create_number("position-x", self.update_absolute_position_x, position_x)
-		self.properties.create_number("position-y", self.update_absolute_position_y, position_y)
+		self.__absolute_position = {"x": 0, "y": 0}
 		
-		self.__absolute_position_x = 0
-		self.__absolute_position_y = 0
+		self.properties.create_number("position-x", self.__update_absolute_position_x, position_x)
+		self.properties.create_number("position-y", self.__update_absolute_position_y, position_y)
 	
-	def update_absolute_position_x(self):
-		self.__absolute_position_x = self.__get_parent_origin_x() + self.__get_local_origin("x")
-		
-		self.update_children_position_x()
-		self.update_parent_width()
+	def __update_absolute_position_x(self):
+		self.__update("x", "width")
 	
-	def __get_parent_origin_x(self):
+	def __update_absolute_position_y(self):
+		self.__update("y", "height")
+	
+	def __update(self, axis, dimension):
+		self.__update_absolute_position(axis, dimension)
+		self.update_parent_size(axis, dimension)
+	
+	def __update_absolute_position(self, axis, dimension):
+		self.__absolute_position[axis] = self.__get_parent_origin(axis) + self.__get_local_origin(axis)
+		self.__update_children_position(axis, dimension)
+	
+	def __get_parent_origin(self, axis):
 		parent = self.get_parent()
+		origin = parent.__absolute_position[axis] + parent.get_property("padding")
 		
-		if parent:
-			return parent.__absolute_position_x + parent.get_property("padding")
-		
-		return 0
+		return origin
 	
 	def __get_local_origin(self, axis):
 		return self.get_property("position-%s" % axis) + self.get_property("margin")
 	
-	def update_children_position_x(self):
+	def __update_children_position(self, axis, dimension):
 		for child in self.children_boundaries():
-			child.update_absolute_position_x()
-	
-	def update_absolute_position_y(self):
-		self.__absolute_position_y = self.__get_parent_origin_y() + self.__get_local_origin("y")
-		
-		self.update_children_position_y()
-		self.update_parent_height()
-	
-	def __get_parent_origin_y(self):
-		parent = self.get_parent()
-		
-		if parent:
-			return parent.__absolute_position_y + parent.get_property("padding")
-		
-		return 0
-	
-	def update_children_position_y(self):
-		for child in self.children_boundaries():
-			child.update_absolute_position_y()
+			child.__update(axis, dimension)
 	
 	def update_position(self):
-		self.update_absolute_position_x()
-		self.update_absolute_position_y()
+		self.__update_absolute_position_x()
+		self.__update_absolute_position_y()
 	
 	def get_absolute_position(self):
-		return self.__absolute_position_x, self.__absolute_position_y
+		return self.__absolute_position["x"], self.__absolute_position["y"]
 
 
 class SizeBoundary(SpaceBoundary):
 	def __init__(self, node, width=0, height=0, **kwargs):
 		super(SizeBoundary, self).__init__(node, **kwargs)
 		
+		self.__absolute_size = {"width": 0, "height": 0}
+		
 		self.properties.create_number("width", self.update_absolute_width, width)
 		self.properties.create_number("height", self.update_absolute_height, height)
-		
-		self.__absolute_width = 0
-		self.__absolute_height = 0
 	
 	def update_absolute_width(self):
-		self.__absolute_width = self.get_property("width") + self.get_space()
-		self.update_parent_width()
+		self.__update_absolute_size("width")
+		self.update_parent_size("x", "width")
 	
-	def update_width(self):
-		width = 0
-		
-		for child in self.children_boundaries():
-			width = max(child.get_property("position-x") + child.__absolute_width, width)
-		
-		self.set_property("width", width)
+	def __update_absolute_size(self, dimension):
+		self.__absolute_size[dimension] = self.get_property(dimension) + self.get_space()
 	
 	def update_absolute_height(self):
-		self.__absolute_height = self.get_property("height") + self.get_space()
-		self.update_parent_height()
+		self.__update_absolute_size("height")
+		self.update_parent_size("y", "height")
 	
-	def update_height(self):
-		height = 0
+	def update_size(self, axis, dimension):
+		size = 0
 		
 		for child in self.children_boundaries():
-			height = max(child.get_property("position-y") + child.__absolute_height, height)
+			size = max(child.get_property("position-%s" % axis) + child.__absolute_size[dimension], size)
 		
-		self.set_property("height", height)
+		self.set_property(dimension, size)
 	
 	def get_absolute_width(self):
-		return self.__absolute_width
+		return self.__absolute_size["width"]
 	
 	def get_absolute_height(self):
-		return self.__absolute_height
+		return self.__absolute_size["height"]
 
 
 class Boundary(PositionBoundary, SizeBoundary):
@@ -159,3 +132,11 @@ class Boundary(PositionBoundary, SizeBoundary):
 				return True
 		
 		return False
+
+
+class NullBoundary(Boundary):
+	def __init__(self):
+		super(NullBoundary, self).__init__(None)
+	
+	def children_boundaries(self):
+		return ()

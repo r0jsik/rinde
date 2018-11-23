@@ -37,6 +37,10 @@ class StageBase(object):
 	
 	def get_nodes(self):
 		return self.__nodes
+	
+	# None will be converted to NullBoundary object
+	def get_boundary(self):
+		return None
 
 
 class ControllableStage(StageBase):

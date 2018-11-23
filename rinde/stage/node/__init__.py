@@ -189,8 +189,10 @@ class StageNode(StylizableNode, BoundaryNode):
 			yield node.get_boundary()
 	
 	def get_parent_boundary(self):
-		if isinstance(self.__parent, Node):
+		if self.__parent:
 			return self.__parent.get_boundary()
+		
+		return None
 	
 	def children_appearances(self):
 		for node in self.__nodes:

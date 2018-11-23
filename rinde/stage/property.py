@@ -25,9 +25,6 @@ class Properties:
 		self[name] = BooleanProperty(value)
 		self.add_trigger(name, trigger)
 	
-	def borrow(self, properties, name):
-		self[name] = properties[name]
-	
 	def __setitem__(self, name, property):
 		self.__data[name] = property
 	
