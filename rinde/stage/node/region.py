@@ -1,41 +1,22 @@
-from rinde.stage.node import Node
 from rinde.stage.node.view import CanvasView
 
 
-class Region(Node):
+class Region(CanvasView):
 	def __init__(self, **kwargs):
 		super(Region, self).__init__(**kwargs)
 		
-		self.properties.create_number("border-stroke", self.update)
-		self.properties.create_number("border-color", self.update)
-		self.properties.create_number("content-color", self.update)
-		
-		self.__init_canvas_view()
+		self.properties.create_number("stroke-width", self.redraw)
+		self.properties.create_number("stroke-color", self.redraw)
+		self.properties.create_number("inside-color", self.redraw)
+		self.properties.create_number("radius", self.redraw)
 	
-	def __init_canvas_view(self):
-		self.__canvas_view = CanvasView()
+	def redraw(self):
+		inside_color = self.get_property("inside-color")
+		bounds = (0, 0, *self.get_size())
+		radius = self.get_property("radius")
+		stroke_width = self.get_property("stroke-width")
+		stroke_color = self.get_property("stroke-color")
 		
-		self._borrow_property(self.__canvas_view, "width")
-		self._borrow_property(self.__canvas_view, "height")
-		self._insert_node(self.__canvas_view)
-	
-	def update(self):
-		canvas = self.__canvas_view.get_content()
-		
-		self.__redraw_outer_rect(canvas)
-		self.__redraw_inner_rect(canvas)
-	
-	def __redraw_outer_rect(self, canvas):
-		border_color = self.get_property("border-color")
-		width, height = self.get_size()
-		border_rect = (0, 0, width, height)
-		
-		canvas.draw_rect(border_color, border_rect, 0)
-	
-	def __redraw_inner_rect(self, canvas):
-		border_stroke = self.get_property("border-stroke")
-		content_color = self.get_property("content-color")
-		width, height = self.get_size()
-		background_rect = (border_stroke, border_stroke, width - 2*border_stroke, height - 2*border_stroke)
-		
-		canvas.draw_rect(content_color, background_rect, 0)
+		canvas = self.get_content()
+		canvas.clear()
+		canvas.draw_rounded_rect(inside_color, bounds, radius, stroke_width, stroke_color)

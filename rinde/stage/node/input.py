@@ -101,3 +101,22 @@ class CheckBox(Input):
 	
 	def click(self):
 		self.properties["selected"].toggle()
+
+
+class RadioBox(Input):
+	def __init__(self, group, name, **kwargs):
+		super(RadioBox, self).__init__(**kwargs)
+		
+		self.__group = group
+		self.__group.insert(self, name)
+		self.__name = name
+		
+		self.set_style_name("radio-box")
+	
+	def click(self):
+		self.__group.select(self)
+	
+	def set_group(self, group):
+		self.__group.remove(self)
+		self.__group = group
+		self.__group.insert(self, self.__name)

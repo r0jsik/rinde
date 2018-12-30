@@ -38,6 +38,10 @@ class CanvasView(Node):
 	
 	def update(self):
 		self.__reset_content()
+		self.redraw()
+	
+	def redraw(self):
+		pass
 	
 	def get_content(self):
 		return self.__content

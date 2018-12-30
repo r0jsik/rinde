@@ -7,17 +7,21 @@ text
 
 text display
 {
-    position-y: -1;
+	position-y: -1;
 }
 
-label, draggable-label, text-button
+label,
+draggable-label,
+text-button
 {
 	font: "Roboto Condensed Regular";
 	font-size: 32;
 	color: #837654;
 }
 
-label shadow, draggable-label shadow, text-button shadow
+label shadow,
+draggable-label shadow,
+text-button shadow
 {
 	color: #111111;
 	position-x: 1;
@@ -38,42 +42,60 @@ slider thumb
 {
 	width: 12;
 	height: 12;
-	border-stroke: 1;
-	border-color: #837654;
-	content-color: #615432;
+	stroke-width: 1;
+	stroke-color: #837654;
+	inside-color: #615432;
+	radius: 75;
 }
 
 slider track
 {
 	height: 8;
-	border-stroke: 1;
-	border-color: #837654;
-	content-color: #EEEEEE;
+	stroke-width: 1;
+	stroke-color: #837654;
+	inside-color: #EEEEEE;
 	position-x: 6;
+	radius: 75;
 }
 
-check-box
+check-box,
+radio-box
 {
 	align: "right";
 	spacing: 5;
 }
 
-check-box selector
+check-box selector,
+radio-box selector
 {
 	width: 14;
 	height: 14;
 }
 
-check-box selector background
+check-box selector background,
+radio-box selector background
 {
-	border-stroke: 1;
-	border-color: #837654;
-	content-color: #EEEEEE;
+	stroke-width: 1;
+	stroke-color: #837654;
+	inside-color: #EEEEEE;
 }
 
-check-box selector pipe
+check-box selector pipe,
+radio-box selector pipe
 {
 	width: 6;
 	height: 6;
-	content-color: #615432;
+	inside-color: #615432;
+}
+
+check-box selector background,
+check-box selector pipe
+{
+	radius: 25;
+}
+
+radio-box selector background,
+radio-box selector pipe
+{
+	radius: 100;
 }

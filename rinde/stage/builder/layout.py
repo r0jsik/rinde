@@ -4,6 +4,7 @@ import xml.etree.cElementTree as xml
 
 from rinde.error import RindeException
 from rinde.stage import StageFactory
+from rinde.stage.node.util import Group
 
 
 class AbstractXMLParser(object):
@@ -100,7 +101,10 @@ class AbstractLayoutParser(AbstractXMLParser):
 	
 	def __parse_node(self, type_name, attributes, children):
 		if "action" in attributes:
-			self.__convert_action_to_controller_method(attributes)
+			self.__convert_node_action(attributes)
+		
+		if "group" in attributes:
+			self.__convert_node_group(attributes)
 		
 		node = self.__create_node(type_name, attributes, children)
 		
@@ -109,11 +113,19 @@ class AbstractLayoutParser(AbstractXMLParser):
 		
 		return node
 	
-	def __convert_action_to_controller_method(self, attributes):
+	def __convert_node_action(self, attributes):
 		try:
 			attributes["action"] = getattr(self.__controller, attributes["action"])
 		except AttributeError:
 			raise RindeException("Controller must implement method '%s'" % attributes["action"])
+	
+	def __convert_node_group(self, attributes):
+		group_name = attributes["group"]
+		
+		if group_name not in self.__controller.groups:
+			self.__controller.groups[group_name] = Group()
+		
+		attributes["group"] = self.__controller.groups[group_name]
 	
 	def __create_node(self, type_name, attributes, children):
 		type = self.get_imported(type_name)

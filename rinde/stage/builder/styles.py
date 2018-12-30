@@ -129,19 +129,19 @@ class Style:
 				return child
 	
 	def get_children(self, state):
-		return self.__children.get(state, [])
+		return self.__children.get(state, ())
 	
 	def add_declarations(self, state, declarations):
 		if state in self.__declarations:
 			self.__declarations[state].update(declarations)
 		else:
-			self.__declarations[state] = declarations
+			self.__declarations[state] = declarations.copy()
 	
 	def get_declarations(self, state):
 		if state in self.__declarations:
 			return self.__declarations[state].items()
 		
-		return []
+		return ()
 	
 	def __eq__(self, object):
 		return object == self.__selector

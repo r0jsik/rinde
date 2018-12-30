@@ -71,6 +71,7 @@ class ControllableStage(StageBase):
 class ControllerBase(object):
 	def __init__(self):
 		self.nodes = {}
+		self.groups = {}
 	
 	def start(self, window):
 		pass
