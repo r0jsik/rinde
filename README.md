@@ -7,8 +7,4 @@ If you don't know how to use Rinde, look into [documentation](https://r0jsik.git
 ### Requires:
 * Python 2.7 or 3.x
 * cssutils
-* pygame (for now)
-
-### Coming soon:
-* Many more node types
-* Independence from pygame
+* pygame

@@ -34,10 +34,7 @@ class AbstractXMLParser(object):
 		return types
 	
 	def parse_root(self):
-		attributes = self.__parse_attributes(self.__root)
-		root = self.create_root(attributes, self.__root.tag)
-		
-		return root
+		return self.create_root(self.__parse_attributes(self.__root), self.__root.tag)
 	
 	def __parse_attributes(self, element):
 		return {property: self.__parse_value(value) for property, value in element.attrib.items()}
@@ -80,9 +77,12 @@ class AbstractXMLParser(object):
 class AbstractLayoutParser(AbstractXMLParser):
 	def __init__(self, stage_directory):
 		super(AbstractLayoutParser, self).__init__("%s/layout.xml" % stage_directory)
+	
+	def parse_stage(self):
+		stage = self.parse_root()
+		self.__controller = stage.get_controller()
 		
-		self.__stage = self.parse_root()
-		self.__controller = self.__stage.get_controller()
+		return stage
 	
 	def create_root(self, attributes, tag):
 		try:
@@ -94,19 +94,16 @@ class AbstractLayoutParser(AbstractXMLParser):
 		pass
 	
 	def parse_element(self, type_name, attributes, children):
-		try:
-			return self.__parse_node(type_name, attributes, children)
-		except TypeError:
-			raise RindeException("Incorrect %s argumentation" % type_name)
-	
-	def __parse_node(self, type_name, attributes, children):
 		if "action" in attributes:
 			self.__convert_node_action(attributes)
 		
 		if "group" in attributes:
 			self.__convert_node_group(attributes)
 		
-		node = self.__create_node(type_name, attributes, children)
+		try:
+			node = self.__create_node(type_name, attributes, children)
+		except TypeError:
+			raise RindeException("Incorrect %s argumentation" % type_name)
 		
 		if "id" in attributes:
 			self.__controller.nodes[attributes["id"]] = node
@@ -134,9 +131,6 @@ class AbstractLayoutParser(AbstractXMLParser):
 			return type(nodes=children, **attributes)
 		else:
 			return type(**attributes)
-	
-	def get_stage(self):
-		return self.__stage
 
 
 class LayoutParserWithExistingController(AbstractLayoutParser):

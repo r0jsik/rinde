@@ -5,7 +5,7 @@ from rinde.stage import ControllerBase
 class Controller(ControllerBase):
 	
 	# Method invoked when stage gets ready
-	def start(self, window):
+	def start(self):
 		
 		# Access to node with id="button" (defined in XML)
 		print("TextButton: ", self.nodes["button"])

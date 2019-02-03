@@ -1,0 +1,11 @@
+#header
+{
+	position-y: 50;
+}
+
+#form
+{
+	position-x: 50;
+	position-y: 200;
+	spacing: 10;
+}

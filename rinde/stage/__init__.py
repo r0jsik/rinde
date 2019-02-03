@@ -4,12 +4,16 @@ from rinde.error import RindeException
 
 
 class Screen:
-	SIZE = None
+	__SIZE = None
 	
 	@staticmethod
 	def init_size():
 		screen_size = pygame.display.Info()
-		Screen.SIZE = (screen_size.current_w, screen_size.current_h)
+		Screen.__SIZE = (screen_size.current_w, screen_size.current_h)
+	
+	@staticmethod
+	def get_size():
+		return Screen.__SIZE
 
 
 class StageBase(object):
@@ -56,7 +60,8 @@ class ControllableStage(StageBase):
 			raise RindeException("Controller must be subclass of rinde.stage.ControllerBase")
 	
 	def start_controller(self, window):
-		self.__controller.start(window)
+		self.__controller.window = window
+		self.__controller.start()
 	
 	def update_controller(self):
 		self.__controller.update()
@@ -64,22 +69,29 @@ class ControllableStage(StageBase):
 	def key_pressed(self, code, char):
 		self.__controller.key_pressed(code, char)
 	
+	def key_released(self, code):
+		self.__controller.key_released(code)
+	
 	def get_controller(self):
 		return self.__controller
 
 
 class ControllerBase(object):
 	def __init__(self):
+		self.window = None
 		self.nodes = {}
 		self.groups = {}
 	
-	def start(self, window):
+	def start(self):
 		pass
 	
 	def update(self):
 		pass
 	
 	def key_pressed(self, code, char):
+		pass
+	
+	def key_released(self, code):
 		pass
 
 
@@ -186,6 +198,9 @@ class EventsHandler(object):
 		if event.type == pygame.KEYDOWN:
 			self.__handle_key_down_event(event)
 		
+		elif event.type == pygame.KEYUP:
+			self.__stage.key_released(event.key)
+		
 		elif event.type == pygame.MOUSEMOTION:
 			self.__handle_mouse_motion(event)
 		
@@ -255,7 +270,7 @@ class Scene(Stage):
 
 class Fullscreen(Stage):
 	def __init__(self, controller):
-		super(Fullscreen, self).__init__(controller, Screen.SIZE, pygame.FULLSCREEN)
+		super(Fullscreen, self).__init__(controller, Screen.get_size(), pygame.FULLSCREEN)
 
 
 class StageFactory:

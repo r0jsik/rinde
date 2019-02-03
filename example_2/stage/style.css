@@ -18,13 +18,13 @@ text
 
 slider
 {
-    range: 255;
+	range: 255;
 }
 
 #display
 {
-    position-x: 325;
-    position-y: 10;
-    width: 75;
-    height: 75;
+	position-x: 325;
+	position-y: 10;
+	width: 75;
+	height: 75;
 }

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<?import rinde.stage.node.text.Label ?>
+<?import rinde.stage.node.text.Text ?>
+
+<Fullscreen>
+	<Label text="Summary" id="header" position_y="-40" />
+	
+	<Text id="summary" text="" />
+</Fullscreen>

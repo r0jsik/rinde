@@ -96,3 +96,6 @@ class Window:
 	def __draw_cursor(self):
 		if self.__cursor:
 			self.__surface.blit(self.__cursor, pygame.mouse.get_pos())
+	
+	def get_size(self):
+		return self.__stage.get_size()

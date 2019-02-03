@@ -8,8 +8,8 @@ class NodeBase(object):
 	def __init__(self, **kwargs):
 		self.properties = Properties()
 	
-	def _borrow_property(self, node, name):
-		self.properties.insert(node.properties[name], name)
+	def _borrow_property(self, node, name, trigger=None):
+		self.properties.insert(node.properties[name], name, trigger)
 	
 	def set_property(self, name, value):
 		self.properties[name].set(value)
@@ -77,18 +77,20 @@ class BoundaryNode(NodeBase):
 		self.__borrow_boundary_property("padding")
 	
 	def __borrow_boundary_property(self, name):
-		self.properties[name] = self.__boundary.properties[name]
+		self.properties[name] = self.__boundary.property(name)
 	
 	def update_boundary(self):
 		self.__boundary.update_space()
-		self.__boundary.update_absolute_width()
-		self.__boundary.update_absolute_height()
+		self.__boundary.update_absolute_size()
 	
 	def is_mouse_over(self, mouse_position):
 		return self.__boundary.is_mouse_over(mouse_position)
 	
 	def get_absolute_position(self):
 		return self.__boundary.get_absolute_position()
+	
+	def get_absolute_size(self):
+		return self.__boundary.get_absolute_size()
 	
 	def set_position(self, position_x, position_y):
 		self.set_property("position-x", position_x)
@@ -218,12 +220,12 @@ class Node(InteractiveNode, StageNode):
 	
 	def reset(self):
 		self.update_style()
+		self.update_boundary()
 		
 		for node in self._get_nodes():
 			node.reset()
 		
 		self.update()
-		self.update_boundary()
 	
 	def update_style(self):
 		self.update_style_request(self)

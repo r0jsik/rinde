@@ -5,7 +5,8 @@ from rinde.error import RindeException
 
 
 class Animation(object):
-	def __init__(self):
+	def __init__(self, callback):
+		self.__callback = callback
 		self.__running = False
 	
 	def start(self):
@@ -26,7 +27,9 @@ class Animation(object):
 		while self.__running:
 			self.next_frame()
 			
-			clock.tick(60)
+			clock.tick(120)
+		
+		self.__callback()
 	
 	def next_frame(self):
 		pass
@@ -36,20 +39,21 @@ class Animation(object):
 
 
 class AnimationTo(Animation):
-	def __init__(self, property, value):
-		super(AnimationTo, self).__init__()
+	def __init__(self, property, value, callback, speed=1):
+		super(AnimationTo, self).__init__(callback)
 		
 		self.__property = property
 		self.__value = value
+		self.__speed = speed
 	
 	def next_frame(self):
 		difference = self.__value - self.__property.get()
 		
-		if difference < 0:
-			self.__property -= 1
+		if self.__speed >= difference >= -self.__speed:
+			self.stop()
+		
+		elif difference < 0:
+			self.__property -= self.__speed
 		
 		elif difference > 0:
-			self.__property += 1
-		
-		else:
-			self.stop()
+			self.__property += self.__speed

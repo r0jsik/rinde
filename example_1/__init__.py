@@ -3,5 +3,5 @@ import rinde
 
 if __name__ == '__main__':
 	
-	# Simplest way to start Rinde application: pass window title and path to stage directory
+	# The simplest way to start Rinde application
 	rinde.Application("Window title", "stage_directory")

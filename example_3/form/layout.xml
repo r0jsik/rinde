@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<?import rinde.stage.node.box.vbox.VBox ?>
+<?import rinde.stage.node.button.Button ?>
+<?import rinde.stage.node.input.CheckBox ?>
+<?import rinde.stage.node.input.RadioBox ?>
+<?import rinde.stage.node.text.Label ?>
+<?import rinde.stage.node.text.Text ?>
+
+<Fullscreen controller="form.Controller">
+	<Label text="Fill in the form" id="header" />
+	
+	<VBox id="form">
+		<Label text="Difficulty" />
+		
+		<VBox>
+			<RadioBox text="Easy" group="difficulty" name="easy" selected="true" />
+			<RadioBox text="Hard" group="difficulty" name="hard" />
+		</VBox>
+		
+		<Label text="Checkboxes" />
+		
+		<VBox>
+			<CheckBox text="Checkbox 1" id="checkbox 1" />
+			<CheckBox text="Checkbox 2" id="checkbox 2" />
+		</VBox>
+		
+		<Button text="Confirm" action="confirm" />
+	</VBox>
+</Fullscreen>

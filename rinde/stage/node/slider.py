@@ -30,7 +30,7 @@ class Slider(Node):
 		
 		self.properties.insert(property, "range", self.__clamp_value)
 	
-	# Prevents thumb from getting out of slider range
+	# Prevents thumb from getting out of the range
 	def __clamp_value(self):
 		value = self.get_property("value")
 		range = self.get_property("range")

@@ -40,9 +40,9 @@ class TextDisplay(Node):
 	def __init__(self, text):
 		super(TextDisplay, self).__init__()
 		
-		self._borrow_property(text, "text")
-		self._borrow_property(text, "font")
-		self._borrow_property(text, "font-size")
+		self._borrow_property(text, "text", self.update)
+		self._borrow_property(text, "font", self.update)
+		self._borrow_property(text, "font-size", self.update)
 		
 		self.properties.create("color", self.update)
 		

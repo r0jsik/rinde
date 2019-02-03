@@ -8,7 +8,7 @@ class StageBuilder:
 		self.__layout_parser = self.__create_layout_parser(stage_directory, controller)
 		self.__styles_parser = StylesParser(stage_directory)
 		
-		self.__stage = self.__layout_parser.get_stage()
+		self.__stage = self.__layout_parser.parse_stage()
 	
 	def __create_layout_parser(self, stage_directory, controller):
 		if controller:

@@ -38,6 +38,28 @@ text-button:active
 	color: #615432;
 }
 
+button
+{
+	stroke-width: 1;
+	stroke-color: #837654;
+	inside-color: #EEEEEE;
+}
+
+button:hover
+{
+	inside-color: #B5A886;
+}
+
+button:active
+{
+	inside-color: #A59876;
+}
+
+button text
+{
+	margin: 5;
+}
+
 slider thumb
 {
 	width: 12;

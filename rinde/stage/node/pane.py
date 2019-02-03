@@ -1,4 +1,5 @@
 from rinde.stage.node import Node
+from rinde.stage.node.util.layout import LayoutComputer
 
 
 class Pane(Node):
@@ -23,5 +24,28 @@ class Pane(Node):
 		self._insert_node(node)
 		node.reset()
 	
+	def remove_node(self, node):
+		self._remove_node(node)
+		self.update()
+	
 	def get_nodes(self):
 		return self._get_nodes()
+
+
+class StackPane(Pane):
+	def __init__(self, **kwargs):
+		super(StackPane, self).__init__(**kwargs)
+		
+		self.properties.add_trigger("width", self.update)
+		self.properties.add_trigger("height", self.update)
+		
+		self.__layout_computer = LayoutComputer(self)
+	
+	def insert_node(self, node):
+		super(StackPane, self).insert_node(node)
+		
+		self.update()
+	
+	def update(self):
+		for node in self.get_nodes():
+			self.__layout_computer.center_node(node)

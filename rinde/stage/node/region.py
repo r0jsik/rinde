@@ -18,5 +18,4 @@ class Region(CanvasView):
 		stroke_color = self.get_property("stroke-color")
 		
 		canvas = self.get_content()
-		canvas.clear()
 		canvas.draw_rounded_rect(inside_color, bounds, radius, stroke_width, stroke_color)
