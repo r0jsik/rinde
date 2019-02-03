@@ -12,7 +12,7 @@ class Region(CanvasView):
 	
 	def redraw(self):
 		inside_color = self.get_property("inside-color")
-		bounds = (0, 0, *self.get_size())
+		bounds = (0, 0, *self.get_absolute_size())
 		radius = self.get_property("radius")
 		stroke_width = self.get_property("stroke-width")
 		stroke_color = self.get_property("stroke-color")

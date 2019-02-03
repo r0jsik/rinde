@@ -39,6 +39,8 @@ class Slider(Node):
 	
 	def __init_thumb(self):
 		self.__thumb = Thumb(self)
+		self.__thumb.set_style_name("thumb")
+		
 		self._insert_node(self.__thumb)
 	
 	def __init_value(self, action):
@@ -63,8 +65,6 @@ class Thumb(Region):
 		super(Thumb, self).__init__()
 		
 		self.__slider = slider
-		
-		self.set_style_name("thumb")
 	
 	def drag(self, mouse_offset):
 		range = self.__slider.get_property("range")

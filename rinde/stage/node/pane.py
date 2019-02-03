@@ -40,6 +40,8 @@ class StackPane(Pane):
 		self.properties.add_trigger("height", self.update)
 		
 		self.__layout_computer = LayoutComputer(self)
+		
+		self.set_style_name("stack-pane")
 	
 	def insert_node(self, node):
 		super(StackPane, self).insert_node(node)
