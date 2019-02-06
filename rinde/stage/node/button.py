@@ -23,7 +23,5 @@ class Button(Region):
 		self.set_style_name("button")
 	
 	def __init_text(self, text):
-		self.__text = Text(text)
-		self.__text.set_style_name("text")
-		
-		self._insert_node(self.__text)
+		text = Text(text)
+		self._insert_node(text)

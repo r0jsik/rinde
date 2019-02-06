@@ -87,16 +87,11 @@ radio-box
 	spacing: 5;
 }
 
-check-box selector,
-radio-box selector
-{
-	width: 14;
-	height: 14;
-}
-
 check-box selector background,
 radio-box selector background
 {
+	width: 14;
+	height: 14;
 	stroke-width: 1;
 	stroke-color: #837654;
 	inside-color: #EEEEEE;
@@ -120,4 +115,5 @@ radio-box selector background,
 radio-box selector pipe
 {
 	radius: 100;
+}
 }

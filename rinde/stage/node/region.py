@@ -10,6 +10,11 @@ class Region(CanvasView):
 		self.properties.create_number("inside-color", self.redraw)
 		self.properties.create_number("radius", self.redraw)
 	
+	def update(self):
+		super(Region, self).update()
+		
+		self.redraw()
+	
 	def redraw(self):
 		inside_color = self.get_property("inside-color")
 		bounds = (0, 0, *self.get_absolute_size())

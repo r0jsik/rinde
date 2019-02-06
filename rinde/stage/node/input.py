@@ -46,8 +46,6 @@ class Selector(Node):
 		background = Region()
 		background.set_style_name("background")
 		
-		self._borrow_property(background, "width")
-		self._borrow_property(background, "height")
 		self._insert_node(background)
 	
 	def __init_pipe(self):

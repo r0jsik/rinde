@@ -101,6 +101,9 @@ class Canvas:
 		else:
 			radius /= 100
 		
+		if bounds[2] <= 0 or bounds[3] <= 0:
+			return
+		
 		rectangle = pygame.Rect(0, 0, bounds[2], bounds[3])
 		surface = pygame.Surface(rectangle.size, pygame.SRCALPHA)
 		
