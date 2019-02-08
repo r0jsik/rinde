@@ -138,6 +138,65 @@ class NumberProperty(Property):
 		return int(self._value)
 
 
+class SpaceProperty(Property):
+	def __init__(self, value):
+		value = top, right, bottom, left = self.__split_directional(value)
+		
+		self.__sides = (
+			self.__create_property(top),
+			self.__create_property(right),
+			self.__create_property(bottom),
+			self.__create_property(left)
+		)
+		
+		super(SpaceProperty, self).__init__(value)
+	
+	def __split_directional(self, value):
+		values = str(value).split(" ")
+		
+		if len(values) == 1:
+			return values[0], values[0], values[0], values[0]
+		
+		if len(values) == 2:
+			return values[0], values[1], values[0], values[1]
+		
+		if len(values) == 3:
+			return values[0], values[1], values[2], values[1]
+		
+		if len(values) == 4:
+			return tuple(values)
+		
+		raise RindeException("Invalid space values")
+	
+	def __create_property(self, value):
+		property = NumberProperty(value)
+		property.add_trigger(self.__update)
+		
+		return property
+	
+	def __update(self):
+		self.set("%d %d %d %d" % tuple(self.__sides[i].get() for i in range(4)))
+	
+	def reset(self, value):
+		values = self.__split_directional(value)
+		
+		for index, value in enumerate(values):
+			self.__sides[index].reset(value)
+		
+		super(SpaceProperty, self).reset(values)
+	
+	def set(self, value):
+		values = self.__split_directional(value)
+		
+		for index, value in enumerate(values):
+			self.__sides[index].set(value)
+		
+		super(SpaceProperty, self).set(values)
+	
+	def get_side(self, index):
+		return self.__sides[index].get()
+
+
 class BooleanProperty(Property):
 	def __init__(self, value=False):
 		super(BooleanProperty, self).__init__(value)

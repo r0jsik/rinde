@@ -80,7 +80,7 @@ class BoundaryNode(NodeBase):
 		self.properties[name] = self.__boundary.property(name)
 	
 	def update_boundary(self):
-		self.__boundary.update_space()
+		self.__boundary.update_absolute_position()
 		self.__boundary.update_absolute_size()
 	
 	def is_mouse_over(self, mouse_position):
