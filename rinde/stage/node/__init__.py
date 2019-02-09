@@ -68,16 +68,6 @@ class BoundaryNode(NodeBase):
 		super(BoundaryNode, self).__init__(**kwargs)
 		
 		self.__boundary = Boundary(self, **kwargs)
-		
-		self.__borrow_boundary_property("position-x")
-		self.__borrow_boundary_property("position-y")
-		self.__borrow_boundary_property("width")
-		self.__borrow_boundary_property("height")
-		self.__borrow_boundary_property("margin")
-		self.__borrow_boundary_property("padding")
-	
-	def __borrow_boundary_property(self, name):
-		self.properties[name] = self.__boundary.property(name)
 	
 	def update_boundary(self):
 		self.__boundary.update_absolute_position()
@@ -87,7 +77,7 @@ class BoundaryNode(NodeBase):
 		return self.__boundary.is_mouse_over(mouse_position)
 	
 	def get_absolute_position(self):
-		return self.__boundary.get_absolute_position()
+		return self.__boundary.get_absolute_position("x"), self.__boundary.get_absolute_position("y")
 	
 	def get_absolute_size(self):
 		return self.__boundary.get_absolute_size()
@@ -161,7 +151,7 @@ class StageNode(StylizableNode, BoundaryNode):
 	# Chain of responsibility
 	def update_style_request(self, node):
 		if self.__parent is None:
-			raise RindeException("Parent is not inserted to the stage")
+			raise RindeException("Node is not inserted to the stage")
 		
 		self.__parent.update_style_request(node)
 	

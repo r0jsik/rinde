@@ -1,11 +1,10 @@
-from rinde.stage.property import Properties
 from rinde.stage.property import SpaceProperty
 
 
 class BoundaryBase(object):
 	def __init__(self, node):
-		self.__properties = Properties()
 		self.__node = node
+		self.__properties = node.properties
 	
 	def create_property(self, name, trigger, value):
 		self.__properties.create_number(name, trigger, value)
@@ -72,7 +71,7 @@ class PositionBoundary(SpaceBoundary):
 	
 	def __get_parent_origin(self, axis, side):
 		parent = self.get_parent()
-		origin = parent.__absolute_position[axis] + parent.get_padding(side)
+		origin = parent.get_absolute_position(axis) + parent.get_padding(side)
 		
 		return origin
 	
@@ -87,8 +86,8 @@ class PositionBoundary(SpaceBoundary):
 		self.__update_absolute_position_x()
 		self.__update_absolute_position_y()
 	
-	def get_absolute_position(self):
-		return self.__absolute_position["x"], self.__absolute_position["y"]
+	def get_absolute_position(self, axis):
+		return self.__absolute_position[axis]
 
 
 class SizeBoundary(SpaceBoundary):
@@ -131,18 +130,14 @@ class SizeBoundary(SpaceBoundary):
 class Boundary(PositionBoundary, SizeBoundary):
 	def is_mouse_over(self, mouse_position):
 		absolute_size = self.get_absolute_size()
-		absolute_position = self.get_absolute_position()
 		
-		if absolute_size[0] > mouse_position[0] - absolute_position[0] > 0:
-			if absolute_size[1] > mouse_position[1] - absolute_position[1] > 0:
+		if absolute_size[0] > mouse_position[0] - self.get_absolute_position("x") > 0:
+			if absolute_size[1] > mouse_position[1] - self.get_absolute_position("y") > 0:
 				return True
 		
 		return False
 
 
-class NullBoundary(Boundary):
-	def __init__(self):
-		super(NullBoundary, self).__init__(None)
-	
-	def children_boundaries(self):
-		return ()
+class NullBoundary:
+	def __getattr__(self, item):
+		return lambda *args: 0
