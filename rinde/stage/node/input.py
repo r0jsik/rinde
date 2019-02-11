@@ -9,8 +9,8 @@ class Input(Node):
 	def __init__(self, text="", selected=False, **kwargs):
 		super(Input, self).__init__(**kwargs)
 		
-		self.properties.create("align", self.update)
-		self.properties.create_number("spacing", self.update)
+		self._create_property("align", self.update)
+		self._create_number_property("spacing", self.update)
 		
 		self.__init_selector(selected)
 		self.__init_text(text)
@@ -55,10 +55,10 @@ class Selector(Node):
 		self._insert_node(self.__pipe)
 	
 	def __init_selected(self, selected):
-		property = self.__pipe.properties["visible"]
-		property.set(selected)
+		property = self.__pipe.property("visible")
+		property.reset(selected)
 		
-		self.properties.insert(property, "selected")
+		self._insert_property("selected", property)
 	
 	def update(self):
 		self.__layout_computer.center_node(self.__pipe)
@@ -86,7 +86,7 @@ class InputLayoutComputer(LayoutComputer):
 	def __align_node(self, node, position_x):
 		position_y = self.compute_node_center(node, "height")
 		node.set_position(position_x, position_y)
-		position_x = node.get_property("width") + self.get_property("spacing")
+		position_x = node["width"] + self.get_property("spacing")
 		
 		return position_x
 
@@ -98,7 +98,7 @@ class CheckBox(Input):
 		self.set_style_name("check-box")
 	
 	def click(self):
-		self.properties["selected"].toggle()
+		self.property("selected").toggle()
 
 
 class RadioBox(Input):

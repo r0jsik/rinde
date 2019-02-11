@@ -28,7 +28,7 @@ text-button shadow
 	position-y: 1;
 }
 
-text-button:hover
+text-button:hovered
 {
 	color: #A59876;
 }
@@ -45,7 +45,7 @@ button
 	inside-color: #EEEEEE;
 }
 
-button:hover
+button:hovered
 {
 	inside-color: #B5A886;
 }

@@ -16,15 +16,12 @@ class Summary(ControllerBase):
 		window_width, window_height = self.window.get_size()
 		
 		label = self.nodes["header"]
-		label_width = label.get_property("width")
-		position = (window_width - label_width)/2
-		
-		label.set_property("position-x", position)
+		label["position-x"] = (window_width - label["width"])/2
 	
 	def show_header(self):
-		property = self.nodes["header"].properties["position-y"]
+		property = self.nodes["header"].property("position-y")
 		animation = AnimationTo(property, 50, self.show_summary)
 		animation.start()
 	
 	def show_summary(self):
-		self.nodes["summary"].set_property("text", self.summary)
+		self.nodes["summary"]["text"] = self.summary

@@ -4,22 +4,21 @@ from rinde.stage.property import SpaceProperty
 class BoundaryBase(object):
 	def __init__(self, node):
 		self.__node = node
-		self.__properties = node.properties
 	
-	def create_property(self, name, trigger, value):
-		self.__properties.create_number(name, trigger, value)
+	def create_property(self, name, value, trigger):
+		self.__node._create_number_property(name, trigger, value)
 	
 	def create_space_property(self, name, value):
-		self.__properties.insert(SpaceProperty(value), name)
+		self.__node._insert_property(name, SpaceProperty(value))
 	
 	def property(self, name):
-		return self.__properties[name]
+		return self.__node.property(name)
 	
 	def set_property(self, name, value):
-		self.__properties[name].set(value)
+		self.__node[name] = value
 	
 	def get_property(self, name):
-		return self.__properties[name].get()
+		return self.__node[name]
 	
 	def update_parent_size(self, axis, dimension, side_1, side_2):
 		parent = self.get_parent()
@@ -52,8 +51,8 @@ class PositionBoundary(SpaceBoundary):
 		
 		self.__absolute_position = {"x": 0, "y": 0}
 		
-		self.create_property("position-x", self.__update_absolute_position_x, position_x)
-		self.create_property("position-y", self.__update_absolute_position_y, position_y)
+		self.create_property("position-x", position_x, self.__update_absolute_position_x)
+		self.create_property("position-y", position_y, self.__update_absolute_position_y)
 	
 	def __update_absolute_position_x(self):
 		self.__update("x", "width", 3, 1)
@@ -96,8 +95,8 @@ class SizeBoundary(SpaceBoundary):
 		
 		self.__absolute_size = {"width": 0, "height": 0}
 		
-		self.create_property("width", self.__update_absolute_width, width)
-		self.create_property("height", self.__update_absolute_height, height)
+		self.create_property("width", width, self.__update_absolute_width)
+		self.create_property("height", height, self.__update_absolute_height)
 	
 	def __update_absolute_width(self):
 		self.__update("x", "width", 3, 1)

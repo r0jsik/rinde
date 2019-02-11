@@ -36,12 +36,11 @@ class StackPane(Pane):
 	def __init__(self, **kwargs):
 		super(StackPane, self).__init__(**kwargs)
 		
-		self.properties.add_trigger("width", self.update)
-		self.properties.add_trigger("height", self.update)
+		self._add_trigger_to_property("width", self.update)
+		self._add_trigger_to_property("height", self.update)
+		self.set_style_name("stack-pane")
 		
 		self.__layout_computer = LayoutComputer(self)
-		
-		self.set_style_name("stack-pane")
 	
 	def insert_node(self, node):
 		super(StackPane, self).insert_node(node)

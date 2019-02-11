@@ -7,18 +7,16 @@ class LayoutComputer(object):
 		self.center_node_vertically(node)
 	
 	def center_node_horizontally(self, node):
-		position = self.compute_node_center(node, "width")
-		node.set_property("position-x", position)
+		node["position-x"] = self.compute_node_center(node, "width")
 	
 	def center_node_vertically(self, node):
-		position = self.compute_node_center(node, "height")
-		node.set_property("position-y", position)
+		node["position-y"] = self.compute_node_center(node, "height")
 	
 	def compute_node_center(self, node, dimension):
-		return (self.get_property(dimension) - node.get_property(dimension))/2
+		return (self.get_property(dimension) - node[dimension])/2
 	
 	def get_property(self, property_name):
-		return self.__node.get_property(property_name)
+		return self.__node[property_name]
 
 
 class PaneLayoutComputer(LayoutComputer):

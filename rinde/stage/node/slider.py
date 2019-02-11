@@ -13,8 +13,8 @@ class Slider(Node):
 		self.__init_thumb()
 		self.__init_value(action)
 		
-		self.properties.add_trigger("width", self.__clamp_value)
-		self.properties.add_trigger("height", self.__update_layout)
+		self._add_trigger_to_property("width", self.__clamp_value)
+		self._add_trigger_to_property("height", self.__update_layout)
 		
 		self.set_style_name("slider")
 	
@@ -25,17 +25,14 @@ class Slider(Node):
 		self._insert_node(self.__track)
 	
 	def __init_range(self, range):
-		property = self.__track.properties["width"]
-		property.set(range)
+		property = self.__track.property("width")
+		property.reset(range)
 		
-		self.properties.insert(property, "range", self.__clamp_value)
+		self._insert_property("range", property, self.__clamp_value)
 	
 	# Prevents thumb from getting out of the range
 	def __clamp_value(self):
-		value = self.get_property("value")
-		range = self.get_property("range")
-		
-		self.properties["value"].set_in_range(0, value, range)
+		self.property("value").set_in_range(0, self["value"], self["range"])
 	
 	def __init_thumb(self):
 		self.__thumb = Thumb(self)
@@ -44,10 +41,7 @@ class Slider(Node):
 		self._insert_node(self.__thumb)
 	
 	def __init_value(self, action):
-		property = self.__thumb.properties["position-x"]
-		property.add_trigger(action)
-		
-		self.properties.insert(property, "value")
+		self._borrow_property(self.__thumb, "position-x", action, "value")
 	
 	def __update_layout(self):
 		self.__layout_computer.center_node_vertically(self.__track)
@@ -67,6 +61,4 @@ class Thumb(Region):
 		self.__slider = slider
 	
 	def drag(self, mouse_offset):
-		range = self.__slider.get_property("range")
-		value = self.properties["position-x"]
-		value.set_in_range(0, value + mouse_offset[0], range)
+		self.property("position-x").set_in_range(0, self["position-x"] + mouse_offset[0], self.__slider["range"])

@@ -12,22 +12,19 @@ class Controller(ControllerBase):
 		window_width, window_height = self.window.get_size()
 		
 		label = self.nodes["header"]
-		label_width = label.get_property("width")
-		position = (window_width - label_width)/2
-		
-		label.set_property("position-x", position)
+		label["position-x"] = (window_width - label["width"])/2
 	
 	def confirm(self):
-		self.nodes["form"].set_property("enabled", False)
+		self.nodes["form"]["enabled"] = False
 		self.hide_header()
 	
 	def hide_header(self):
-		property = self.nodes["header"].properties["position-y"]
+		property = self.nodes["header"].property("position-y")
 		animation = AnimationTo(property, -40, self.hide_form, 2)
 		animation.start()
 	
 	def hide_form(self):
-		property = self.nodes["form"].properties["position-x"]
+		property = self.nodes["form"].property("position-x")
 		animation = AnimationTo(property, -180, self.finish, 2)
 		animation.start()
 	
@@ -41,8 +38,8 @@ class Controller(ControllerBase):
 	
 	def show_summary(self):
 		difficulty = self.groups["difficulty"].get()
-		checkbox_1 = self.nodes["checkbox 1"].get_property("selected")
-		checkbox_2 = self.nodes["checkbox 2"].get_property("selected")
+		checkbox_1 = self.nodes["checkbox 1"]["selected"]
+		checkbox_2 = self.nodes["checkbox 2"]["selected"]
 		summary = Summary(difficulty, checkbox_1, checkbox_2)
 		
 		self.window.set_stage("summary", summary)

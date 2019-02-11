@@ -1,21 +1,54 @@
 from rinde.error import RindeException
 from rinde.stage.node.util.appearance import Appearance
 from rinde.stage.node.util.boundary import Boundary
-from rinde.stage.property import Properties
+from rinde.stage.property import BooleanProperty
+from rinde.stage.property import NumberProperty
+from rinde.stage.property import Property
 
 
 class NodeBase(object):
 	def __init__(self, **kwargs):
-		self.properties = Properties()
+		self.__properties = {}
 	
-	def _borrow_property(self, node, name, trigger=None):
-		self.properties.insert(node.properties[name], name, trigger)
+	def _create_property(self, name, trigger=None, value=None):
+		self.__properties[name] = Property(value)
+		self.__try_to_add_trigger_to_property(name, trigger)
 	
-	def set_property(self, name, value):
-		self.properties[name].set(value)
+	def _create_number_property(self, name, trigger=None, value=0):
+		self.__properties[name] = NumberProperty(value)
+		self.__try_to_add_trigger_to_property(name, trigger)
 	
-	def get_property(self, name):
-		return self.properties[name].get()
+	def _create_boolean_property(self, name, value=False, trigger=None):
+		self.__properties[name] = BooleanProperty(value)
+		self.__try_to_add_trigger_to_property(name, trigger)
+	
+	def _borrow_property(self, node, name, trigger=None, name_as=None):
+		property = node.property(name)
+		
+		if name_as:
+			self._insert_property(name_as, property, trigger)
+		else:
+			self._insert_property(name, property, trigger)
+	
+	def _insert_property(self, name, property, trigger=None):
+		self.__properties[name] = property
+		self.__try_to_add_trigger_to_property(name, trigger)
+	
+	def __try_to_add_trigger_to_property(self, name, trigger):
+		if trigger:
+			self.__properties[name].add_trigger(trigger)
+	
+	def _add_trigger_to_property(self, name, trigger):
+		self.__properties[name].add_trigger(trigger)
+	
+	def property(self, name):
+		return self.__properties[name]
+	
+	def __setitem__(self, property_name, value):
+		self.__properties[property_name].set(value)
+	
+	def __getitem__(self, property_name):
+		return self.__properties[property_name].get()
 
 
 class StylizableNode(NodeBase):
@@ -24,24 +57,24 @@ class StylizableNode(NodeBase):
 		
 		self.__appearance = Appearance(self, id, style_class)
 		
-		self.__create_state_property("hover")
+		self.__create_state_property("hovered")
 		self.__create_state_property("active")
-		self.__create_state_property("focus")
+		self.__create_state_property("focused")
 	
 	def __create_state_property(self, name):
-		self.properties.create_boolean(name, self.__update_state)
+		self._create_boolean_property(name, trigger=self.__update_state)
 	
 	def __update_state(self):
 		self.__appearance.apply(None)
 		
-		if self.get_property("hover"):
-			self.__appearance.apply("hover")
+		if self["hovered"]:
+			self.__appearance.apply("hovered")
 		
-		if self.get_property("active"):
+		if self["active"]:
 			self.__appearance.apply("active")
 		
-		if self.get_property("focus"):
-			self.__appearance.apply("focus")
+		if self["focused"]:
+			self.__appearance.apply("focused")
 	
 	def set_style(self, style):
 		self.__appearance.set_style(style)
@@ -83,15 +116,13 @@ class BoundaryNode(NodeBase):
 		return self.__boundary.get_absolute_size()
 	
 	def set_position(self, position_x, position_y):
-		self.set_property("position-x", position_x)
-		self.set_property("position-y", position_y)
+		self["position-x"], self["position-y"] = position_x, position_y
 	
 	def set_size(self, width, height):
-		self.set_property("width", width)
-		self.set_property("height", height)
+		self["width"], self["height"] = width, height
 	
 	def get_size(self):
-		return self.get_property("width"), self.get_property("height")
+		return self["width"], self["height"]
 	
 	def get_boundary(self):
 		return self.__boundary
@@ -101,29 +132,29 @@ class InteractiveNode(StylizableNode, BoundaryNode):
 	def __init__(self, visible=True, enabled=True, **kwargs):
 		super(InteractiveNode, self).__init__(**kwargs)
 		
-		self.properties.create_boolean("visible", value=visible)
-		self.properties.create_boolean("enabled", value=enabled)
+		self._create_boolean_property("visible", visible)
+		self._create_boolean_property("enabled", enabled)
 	
 	def can_be_hovered(self, mouse_position):
-		return self.get_property("visible") and self.get_property("enabled") and self.is_mouse_over(mouse_position)
+		return self["visible"] and self["enabled"] and self.is_mouse_over(mouse_position)
 	
 	def hover(self):
-		self.set_property("hover", True)
+		self["hovered"] = True
 	
 	def leave(self):
-		self.set_property("hover", False)
+		self["hovered"] = False
 	
 	def activate(self):
-		self.set_property("active", True)
+		self["active"] = True
 	
 	def deactivate(self):
-		self.set_property("active", False)
+		self["active"] = False
 	
 	def focus(self):
-		self.set_property("focus", True)
+		self["focused"] = True
 	
 	def unfocus(self):
-		self.set_property("focus", False)
+		self["focused"] = False
 	
 	def drag(self, mouse_offset):
 		pass
@@ -201,7 +232,7 @@ class Node(InteractiveNode, StageNode):
 		self.__canvas = None
 	
 	def repaint(self, surface):
-		if self.get_property("visible"):
+		if self["visible"]:
 			if self.__canvas:
 				surface.blit(self.__canvas, self.get_absolute_position())
 			
@@ -228,3 +259,6 @@ class Node(InteractiveNode, StageNode):
 		
 		width, height = canvas.get_size()
 		self.set_size(width, height)
+	
+	def _get_canvas(self):
+		return self.__canvas

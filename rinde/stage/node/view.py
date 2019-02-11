@@ -32,8 +32,8 @@ class CanvasView(Node):
 		self.set_style_name("canvas-view")
 	
 	def __update_when_resized(self):
-		self.properties.add_trigger("width", self.update)
-		self.properties.add_trigger("height", self.update)
+		self._add_trigger_to_property("width", self.update)
+		self._add_trigger_to_property("height", self.update)
 	
 	def update(self):
 		width, height = self.get_size()

@@ -6,9 +6,9 @@ class Text(Node):
 	def __init__(self, text, **kwargs):
 		super(Text, self).__init__(**kwargs)
 		
-		self.properties.create("text", value=text)
-		self.properties.create("font")
-		self.properties.create_number("font-size")
+		self._create_property("text", value=text)
+		self._create_property("font")
+		self._create_number_property("font-size")
 		
 		self.__init_display()
 		
@@ -44,23 +44,14 @@ class TextDisplay(Node):
 		self._borrow_property(text, "font", self.update)
 		self._borrow_property(text, "font-size", self.update)
 		
-		self.properties.create("color", self.update)
+		self._create_number_property("color", self.update)
 		
 		self.set_style_name("display")
 	
 	def update(self):
-		text = self.get_property("text")
-		color = self.get_property("color")
-		font = self.__get_font()
-		
-		canvas = font.render(text, color)
+		font = Font(self["font"], self["font-size"])
+		canvas = font.render(self["text"], self["color"])
 		self._set_canvas(canvas)
-	
-	def __get_font(self):
-		file = self.get_property("font")
-		size = self.get_property("font-size")
-		
-		return Font(file, size)
 
 
 class DraggableLabel(Label):
@@ -70,5 +61,5 @@ class DraggableLabel(Label):
 		self.set_style_name("draggable-label")
 	
 	def drag(self, mouse_offset):
-		self.properties["position-x"] += mouse_offset[0]
-		self.properties["position-y"] += mouse_offset[1]
+		self["position-x"] += mouse_offset[0]
+		self["position-y"] += mouse_offset[1]

@@ -139,7 +139,7 @@ class Group:
 		self.__items = {}
 	
 	def insert(self, node, name):
-		if node.get_property("selected"):
+		if node["selected"]:
 			self.__selected = node
 		
 		self.__items[node] = name
@@ -152,7 +152,7 @@ class Group:
 			if node is target:
 				self.__selected = node
 			
-			node.set_property("selected", node is target)
+			node["selected"] = node is target
 	
 	def get(self):
 		return self.__items[self.__selected]
