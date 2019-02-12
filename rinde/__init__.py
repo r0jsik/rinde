@@ -80,11 +80,13 @@ class Window:
 	
 	def __try_to_set_cursor(self, cursor):
 		if cursor:
-			self.__cursor = pygame.image.load(cursor)
+			image = pygame.image.load(cursor)
+			self.__draw_cursor = lambda: self.__surface.blit(image, pygame.mouse.get_pos())
 		else:
-			self.__cursor = None
+			image = None
+			self.__draw_cursor = lambda: ()
 		
-		pygame.mouse.set_visible(cursor is None)
+		pygame.mouse.set_visible(image is None)
 	
 	def __updating(self):
 		while True:
@@ -92,10 +94,6 @@ class Window:
 			self.__draw_cursor()
 			
 			pygame.display.update()
-	
-	def __draw_cursor(self):
-		if self.__cursor:
-			self.__surface.blit(self.__cursor, pygame.mouse.get_pos())
 	
 	def get_size(self):
 		return self.__stage.get_size()

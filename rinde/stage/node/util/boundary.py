@@ -85,6 +85,9 @@ class PositionBoundary(SpaceBoundary):
 		self.__update_absolute_position_x()
 		self.__update_absolute_position_y()
 	
+	def absolute_position(self):
+		return self.__absolute_position["x"], self.__absolute_position["y"]
+	
 	def get_absolute_position(self, axis):
 		return self.__absolute_position[axis]
 
@@ -122,16 +125,17 @@ class SizeBoundary(SpaceBoundary):
 		self.__update_absolute_width()
 		self.__update_absolute_height()
 	
-	def get_absolute_size(self):
+	def absolute_size(self):
 		return self.__absolute_size["width"], self.__absolute_size["height"]
+	
+	def get_absolute_size(self, dimension):
+		return self.__absolute_size[dimension]
 
 
 class Boundary(PositionBoundary, SizeBoundary):
 	def is_mouse_over(self, mouse_position):
-		absolute_size = self.get_absolute_size()
-		
-		if absolute_size[0] > mouse_position[0] - self.get_absolute_position("x") > 0:
-			if absolute_size[1] > mouse_position[1] - self.get_absolute_position("y") > 0:
+		if self.get_absolute_size("width") > mouse_position[0] - self.get_absolute_position("x") > 0:
+			if self.get_absolute_size("height") > mouse_position[1] - self.get_absolute_position("y") > 0:
 				return True
 		
 		return False

@@ -22,13 +22,13 @@ class Box(Pane):
 
 
 class BoxLayoutComputer(PaneLayoutComputer):
-	def update_nodes_spacing(self, dimension_index, axis):
+	def update_nodes_spacing(self, dimension, axis):
 		spacing = self.get_property("spacing")
 		position = 0
 		
 		for node in self.get_nodes():
 			node["position-%s" % axis] = position
-			position += node.get_absolute_size()[dimension_index] + spacing
+			position += node.get_absolute_size(dimension) + spacing
 	
 	def update_nodes_align(self, axis):
 		align = self.get_property("align")

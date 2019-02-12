@@ -11,7 +11,7 @@ class VBox(Box):
 		self.__layout_computer = VBoxLayoutComputer(self)
 	
 	def update_nodes_spacing(self):
-		self.__layout_computer.update_nodes_spacing(1, "y")
+		self.__layout_computer.update_nodes_spacing("height", "y")
 	
 	def update_nodes_align(self):
 		self.__layout_computer.update_nodes_align("x")

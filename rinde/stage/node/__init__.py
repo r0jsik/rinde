@@ -109,11 +109,14 @@ class BoundaryNode(NodeBase):
 	def is_mouse_over(self, mouse_position):
 		return self.__boundary.is_mouse_over(mouse_position)
 	
-	def get_absolute_position(self):
-		return self.__boundary.get_absolute_position("x"), self.__boundary.get_absolute_position("y")
+	def absolute_position(self):
+		return self.__boundary.absolute_position()
 	
-	def get_absolute_size(self):
-		return self.__boundary.get_absolute_size()
+	def absolute_size(self):
+		return self.__boundary.absolute_size()
+	
+	def get_absolute_size(self, dimension):
+		return self.__boundary.get_absolute_size(dimension)
 	
 	def set_position(self, position_x, position_y):
 		self["position-x"], self["position-y"] = position_x, position_y
@@ -234,7 +237,7 @@ class Node(InteractiveNode, StageNode):
 	def repaint(self, surface):
 		if self["visible"]:
 			if self.__canvas:
-				surface.blit(self.__canvas, self.get_absolute_position())
+				surface.blit(self.__canvas, self.absolute_position())
 			
 			for node in self._get_nodes():
 				node.repaint(surface)

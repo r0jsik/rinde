@@ -26,7 +26,7 @@ class Pane(Node):
 	
 	def remove_node(self, node):
 		self._remove_node(node)
-		self.update()
+		self.update_boundary()
 	
 	def get_nodes(self):
 		return self._get_nodes()
@@ -38,14 +38,10 @@ class StackPane(Pane):
 		
 		self._add_trigger_to_property("width", self.update)
 		self._add_trigger_to_property("height", self.update)
+		
 		self.set_style_name("stack-pane")
 		
 		self.__layout_computer = LayoutComputer(self)
-	
-	def insert_node(self, node):
-		super(StackPane, self).insert_node(node)
-		
-		self.update()
 	
 	def update(self):
 		for node in self.get_nodes():
