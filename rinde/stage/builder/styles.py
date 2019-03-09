@@ -5,7 +5,7 @@ from rinde.error import RindeException
 
 
 class StylesParser:
-	__PATH_TO_RINDE_STYLESHEET = Resources.get_path("rinde.css")
+	__PATH_TO_RINDE_STYLESHEET = Resources.get_path_to_rinde_file("rinde.css")
 	
 	def __init__(self, stage_directory):
 		self.__path_to_stage_stylesheet = "%s/style.css" % stage_directory

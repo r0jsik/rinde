@@ -72,6 +72,10 @@ class ControllableStage(StageBase):
 	def key_released(self, code):
 		self.__controller.key_released(code)
 	
+	def close_request(self):
+		self.__controller.close()
+		exit()
+	
 	def get_controller(self):
 		return self.__controller
 
@@ -92,6 +96,9 @@ class ControllerBase(object):
 		pass
 	
 	def key_released(self, code):
+		pass
+	
+	def close(self):
 		pass
 
 
@@ -211,11 +218,11 @@ class EventsHandler(object):
 			self.__handle_mouse_release(event)
 		
 		elif event.type == pygame.QUIT:
-			exit()
+			self.__stage.close_request()
 	
 	def __handle_key_down_event(self, event):
 		if event.key == pygame.K_F4 and self.__is_alt_down():
-			exit()
+			self.__stage.close_request()
 		else:
 			self.__stage.key_pressed(event.key, event.unicode)
 	

@@ -89,7 +89,7 @@ class NumberProperty(Property):
 		return self.set(self._value % other)
 	
 	def __int__(self):
-		return self._value
+		return int(self._value)
 
 
 class SpaceProperty(Property):

@@ -34,28 +34,13 @@ class Font:
 
 
 class Image:
-	__CACHE = {}
-	
-	@staticmethod
-	def remove_from_cache(resource):
-		try:
-			Image.__CACHE.pop(resource)
-		except KeyError:
-			raise RindeException("File '%s' is not cached")
-	
 	def __init__(self, resource):
-		try:
-			self.__image = self.__load("src('%s')" % resource)
-		except pygame.error:
-			raise RindeException("File '%s' not found" % resource)
-	
-	def __load(self, resource):
 		path = Resources.get_path(resource)
 		
-		if path not in Image.__CACHE:
-			Image.__CACHE[path] = pygame.image.load(path)
-		
-		return Image.__CACHE[path]
+		try:
+			self.__image = pygame.image.load(path)
+		except pygame.error:
+			raise RindeException("File '%s' not found" % path)
 	
 	def resize(self, width, height):
 		self.__image = pygame.transform.scale(self.__image, (width, height))
@@ -144,9 +129,6 @@ class Group:
 		
 		self.__items[node] = name
 	
-	def remove(self, node):
-		self.__items.pop(node)
-	
 	def select(self, target):
 		for node, name in self.__items.items():
 			if node is target:
@@ -154,5 +136,8 @@ class Group:
 			
 			node["selected"] = node is target
 	
-	def get(self):
+	def __eq__(self, other):
+		return str(self) == str(other)
+	
+	def __str__(self):
 		return self.__items[self.__selected]

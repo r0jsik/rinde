@@ -47,7 +47,7 @@ class Window:
 	
 	def __try_to_init_favicon(self, favicon):
 		if favicon is None:
-			favicon = Resources.get_path("favicon.png")
+			favicon = Resources.get_path_to_rinde_file("favicon.png")
 		
 		favicon = pygame.image.load(favicon)
 		pygame.display.set_icon(favicon)

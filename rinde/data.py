@@ -1,5 +1,4 @@
 import os
-import re
 
 
 class Resources:
@@ -7,18 +6,14 @@ class Resources:
 	
 	@staticmethod
 	def get_path(resource):
-		external_resource = Resources.__as_external(resource)
+		if resource.startswith("src"):
+			return resource[5:-2]
 		
-		if external_resource:
-			return external_resource.group(1)
-		else:
-			return os.path.join(Resources.__ROOT, "res", resource)
+		if resource.startswith("rinde_src"):
+			return "%s/res/%s" % (Resources.__ROOT, resource[11:-2])
+		
+		return resource
 	
 	@staticmethod
-	def __as_external(resource):
-		
-		# Resource looks like: src('path/to/resource/foo.bar')
-		regex = re.compile("^src\([\'\"]([\w\s./\\\\]+)[\'\"]\)$")
-		match = re.match(regex, resource)
-		
-		return match
+	def get_path_to_rinde_file(resource):
+		return "%s/res/%s" % (Resources.__ROOT, resource)

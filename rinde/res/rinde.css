@@ -1,6 +1,6 @@
 text
 {
-	font: "Roboto Condensed Regular";
+	font: rinde_src("Roboto Condensed Regular.ttf");
 	font-size: 14;
 	color: #333333;
 }
@@ -14,7 +14,7 @@ label,
 draggable-label,
 text-button
 {
-	font: "Roboto Condensed Regular";
+	font: rinde_src("Roboto Condensed Regular.ttf");
 	font-size: 32;
 	color: #837654;
 }

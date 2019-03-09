@@ -37,7 +37,7 @@ class Controller(ControllerBase):
 			self.show_summary()
 	
 	def show_summary(self):
-		difficulty = self.groups["difficulty"].get()
+		difficulty = self.groups["difficulty"]
 		checkbox_1 = self.nodes["checkbox 1"]["selected"]
 		checkbox_2 = self.nodes["checkbox 2"]["selected"]
 		summary = Summary(difficulty, checkbox_1, checkbox_2)
