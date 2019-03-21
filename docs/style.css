@@ -6,7 +6,7 @@
 
 body
 {
-	width: 1080px;
+	width: 90%;
 	margin: 50px auto;
 	font-family: "Trebuchet MS", sans-serif;
 }
@@ -31,7 +31,7 @@ a:hover
 	border-right: 1px dotted #837654;
 }
 
-#menu dt
+#menu dt:first-of-type, #menu dt:last-of-type
 {
 	margin-bottom: 10px;
 }
@@ -47,7 +47,7 @@ a:hover
 /* Main */
 #main
 {
-	width: 850px;
+	width: 80%;
 	float: right;
 	margin-bottom: 50px;
 }
@@ -78,7 +78,7 @@ a:hover
 	font-size: initial;
 }
 
-#main h3 + p
+#main p
 {
 	margin-left: 20px;
 }
@@ -106,4 +106,71 @@ a:hover
 	background-color: #EEE8AA;
 	padding: 10px;
 	margin: 10px 0;
+}
+
+#main table
+{
+	margin-top: 20px;
+	width: 100%;
+}
+
+#main table th
+{
+	background-color: #EEE8AA;
+	padding: 5px;
+}
+
+#main table td
+{
+	border-bottom: 1px solid #EEE8AA;
+	padding: 5px;
+	min-width: 150px;
+}
+
+
+/* Responsibility */
+@media screen and (max-width: 1200px)
+{
+	#menu
+	{
+		width: 150px;
+	}
+
+	#main
+	{
+		width: 80%;
+	}
+}
+
+@media screen and (max-width: 960px)
+{
+	#main
+	{
+		width: 75%;
+	}
+}
+
+@media screen and (max-width: 760px)
+{
+	#main
+	{
+		width: 65%;
+	}
+}
+
+@media screen and (max-width: 520px)
+{
+	#menu
+	{
+		width: 100%;
+		clear: both;
+		border-right: none;
+		margin-bottom: 50px;
+	}
+	
+	#main
+	{
+		float: none;
+		width: 100%;
+	}
 }
