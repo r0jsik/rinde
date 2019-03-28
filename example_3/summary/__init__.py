@@ -1,5 +1,4 @@
 from rinde.stage import ControllerBase
-from rinde.stage.animation import AnimationTo
 
 
 class Summary(ControllerBase):
@@ -20,8 +19,7 @@ class Summary(ControllerBase):
 	
 	def show_header(self):
 		property = self.nodes["header"].property("position-y")
-		animation = AnimationTo(property, 50, self.show_summary)
-		animation.start()
+		property.animate_to(50, self.show_summary)
 	
 	def show_summary(self):
 		self.nodes["summary"]["text"] = self.summary

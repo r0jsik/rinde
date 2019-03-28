@@ -1,4 +1,5 @@
 from rinde.error import RindeException
+from rinde.stage.animation import Animation
 
 
 class Property(object):
@@ -60,6 +61,14 @@ class Property(object):
 class NumberProperty(Property):
 	def __init__(self, value=0):
 		super(NumberProperty, self).__init__(value)
+	
+	def animate_to(self, value, callback, speed=0.5):
+		animation = Animation(self, value, callback, speed)
+		animation.start()
+	
+	def animate_by(self, value, callback, speed=0.5):
+		animation = Animation(self, self._value + value, callback, speed)
+		animation.start()
 	
 	def set_in_range(self, min_value, value, max_value):
 		self.set(min_value if value < min_value else value if value < max_value else max_value)

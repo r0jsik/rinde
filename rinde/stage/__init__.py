@@ -1,6 +1,7 @@
 import pygame
 
 from rinde.error import RindeException
+from rinde.stage.animation import Animations
 
 
 class Screen:
@@ -259,6 +260,8 @@ class Stage(InteractiveStage):
 		self.__mode = mode
 	
 	def update(self, surface):
+		Animations.update_all()
+		
 		self.update_controller()
 		self.handle_events()
 		self.repaint(surface)
