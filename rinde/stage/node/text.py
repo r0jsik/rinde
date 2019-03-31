@@ -3,7 +3,7 @@ from rinde.stage.node.util import Font
 
 
 class Text(Node):
-	def __init__(self, text, **kwargs):
+	def __init__(self, text="", **kwargs):
 		super(Text, self).__init__(**kwargs)
 		
 		self._create_property("text", value=text)
@@ -22,8 +22,8 @@ class Text(Node):
 
 
 class Label(Text):
-	def __init__(self, text, **kwargs):
-		super(Label, self).__init__(text, **kwargs)
+	def __init__(self, **kwargs):
+		super(Label, self).__init__(**kwargs)
 		
 		self.__init_shadow()
 		
@@ -51,7 +51,9 @@ class TextDisplay(Node):
 	def update(self):
 		font = Font(self["font"], self["font-size"])
 		canvas = font.render(self["text"], self["color"])
+		
 		self._set_canvas(canvas)
+		self._fit_size()
 
 
 class DraggableLabel(Label):

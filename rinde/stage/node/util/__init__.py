@@ -42,9 +42,6 @@ class Image:
 		except pygame.error:
 			raise RindeException("File '%s' not found" % path)
 	
-	def resize(self, width, height):
-		self.__image = pygame.transform.scale(self.__image, (width, height))
-	
 	def get(self):
 		return self.__image.convert_alpha()
 
@@ -55,6 +52,9 @@ class Canvas:
 			self.__canvas = pygame.Surface((width, height), pygame.SRCALPHA)
 		except pygame.error:
 			raise RindeException("Invalid canvas size")
+	
+	def clear(self):
+		self.__canvas.fill((0, 0, 0, 0))
 	
 	def fill(self, red, green, blue, alpha=255):
 		self.__canvas.fill((red, green, blue, alpha))

@@ -62,11 +62,11 @@ class NumberProperty(Property):
 	def __init__(self, value=0):
 		super(NumberProperty, self).__init__(value)
 	
-	def animate_to(self, value, callback, speed=0.5):
+	def animate_to(self, value, callback, speed=2):
 		animation = Animation(self, value, callback, speed)
 		animation.start()
 	
-	def animate_by(self, value, callback, speed=0.5):
+	def animate_by(self, value, callback, speed=2):
 		animation = Animation(self, self._value + value, callback, speed)
 		animation.start()
 	

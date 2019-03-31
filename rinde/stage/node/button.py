@@ -13,8 +13,8 @@ class TextButton(Label):
 
 
 class Button(Region):
-	def __init__(self, action, text):
-		super(Button, self).__init__()
+	def __init__(self, action, text="", **kwargs):
+		super(Button, self).__init__(**kwargs)
 		
 		self.__init_text(text)
 		
@@ -24,4 +24,6 @@ class Button(Region):
 	
 	def __init_text(self, text):
 		text = Text(text)
+		
+		self._borrow_property(text, "text")
 		self._insert_node(text)

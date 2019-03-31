@@ -19,7 +19,7 @@ class Controller(ControllerBase):
 	
 	def hide_form(self):
 		property = self.nodes["form"].property("position-x")
-		property.animate_by(-210, self.show_summary, 1)
+		property.animate_by(-210, self.show_summary, 3)
 	
 	def show_summary(self):
 		difficulty = self.groups["difficulty"]

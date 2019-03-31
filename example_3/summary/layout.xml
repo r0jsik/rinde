@@ -5,6 +5,5 @@
 
 <Fullscreen>
 	<Label text="Summary" id="header" position_y="-40" />
-	
-	<Text id="summary" text="" />
+	<Text id="summary" />
 </Fullscreen>

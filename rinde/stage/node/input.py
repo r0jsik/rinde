@@ -24,6 +24,8 @@ class Input(Node):
 	
 	def __init_text(self, text):
 		self.__text = Text(text)
+		
+		self._borrow_property(self.__text, "text")
 		self._insert_node(self.__text)
 	
 	def update(self):

@@ -259,8 +259,9 @@ class Node(InteractiveNode, StageNode):
 	
 	def _set_canvas(self, canvas):
 		self.__canvas = canvas
-		
-		width, height = canvas.get_size()
+	
+	def _fit_size(self):
+		width, height = self.__canvas.get_size()
 		self.set_size(width, height)
 	
 	def _get_canvas(self):

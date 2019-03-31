@@ -89,11 +89,15 @@ class Window:
 		pygame.mouse.set_visible(image is None)
 	
 	def __updating(self):
+		clock = pygame.time.Clock()
+		
 		while True:
 			self.__stage.update(self.__surface)
 			self.__draw_cursor()
 			
 			pygame.display.update()
+			
+			clock.tick(60)
 	
 	def get_size(self):
 		return self.__stage.get_size()
