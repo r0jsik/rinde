@@ -15,10 +15,17 @@ class Text(Node):
 		self.set_style_name("text")
 	
 	def __init_display(self):
-		display = TextDisplay(self)
+		self.__display = TextDisplay(self)
 		
-		self._borrow_property(display, "color")
-		self._insert_node(display)
+		self._borrow_property(self.__display, "color")
+		self._insert_node(self.__display)
+	
+	def _crop_display_canvas(self, offset_x, offset_y, width, height):
+		canvas = self.__display._get_canvas()
+		canvas = canvas.subsurface((offset_x, offset_y, width, height))
+		
+		self.__display._set_canvas(canvas)
+		self.__display._fit_size()
 
 
 class Label(Text):

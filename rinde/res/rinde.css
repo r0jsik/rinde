@@ -116,4 +116,24 @@ radio-box selector pipe
 {
 	radius: 100;
 }
+
+text-field background,
+password-field background
+{
+	width: 160;
+	height: 24;
+	stroke-width: 1;
+	stroke-color: #837654;
+	inside-color: #EEEEEE;
+	radius: 25;
+}
+
+text-field text
+{
+	padding: 3 5;
+}
+
+password-field text
+{
+	padding: 5;
 }
