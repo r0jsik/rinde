@@ -11,7 +11,7 @@ class HBox(Box):
 		self.__layout_computer = HBoxLayoutComputer(self)
 	
 	def update_nodes_spacing(self):
-		self.__layout_computer.update_nodes_spacing("width", "x")
+		self.__layout_computer.update_nodes_spacing("x", "width", 3, 1)
 	
 	def update_nodes_align(self):
 		self.__layout_computer.update_nodes_align("y")

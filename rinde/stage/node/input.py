@@ -109,8 +109,9 @@ class RadioBox(Input):
 		
 		self.__group = group
 		self.__group.insert(self, name)
+		self.__name = name
 		
 		self.set_style_name("radio-box")
 	
 	def click(self):
-		self.__group.select(self)
+		self.__group.select(self.__name)

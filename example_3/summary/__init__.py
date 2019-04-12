@@ -2,10 +2,10 @@ from rinde.stage import ControllerBase
 
 
 class Summary(ControllerBase):
-	def __init__(self, difficulty, checkbox_1, checkbox_2):
+	def __init__(self, *args):
 		super(Summary, self).__init__()
 		
-		self.summary = "Difficulty: %s, checkbox_1: %s, checkbox_2: %s" % (difficulty, checkbox_1, checkbox_2)
+		self.summary = "username='%s'; password='%s'; difficulty='%s'; checkbox_1='%s'; checkbox_2='%s'" % args
 	
 	def start(self):
 		self.center_header()

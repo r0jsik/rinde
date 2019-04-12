@@ -19,7 +19,6 @@ class Button(Region):
 		self.__init_text(text)
 		
 		self.click = action
-		
 		self.set_style_name("button")
 	
 	def __init_text(self, text):

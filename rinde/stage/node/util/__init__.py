@@ -27,7 +27,7 @@ class Font:
 		return Font.__CACHE[path][size]
 	
 	def render(self, text, color):
-		return self.__pygame_font.render(str(text), True, self.__int_to_rgb(color))
+		return self.__pygame_font.render(text, True, self.__int_to_rgb(color))
 	
 	def __int_to_rgb(self, color):
 		return tuple((color >> offset) & 255 for offset in (16, 8, 0))
@@ -120,24 +120,23 @@ class Canvas:
 
 class Group:
 	def __init__(self):
-		self.__selected = None
+		self.__selected = ""
 		self.__items = {}
 	
 	def insert(self, node, name):
-		if node["selected"]:
-			self.__selected = node
+		self.__items[name] = node
 		
-		self.__items[node] = name
+		if node["selected"]:
+			self.select(name)
 	
-	def select(self, target):
-		for node, name in self.__items.items():
-			if node is target:
-				self.__selected = node
-			
-			node["selected"] = node is target
+	def select(self, name):
+		self.__selected = name
+		
+		for item_name, item in self.__items.items():
+			item["selected"] = (item_name == name)
 	
 	def __eq__(self, other):
-		return str(self) == str(other)
+		return self.__selected == other
 	
 	def __str__(self):
-		return self.__items[self.__selected]
+		return self.__selected

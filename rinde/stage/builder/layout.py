@@ -37,13 +37,7 @@ class AbstractXMLParser(object):
 		return self.create_root(self.__parse_attributes(self.__root), self.__root.tag)
 	
 	def __parse_attributes(self, element):
-		return {property: self.__parse_value(value) for property, value in element.attrib.items()}
-	
-	def __parse_value(self, value):
-		if value.lstrip("-").isdigit():
-			return int(value)
-		else:
-			return value
+		return {property: value for property, value in element.attrib.items()}
 	
 	def create_root(self, attributes, tag):
 		pass

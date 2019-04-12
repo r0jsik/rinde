@@ -11,6 +11,9 @@ class Pane(Node):
 		
 		self.set_style_name("pane")
 	
+	def update(self):
+		self.update_layout()
+	
 	def get_hovered_node(self, mouse_position):
 		hovered_node = self
 		
@@ -23,10 +26,11 @@ class Pane(Node):
 	def insert_node(self, node):
 		self._insert_node(node)
 		node.reset()
+		self.update_layout()
 	
 	def remove_node(self, node):
 		self._remove_node(node)
-		self.update_boundary()
+		self.update_layout()
 	
 	def get_nodes(self):
 		return self._get_nodes()
@@ -36,13 +40,10 @@ class StackPane(Pane):
 	def __init__(self, **kwargs):
 		super(StackPane, self).__init__(**kwargs)
 		
-		self._add_trigger_to_property("width", self.update)
-		self._add_trigger_to_property("height", self.update)
-		
 		self.set_style_name("stack-pane")
 		
 		self.__layout_computer = LayoutComputer(self)
 	
-	def update(self):
+	def update_layout(self):
 		for node in self.get_nodes():
 			self.__layout_computer.center_node(node)

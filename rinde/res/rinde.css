@@ -10,18 +10,14 @@ text display
 	position-y: -1;
 }
 
-label,
-draggable-label,
-text-button
+label, draggable-label, text-button
 {
 	font: rinde_src("Roboto Condensed Regular.ttf");
 	font-size: 32;
 	color: #837654;
 }
 
-label shadow,
-draggable-label shadow,
-text-button shadow
+label shadow, draggable-label shadow, text-button shadow
 {
 	color: #111111;
 	position-x: 1;
@@ -55,9 +51,9 @@ button:active
 	inside-color: #A59876;
 }
 
-button text
+button
 {
-	margin: 5 10;
+	padding: 5 10;
 }
 
 slider thumb
@@ -80,15 +76,13 @@ slider track
 	radius: 75;
 }
 
-check-box,
-radio-box
+check-box, radio-box
 {
 	align: "right";
 	spacing: 5;
 }
 
-check-box selector background,
-radio-box selector background
+check-box selector background, radio-box selector background
 {
 	width: 14;
 	height: 14;
@@ -97,28 +91,24 @@ radio-box selector background
 	inside-color: #EEEEEE;
 }
 
-check-box selector pipe,
-radio-box selector pipe
+check-box selector pipe, radio-box selector pipe
 {
 	width: 6;
 	height: 6;
 	inside-color: #615432;
 }
 
-check-box selector background,
-check-box selector pipe
+check-box selector background, check-box selector pipe
 {
 	radius: 25;
 }
 
-radio-box selector background,
-radio-box selector pipe
+radio-box selector background, radio-box selector pipe
 {
 	radius: 100;
 }
 
-text-field background,
-password-field background
+text-field background, password-field background
 {
 	width: 160;
 	height: 24;
@@ -128,12 +118,15 @@ password-field background
 	radius: 25;
 }
 
-text-field text
+text-field placeholder, password-field placeholder
 {
-	padding: 3 5;
+	font: rinde_src("Roboto Condensed Regular.ttf");
+	font-size: 14;
+	color: #666666;
+	padding: 2 5;
 }
 
-password-field text
+text-field text, password-field text
 {
-	padding: 5;
+	padding: 3 5;
 }

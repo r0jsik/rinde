@@ -4,10 +4,10 @@ from rinde.stage.node.util.layout import PaneLayoutComputer
 
 
 class Box(Pane):
-	def __init__(self, nodes, align, spacing=0, **kwargs):
+	def __init__(self, nodes, align, **kwargs):
 		super(Box, self).__init__(nodes, **kwargs)
 		
-		self._create_number_property("spacing", self.update_nodes_spacing, spacing)
+		self._create_number_property("spacing", self.update_nodes_spacing)
 		self._create_property("align", self.update_nodes_align, align)
 	
 	def update_nodes_spacing(self):
@@ -16,19 +16,19 @@ class Box(Pane):
 	def update_nodes_align(self):
 		pass
 	
-	def update(self):
+	def update_layout(self):
 		self.update_nodes_spacing()
 		self.update_nodes_align()
 
 
 class BoxLayoutComputer(PaneLayoutComputer):
-	def update_nodes_spacing(self, dimension, axis):
+	def update_nodes_spacing(self, axis, dimension, side_1, side_2):
 		spacing = self.get_property("spacing")
 		position = 0
 		
 		for node in self.get_nodes():
 			node["position-%s" % axis] = position
-			position += node.get_absolute_size(dimension) + spacing
+			position += node["margin"][side_1] + node.get_absolute_size(dimension) + node["margin"][side_2] + spacing
 	
 	def update_nodes_align(self, axis):
 		align = self.get_property("align")

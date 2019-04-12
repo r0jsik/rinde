@@ -58,7 +58,7 @@ class ControllableStage(StageBase):
 		if isinstance(controller, ControllerBase):
 			self.__controller = controller
 		else:
-			raise RindeException("Controller must be subclass of rinde.stage.ControllerBase")
+			raise RindeException("Controller must be a subclass of rinde.stage.ControllerBase")
 	
 	def start_controller(self, window):
 		self.__controller.window = window
@@ -275,7 +275,7 @@ class Stage(InteractiveStage):
 
 class Scene(Stage):
 	def __init__(self, controller, width, height):
-		super(Scene, self).__init__(controller, (width, height))
+		super(Scene, self).__init__(controller, (int(width), int(height)))
 
 
 class Fullscreen(Stage):

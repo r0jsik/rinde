@@ -1,7 +1,7 @@
 from rinde.stage import ControllerBase
 
 
-# Controller must be subclass of rinde.stage.ControllerBase
+# Controller must be a subclass of rinde.stage.ControllerBase
 class Controller(ControllerBase):
 	
 	# Method invoked when stage gets ready

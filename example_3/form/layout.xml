@@ -2,6 +2,8 @@
 
 <?import rinde.stage.node.box.vbox.VBox ?>
 <?import rinde.stage.node.button.Button ?>
+<?import rinde.stage.node.field.TextField ?>
+<?import rinde.stage.node.field.PasswordField ?>
 <?import rinde.stage.node.input.CheckBox ?>
 <?import rinde.stage.node.input.RadioBox ?>
 <?import rinde.stage.node.text.Label ?>
@@ -11,6 +13,11 @@
 	<Label text="Fill in the form" id="header" />
 	
 	<VBox id="form">
+		<Label text="User" />
+		
+		<TextField id="username" placeholder="username" />
+		<PasswordField id="password" placeholder="password" />
+		
 		<Label text="Difficulty" />
 		
 		<VBox>
@@ -18,7 +25,7 @@
 			<RadioBox text="Hard" group="difficulty" name="hard" />
 		</VBox>
 		
-		<Label text="Checkboxes" />
+		<Label text="Options" />
 		
 		<VBox>
 			<CheckBox text="Checkbox 1" id="checkbox 1" />

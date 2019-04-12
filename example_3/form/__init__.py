@@ -19,12 +19,14 @@ class Controller(ControllerBase):
 	
 	def hide_form(self):
 		property = self.nodes["form"].property("position-x")
-		property.animate_by(-210, self.show_summary, 3)
+		property.animate_by(-220, self.show_summary, 3)
 	
 	def show_summary(self):
+		username = self.nodes["username"]["text"]
+		password = self.nodes["password"]["text"]
 		difficulty = self.groups["difficulty"]
 		checkbox_1 = self.nodes["checkbox 1"]["selected"]
 		checkbox_2 = self.nodes["checkbox 2"]["selected"]
-		summary = Summary(difficulty, checkbox_1, checkbox_2)
+		summary = Summary(username, password, difficulty, checkbox_1, checkbox_2)
 		
 		self.window.set_stage("summary", summary)

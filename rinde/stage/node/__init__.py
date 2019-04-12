@@ -106,11 +106,17 @@ class BoundaryNode(NodeBase):
 		self.__boundary.update_absolute_position()
 		self.__boundary.update_absolute_size()
 	
+	def update_layout(self):
+		pass
+	
 	def is_mouse_over(self, mouse_position):
 		return self.__boundary.is_mouse_over(mouse_position)
 	
 	def absolute_position(self):
 		return self.__boundary.absolute_position()
+	
+	def get_absolute_position(self, axis):
+		return self.__boundary.get_absolute_position(axis)
 	
 	def absolute_size(self):
 		return self.__boundary.absolute_size()

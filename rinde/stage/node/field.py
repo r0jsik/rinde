@@ -4,13 +4,14 @@ from rinde.stage.node.text import Text
 
 
 class Field(Node):
-	def __init__(self, text="", **kwargs):
+	def __init__(self, text="", placeholder="", **kwargs):
 		super(Field, self).__init__(**kwargs)
 		
 		self._create_property("text", self.update, text)
 		
 		self.__init_background()
-		self.__init_content(text)
+		self.__init_placeholder(placeholder)
+		self.__init_text(text)
 	
 	def __init_background(self):
 		self.__background = Region()
@@ -18,30 +19,40 @@ class Field(Node):
 		
 		self._insert_node(self.__background)
 	
-	def __init_content(self, text):
-		self.__content = Text(text)
+	def __init_placeholder(self, text):
+		self.__placeholder = Text(text)
+		self.__placeholder.set_style_name("placeholder")
 		
-		self._borrow_property(self.__content, "text", name_as="content-text")
-		self._insert_node(self.__content)
+		self._insert_node(self.__placeholder)
 	
-	def key_pressed(self, code, char):
-		self.__update_text_property(code, char)
+	def __init_text(self, text):
+		self.__text = Text(text)
+		self.__text._add_trigger_to_property("text", self.update)
+		
+		self._insert_node(self.__text)
+	
+	def update(self):
+		self.__text["text"] = self._get_content_text()
+		self.__placeholder["visible"] = (self.__text["text"] == "")
 		self.__fit_content_size()
 	
-	def __update_text_property(self, code, char):
+	def _get_content_text(self):
+		pass
+	
+	def __fit_content_size(self):
+		offset = self.__text.get_absolute_size("width") - self.__background.get_absolute_size("width")
+		
+		if offset > 0:
+			self.__text._crop_display_canvas(offset, 0, self.__get_content_space("width"), self.__get_content_space("height"))
+	
+	def __get_content_space(self, dimension):
+		return self.__background[dimension] - self.__text.get_absolute_size(dimension) + self.__text[dimension]
+	
+	def key_pressed(self, code, char):
 		if code == 8:
 			self["text"] = self["text"][:-1]
 		else:
 			self["text"] += char
-	
-	def __fit_content_size(self):
-		offset = self.__content.get_absolute_size("width") - self.__background.get_absolute_size("width")
-		
-		if offset > 0:
-			width = self.__background["width"] - self.__content.get_absolute_size("width") + self.__content["width"]
-			height = self.__background["height"] - self.__content.get_absolute_size("height") + self.__content["height"]
-			
-			self.__content._crop_display_canvas(offset, 0, width, height)
 
 
 class TextField(Field):
@@ -50,8 +61,8 @@ class TextField(Field):
 		
 		self.set_style_name("text-field")
 	
-	def update(self):
-		self["content-text"] = self["text"]
+	def _get_content_text(self):
+		return self["text"]
 
 
 class PasswordField(Field):
@@ -60,5 +71,5 @@ class PasswordField(Field):
 		
 		self.set_style_name("password-field")
 	
-	def update(self):
-		self["content-text"] = "*" * len(self["text"])
+	def _get_content_text(self):
+		return "*" * len(self["text"])
