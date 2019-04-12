@@ -13,9 +13,6 @@ class Slider(Node):
 		self.__init_thumb()
 		self.__init_value(action)
 		
-		self._add_trigger_to_property("width", self.__clamp_value)
-		self._add_trigger_to_property("height", self.__update_layout)
-		
 		self.set_style_name("slider")
 	
 	def __init_track(self):
@@ -24,11 +21,11 @@ class Slider(Node):
 		
 		self._insert_node(self.__track)
 	
-	def __init_range(self, range):
-		property = self.__track.property("width")
-		property.reset(range)
+	def __init_range(self, value):
+		range = self.__track.property("width")
+		range.reset(value)
 		
-		self._insert_property("range", property, self.__clamp_value)
+		self._insert_property("range", range, self.__clamp_value)
 	
 	# Prevents thumb from getting out of the range
 	def __clamp_value(self):
@@ -42,8 +39,9 @@ class Slider(Node):
 	
 	def __init_value(self, action):
 		self._borrow_property(self.__thumb, "position-x", action, "value")
+		self._add_trigger_to_property("value", self.__clamp_value)
 	
-	def __update_layout(self):
+	def update(self):
 		self.__layout_computer.center_node_vertically(self.__track)
 		self.__layout_computer.center_node_vertically(self.__thumb)
 	
