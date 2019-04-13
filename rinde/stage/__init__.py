@@ -1,6 +1,5 @@
 import pygame
 
-from rinde.error import RindeException
 from rinde.stage.animation import Animations
 
 
@@ -58,7 +57,7 @@ class ControllableStage(StageBase):
 		if isinstance(controller, ControllerBase):
 			self.__controller = controller
 		else:
-			raise RindeException("Controller must be a subclass of rinde.stage.ControllerBase")
+			raise TypeError("Controller must be a subclass of rinde.stage.ControllerBase")
 	
 	def start_controller(self, window):
 		self.__controller.window = window
@@ -293,4 +292,4 @@ class StageFactory:
 		if tag == "Fullscreen":
 			return Fullscreen(controller)
 		
-		raise RindeException("Invalid stage type")
+		raise TypeError("Invalid stage type")

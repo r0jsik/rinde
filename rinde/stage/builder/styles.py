@@ -1,7 +1,6 @@
 import cssutils
 
 from rinde.data import Resources
-from rinde.error import RindeException
 
 
 class StylesParser:
@@ -30,7 +29,7 @@ class StylesheetParser(object):
 		try:
 			self.__stylesheet = cssutils.parseFile(file)
 		except IOError:
-			raise RindeException("File '%s' not found" % file)
+			raise IOError("Cannot load file: '%s'" % file)
 	
 	def parse_to(self, data):
 		for rule_group in self.__stylesheet.cssRules:

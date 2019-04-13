@@ -1,4 +1,3 @@
-from rinde.error import RindeException
 from rinde.stage.node.util.appearance import Appearance
 from rinde.stage.node.util.boundary import Boundary
 from rinde.stage.property import BooleanProperty
@@ -191,13 +190,13 @@ class StageNode(StylizableNode, BoundaryNode):
 	# Chain of responsibility
 	def update_style_request(self, node):
 		if self.__parent is None:
-			raise RindeException("Node is not inserted to the stage")
+			raise RuntimeError("Node is not inserted to the stage")
 		
 		self.__parent.update_style_request(node)
 	
 	def set_parent(self, node):
 		if self.__parent and node:
-			raise RindeException("Node has already got parent")
+			raise RuntimeError("Node has already got parent")
 		
 		self.__parent = node
 	

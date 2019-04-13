@@ -1,7 +1,6 @@
 import pygame
 
 from rinde.data import Resources
-from rinde.error import RindeException
 from rinde.stage import Screen
 from rinde.stage.builder import StageBuilder
 
@@ -21,10 +20,7 @@ class Application:
 
 
 class Window:
-	__INSTANCE = None
-	
 	def __init__(self, title, stage_directory, favicon, cursor):
-		self.__init_instance()
 		self.__init_favicon(favicon)
 		
 		self.set_title(title)
@@ -33,17 +29,11 @@ class Window:
 		
 		self.__updating()
 	
-	def __init_instance(self):
-		if Window.__INSTANCE:
-			raise RindeException("Window already exists")
-		
-		Window.__INSTANCE = self
-	
 	def __init_favicon(self, favicon):
 		try:
 			self.__try_to_init_favicon(favicon)
 		except pygame.error:
-			raise RindeException("Favicon not found")
+			raise IOError("Cannot load file: '%s'" % favicon)
 	
 	def __try_to_init_favicon(self, favicon):
 		if favicon is None:
@@ -53,7 +43,10 @@ class Window:
 		pygame.display.set_icon(favicon)
 	
 	def set_title(self, title):
-		pygame.display.set_caption(title)
+		try:
+			pygame.display.set_caption(title)
+		except TypeError:
+			raise TypeError("Title of the window must be a string")
 	
 	def set_stage(self, stage_directory, controller=None):
 		stage_builder = StageBuilder(stage_directory, controller)
@@ -70,13 +63,13 @@ class Window:
 		try:
 			self.__surface = pygame.display.set_mode(stage_size, stage_mode)
 		except TypeError:
-			raise RindeException("Incorrect stage size")
+			raise ValueError("Incorrect stage size")
 	
 	def set_cursor(self, cursor):
 		try:
 			self.__try_to_set_cursor(cursor)
 		except pygame.error:
-			raise RindeException("Cursor not found")
+			raise IOError("Cannot load file: '%s'" % cursor)
 	
 	def __try_to_set_cursor(self, cursor):
 		if cursor:
@@ -101,3 +94,6 @@ class Window:
 	
 	def get_size(self):
 		return self.__stage.get_size()
+	
+	def get_mouse_position(self):
+		return pygame.mouse.get_pos()

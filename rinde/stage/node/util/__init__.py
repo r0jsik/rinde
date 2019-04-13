@@ -1,7 +1,6 @@
 import pygame
 
 from rinde.data import Resources
-from rinde.error import RindeException
 
 
 class Font:
@@ -11,9 +10,9 @@ class Font:
 		try:
 			self.__pygame_font = self.__load(resource, size)
 		except IOError:
-			raise RindeException("File '%s' not found" % resource)
+			raise IOError("Cannot load file: '%s'" % resource)
 		except RuntimeError:
-			raise RindeException("Incorrect font '%s'" % resource)
+			raise IOError("Incorrect font: '%s'" % resource)
 	
 	def __load(self, resource, size):
 		path = Resources.get_path(resource)
@@ -40,7 +39,7 @@ class Image:
 		try:
 			self.__image = pygame.image.load(path)
 		except pygame.error:
-			raise RindeException("File '%s' not found" % path)
+			raise IOError("Cannot load file: '%s'" % path)
 	
 	def get(self):
 		return self.__image.convert_alpha()
@@ -51,7 +50,7 @@ class Canvas:
 		try:
 			self.__canvas = pygame.Surface((width, height), pygame.SRCALPHA)
 		except pygame.error:
-			raise RindeException("Invalid canvas size")
+			raise ValueError("Invalid canvas size")
 	
 	def clear(self):
 		self.__canvas.fill((0, 0, 0, 0))
@@ -82,7 +81,7 @@ class Canvas:
 	
 	def fill_rounded_rect(self, color, bounds, radius):
 		if radius < 0 or radius > 100:
-			raise RindeException("Radius must be in range <0, 100>")
+			raise ValueError("Radius must be in range <0, 100>")
 		else:
 			radius /= 100
 		

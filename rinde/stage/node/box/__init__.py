@@ -1,4 +1,3 @@
-from rinde.error import RindeException
 from rinde.stage.node.pane import Pane
 from rinde.stage.node.util.layout import PaneLayoutComputer
 
@@ -40,7 +39,7 @@ class BoxLayoutComputer(PaneLayoutComputer):
 		position = self.compute_aligned_position(node, align)
 		
 		if position is None:
-			raise RindeException("Unknown alignment: '%s'" % align)
+			raise ValueError("Unknown alignment: '%s'" % align)
 		
 		return position
 	

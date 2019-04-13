@@ -1,4 +1,3 @@
-from rinde.error import RindeException
 from rinde.stage.animation import Animation
 
 
@@ -144,7 +143,7 @@ class SpaceProperty(Property):
 		if len(values) == 4:
 			return int(values[0]), int(values[1]), int(values[2]), int(values[3])
 		
-		raise RindeException("Invalid space values")
+		raise ValueError("Invalid space value")
 	
 	def reset(self, value):
 		values = self.__split_directional(value)

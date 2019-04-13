@@ -2,7 +2,6 @@ import importlib
 import re
 import xml.etree.cElementTree as xml
 
-from rinde.error import RindeException
 from rinde.stage import StageFactory
 from rinde.stage.node.util import Group
 
@@ -12,9 +11,7 @@ class AbstractXMLParser(object):
 		try:
 			self.__parse_file(file)
 		except IOError:
-			raise RindeException("File '%s' not found" % file)
-		except xml.ParseError as exception:
-			raise RindeException("XML %s" % exception)
+			raise IOError("Cannot load file: '%s'" % file)
 	
 	def __parse_file(self, file):
 		document = open(file).read()
@@ -65,7 +62,7 @@ class AbstractXMLParser(object):
 		try:
 			return self.__imported_types[type_name]
 		except KeyError:
-			raise RindeException("Unknown type: '%s'" % type_name)
+			raise TypeError("Type not imported: '%s'" % type_name)
 
 
 class AbstractLayoutParser(AbstractXMLParser):
@@ -82,7 +79,7 @@ class AbstractLayoutParser(AbstractXMLParser):
 		try:
 			return self.create_stage(attributes, tag)
 		except TypeError:
-			raise RindeException("Incorrect stage argumentation")
+			raise TypeError("Invalid stage argumentation")
 	
 	def create_stage(self, attributes, tag):
 		pass
@@ -97,7 +94,7 @@ class AbstractLayoutParser(AbstractXMLParser):
 		try:
 			node = self.__create_node(type_name, attributes, children)
 		except TypeError:
-			raise RindeException("Incorrect %s argumentation" % type_name)
+			raise TypeError("Invalid '%s' argumentation" % type_name)
 		
 		if "id" in attributes:
 			self.__controller.nodes[attributes["id"]] = node
@@ -108,7 +105,7 @@ class AbstractLayoutParser(AbstractXMLParser):
 		try:
 			attributes["action"] = getattr(self.__controller, attributes["action"])
 		except AttributeError:
-			raise RindeException("Controller must implement method '%s'" % attributes["action"])
+			raise TypeError("Controller must implement method '%s'" % attributes["action"])
 	
 	def __convert_node_group(self, attributes):
 		group_name = attributes["group"]
@@ -148,17 +145,17 @@ class LayoutParserWithCreatingController(AbstractLayoutParser):
 		try:
 			return attributes.pop("controller")
 		except KeyError:
-			raise RindeException("Stage controller not specified")
+			raise ValueError("Stage controller not specified")
 	
 	def __create_controller(self, controller):
 		try:
 			return self.__try_to_create_controller(controller)
 		except ImportError:
-			raise RindeException("Controller module not found")
+			raise ImportError("Controller module not found")
 		except AttributeError:
-			raise RindeException("Controller class not found")
+			raise ImportError("Controller class not found")
 		except TypeError:
-			raise RindeException("Controller constructor cannot take any argument")
+			raise TypeError("Controller constructor cannot take any argument")
 	
 	def __try_to_create_controller(self, controller):
 		module_name, class_name = controller.rsplit(".", 1)

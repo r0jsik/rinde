@@ -1,4 +1,3 @@
-from rinde.error import RindeException
 from rinde.stage.node import Node
 from rinde.stage.node.region import Region
 from rinde.stage.node.text import Text
@@ -83,7 +82,7 @@ class InputLayoutComputer(LayoutComputer):
 		if align == "left":
 			return label, selector
 		
-		raise RindeException("Unknown alignment: '%s'" % align)
+		raise ValueError("Unknown alignment: '%s'" % align)
 	
 	def __align_node(self, node, position_x):
 		position_y = self.compute_node_center(node, "height")
