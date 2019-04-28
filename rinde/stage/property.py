@@ -1,6 +1,40 @@
 from rinde.stage.animation import Animation
 
 
+class Properties:
+	def __init__(self):
+		self.__properties = {}
+	
+	def create(self, name, trigger=None, value=None):
+		self.__properties[name] = Property(value)
+		self.__try_to_add_trigger(name, trigger)
+	
+	def create_number(self, name, trigger=None, value=0):
+		self.__properties[name] = NumberProperty(value)
+		self.__try_to_add_trigger(name, trigger)
+	
+	def create_boolean(self, name, trigger=None, value=False):
+		self.__properties[name] = BooleanProperty(value)
+		self.__try_to_add_trigger(name, trigger)
+	
+	def insert(self, name, property, trigger=None):
+		self.__properties[name] = property
+		self.__try_to_add_trigger(name, trigger)
+	
+	def __try_to_add_trigger(self, name, trigger):
+		if trigger:
+			self.__properties[name].add_trigger(trigger)
+	
+	def add_trigger(self, name, trigger):
+		self.__properties[name].add_trigger(trigger)
+	
+	def __setitem__(self, property_name, property):
+		self.__properties[property_name] = property
+	
+	def __getitem__(self, property_name):
+		return self.__properties[property_name]
+
+
 class Property(object):
 	def __init__(self, value=None):
 		self.__bound_to = None

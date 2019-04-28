@@ -1,127 +1,86 @@
 from rinde.stage.node.util.appearance import Appearance
 from rinde.stage.node.util.boundary import Boundary
-from rinde.stage.property import BooleanProperty
-from rinde.stage.property import NumberProperty
-from rinde.stage.property import Property
+from rinde.stage.property import Properties
 
 
 class NodeBase(object):
 	def __init__(self, **kwargs):
-		self.__properties = {}
+		self.properties = Properties()
 	
-	def _create_property(self, name, trigger=None, value=None):
-		self.__properties[name] = Property(value)
-		self.__try_to_add_trigger_to_property(name, trigger)
-	
-	def _create_number_property(self, name, trigger=None, value=0):
-		self.__properties[name] = NumberProperty(value)
-		self.__try_to_add_trigger_to_property(name, trigger)
-	
-	def _create_boolean_property(self, name, value=False, trigger=None):
-		self.__properties[name] = BooleanProperty(value)
-		self.__try_to_add_trigger_to_property(name, trigger)
-	
-	def _borrow_property(self, node, name, trigger=None, name_as=None):
-		property = node.property(name)
+	def borrow_property(self, node, name, trigger=None, name_as=None):
+		property = node.properties[name]
 		
 		if name_as:
-			self._insert_property(name_as, property, trigger)
+			self.properties.insert(name_as, property, trigger)
 		else:
-			self._insert_property(name, property, trigger)
+			self.properties.insert(name, property, trigger)
 	
-	def _insert_property(self, name, property, trigger=None):
-		self.__properties[name] = property
-		self.__try_to_add_trigger_to_property(name, trigger)
-	
-	def __try_to_add_trigger_to_property(self, name, trigger):
-		if trigger:
-			self.__properties[name].add_trigger(trigger)
-	
-	def _add_trigger_to_property(self, name, trigger):
-		self.__properties[name].add_trigger(trigger)
-	
-	def property(self, name):
-		return self.__properties[name]
+	def property(self, property_name):
+		return self.properties[property_name]
 	
 	def __setitem__(self, property_name, value):
-		self.__properties[property_name].set(value)
+		self.properties[property_name].set(value)
 	
 	def __getitem__(self, property_name):
-		return self.__properties[property_name].get()
+		return self.properties[property_name].get()
 
 
 class StylizableNode(NodeBase):
 	def __init__(self, id=None, style_class=None, **kwargs):
 		super(StylizableNode, self).__init__(**kwargs)
 		
-		self.__appearance = Appearance(self, id, style_class)
+		self.appearance = Appearance(self, id, style_class)
 		
 		self.__create_state_property("hovered")
 		self.__create_state_property("active")
 		self.__create_state_property("focused")
 	
 	def __create_state_property(self, name):
-		self._create_boolean_property(name, trigger=self.__update_state)
+		self.properties.create_boolean(name, trigger=self.__update_state)
 	
 	def __update_state(self):
-		self.__appearance.apply(None)
+		self.appearance.apply(None)
 		
 		if self["hovered"]:
-			self.__appearance.apply("hovered")
+			self.appearance.apply("hovered")
 		
 		if self["active"]:
-			self.__appearance.apply("active")
+			self.appearance.apply("active")
 		
 		if self["focused"]:
-			self.__appearance.apply("focused")
-	
-	def set_style(self, style):
-		self.__appearance.set_style(style)
-		self.__appearance.apply_default()
-	
-	def get_appearance(self):
-		return self.__appearance
-	
-	def set_id(self, value):
-		self.__appearance.set_id(value)
-	
-	def set_style_class(self, value):
-		self.__appearance.set_style_class(value)
+			self.appearance.apply("focused")
 	
 	def set_style_name(self, value):
-		self.__appearance.set_style_name(value)
-	
-	def style_selectors(self):
-		return self.__appearance.style_selectors()
+		self.appearance.style_name = value
 
 
 class BoundaryNode(NodeBase):
 	def __init__(self, **kwargs):
 		super(BoundaryNode, self).__init__(**kwargs)
 		
-		self.__boundary = Boundary(self, **kwargs)
+		self.boundary = Boundary(self, **kwargs)
 	
 	def update_boundary(self):
-		self.__boundary.update_absolute_position()
-		self.__boundary.update_absolute_size()
+		self.boundary.update_absolute_position()
+		self.boundary.update_absolute_size()
 	
 	def update_layout(self):
 		pass
 	
 	def is_mouse_over(self, mouse_position):
-		return self.__boundary.is_mouse_over(mouse_position)
+		return self.boundary.is_mouse_over(mouse_position)
 	
 	def absolute_position(self):
-		return self.__boundary.absolute_position()
+		return self.boundary.absolute_position()
 	
 	def get_absolute_position(self, axis):
-		return self.__boundary.get_absolute_position(axis)
+		return self.boundary.get_absolute_position(axis)
 	
 	def absolute_size(self):
-		return self.__boundary.absolute_size()
+		return self.boundary.absolute_size()
 	
 	def get_absolute_size(self, dimension):
-		return self.__boundary.get_absolute_size(dimension)
+		return self.boundary.get_absolute_size(dimension)
 	
 	def set_position(self, position_x, position_y):
 		self["position-x"], self["position-y"] = position_x, position_y
@@ -131,17 +90,14 @@ class BoundaryNode(NodeBase):
 	
 	def get_size(self):
 		return self["width"], self["height"]
-	
-	def get_boundary(self):
-		return self.__boundary
 
 
 class InteractiveNode(StylizableNode, BoundaryNode):
 	def __init__(self, visible=True, enabled=True, **kwargs):
 		super(InteractiveNode, self).__init__(**kwargs)
 		
-		self._create_boolean_property("visible", visible)
-		self._create_boolean_property("enabled", enabled)
+		self.properties.create_boolean("visible", value=visible)
+		self.properties.create_boolean("enabled", value=enabled)
 	
 	def can_be_hovered(self, mouse_position):
 		return self["visible"] and self["enabled"] and self.is_mouse_over(mouse_position)
@@ -215,21 +171,16 @@ class StageNode(StylizableNode, BoundaryNode):
 	def get_hovered_node(self, mouse_position):
 		return self
 	
-	def children_boundaries(self):
-		for node in self.__nodes:
-			yield node.get_boundary()
+	def get_parent(self):
+		return self.__parent
 	
 	def get_parent_boundary(self):
-		if self.__parent:
-			return self.__parent.get_boundary()
-		
-		return None
+		try:
+			return self.__parent.boundary
+		except AttributeError:
+			return None
 	
-	def children_appearances(self):
-		for node in self.__nodes:
-			yield node.get_appearance()
-	
-	def _get_nodes(self):
+	def children(self):
 		return self.__nodes
 
 
@@ -244,14 +195,14 @@ class Node(InteractiveNode, StageNode):
 			if self.__canvas:
 				surface.blit(self.__canvas, self.absolute_position())
 			
-			for node in self._get_nodes():
+			for node in self.children():
 				node.repaint(surface)
 	
 	def reset(self):
 		self.update_style()
 		self.update_boundary()
 		
-		for node in self._get_nodes():
+		for node in self.children():
 			node.reset()
 		
 		self.update()

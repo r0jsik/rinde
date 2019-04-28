@@ -7,7 +7,7 @@ class Field(Node):
 	def __init__(self, text="", placeholder="", **kwargs):
 		super(Field, self).__init__(**kwargs)
 		
-		self._create_property("text", self.update, text)
+		self.properties.create("text", self.update, text)
 		
 		self.__init_background()
 		self.__init_placeholder(placeholder)
@@ -27,7 +27,7 @@ class Field(Node):
 	
 	def __init_text(self, text):
 		self.__text = Text(text)
-		self.__text._add_trigger_to_property("text", self.update)
+		self.__text.properties.add_trigger("text", self.update)
 		
 		self._insert_node(self.__text)
 	

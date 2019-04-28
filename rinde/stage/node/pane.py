@@ -33,7 +33,7 @@ class Pane(Node):
 		self.update_layout()
 	
 	def get_nodes(self):
-		return self._get_nodes()
+		return self.children()
 
 
 class StackPane(Pane):

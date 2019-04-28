@@ -30,8 +30,8 @@ class StageBase(object):
 			node.reset()
 	
 	def update_style_request(self, node):
-		style = self.__style.get_for(node)
-		node.set_style(style)
+		node.appearance.style = self.__style.get_for(node)
+		node.appearance.apply_default()
 	
 	def repaint(self, surface):
 		surface.fill(0xEEEEEE)
@@ -41,10 +41,6 @@ class StageBase(object):
 	
 	def get_nodes(self):
 		return self.__nodes
-	
-	# None will be converted to NullBoundary object
-	def get_boundary(self):
-		return None
 
 
 class ControllableStage(StageBase):

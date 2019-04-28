@@ -1,6 +1,6 @@
 class LayoutComputer(object):
 	def __init__(self, node):
-		self.__node = node
+		self.node = node
 	
 	def center_node(self, node):
 		self.center_node_horizontally(node)
@@ -13,10 +13,7 @@ class LayoutComputer(object):
 		node["position-y"] = self.compute_node_center(node, "height")
 	
 	def compute_node_center(self, node, dimension):
-		return (self.get_property(dimension) - node[dimension])/2
-	
-	def get_property(self, property_name):
-		return self.__node[property_name]
+		return (self.node[dimension] - node[dimension])/2
 
 
 class PaneLayoutComputer(LayoutComputer):

@@ -26,4 +26,4 @@ class HBoxLayoutComputer(BoxLayoutComputer):
 			return self.compute_node_center(node, "height")
 		
 		if align == "bottom":
-			return self.get_property("height") - node["height"]
+			return self.node["height"] - node["height"]

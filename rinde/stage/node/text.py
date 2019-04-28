@@ -6,9 +6,9 @@ class Text(Node):
 	def __init__(self, text="", **kwargs):
 		super(Text, self).__init__(**kwargs)
 		
-		self._create_property("text", value=text)
-		self._create_property("font")
-		self._create_number_property("font-size")
+		self.properties.create("text", value=text)
+		self.properties.create("font")
+		self.properties.create_number("font-size")
 		
 		self.__init_display()
 		
@@ -17,7 +17,7 @@ class Text(Node):
 	def __init_display(self):
 		self.__display = TextDisplay(self)
 		
-		self._borrow_property(self.__display, "color")
+		self.borrow_property(self.__display, "color")
 		self._insert_node(self.__display)
 	
 	def _crop_display_canvas(self, offset_x, offset_y, width, height):
@@ -47,11 +47,11 @@ class TextDisplay(Node):
 	def __init__(self, text):
 		super(TextDisplay, self).__init__()
 		
-		self._borrow_property(text, "text", self.update)
-		self._borrow_property(text, "font", self.update)
-		self._borrow_property(text, "font-size", self.update)
+		self.borrow_property(text, "text", self.update)
+		self.borrow_property(text, "font", self.update)
+		self.borrow_property(text, "font-size", self.update)
 		
-		self._create_number_property("color", self.update)
+		self.properties.create_number("color", self.update)
 		
 		self.set_style_name("display")
 	

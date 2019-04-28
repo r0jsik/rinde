@@ -100,7 +100,7 @@ class Styles:
 	def get_for(self, node):
 		style = []
 		
-		for selector in node.style_selectors():
+		for selector in node.appearance.selectors():
 			if selector in self.__data:
 				style.append(self.__data[selector])
 		

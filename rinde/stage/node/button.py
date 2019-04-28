@@ -24,5 +24,5 @@ class Button(Region):
 	def __init_text(self, text):
 		text = Text(text)
 		
-		self._borrow_property(text, "text")
+		self.borrow_property(text, "text")
 		self._insert_node(text)
