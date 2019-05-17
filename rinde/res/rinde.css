@@ -34,24 +34,24 @@ text-button:active
 	color: #615432;
 }
 
-button
+button background
 {
 	stroke-width: 1;
 	stroke-color: #837654;
 	inside-color: #EEEEEE;
 }
 
-button:hovered
+button:hovered background
 {
 	inside-color: #B5A886;
 }
 
-button:active
+button:active background
 {
 	inside-color: #A59876;
 }
 
-button
+button text
 {
 	padding: 5 10;
 }

@@ -1,5 +1,8 @@
 from rinde.stage.node.util.appearance import Appearance
 from rinde.stage.node.util.boundary import Boundary
+from rinde.stage.node.util.boundary import ComplexNodeBoundary
+from rinde.stage.node.util.boundary import SimpleNodeBoundary
+from rinde.stage.node.util.boundary import NullBoundary
 from rinde.stage.property import Properties
 
 
@@ -36,7 +39,7 @@ class StylizableNode(NodeBase):
 		self.__create_state_property("focused")
 	
 	def __create_state_property(self, name):
-		self.properties.create_boolean(name, trigger=self.__update_state)
+		self.properties.create_boolean(name, self.__update_state)
 	
 	def __update_state(self):
 		self.appearance.apply(None)
@@ -55,20 +58,10 @@ class StylizableNode(NodeBase):
 
 
 class BoundaryNode(NodeBase):
-	def __init__(self, **kwargs):
+	def __init__(self, boundary_type, **kwargs):
 		super(BoundaryNode, self).__init__(**kwargs)
 		
-		self.boundary = Boundary(self, **kwargs)
-	
-	def update_boundary(self):
-		self.boundary.update_absolute_position()
-		self.boundary.update_absolute_size()
-	
-	def update_layout(self):
-		pass
-	
-	def is_mouse_over(self, mouse_position):
-		return self.boundary.is_mouse_over(mouse_position)
+		self.boundary = boundary_type(self, **kwargs)
 	
 	def absolute_position(self):
 		return self.boundary.absolute_position()
@@ -100,7 +93,7 @@ class InteractiveNode(StylizableNode, BoundaryNode):
 		self.properties.create_boolean("enabled", value=enabled)
 	
 	def can_be_hovered(self, mouse_position):
-		return self["visible"] and self["enabled"] and self.is_mouse_over(mouse_position)
+		return self["visible"] and self["enabled"] and self.boundary.is_mouse_over(mouse_position)
 	
 	def hover(self):
 		self["hovered"] = True
@@ -140,8 +133,10 @@ class StageNode(StylizableNode, BoundaryNode):
 	def __init__(self, **kwargs):
 		super(StageNode, self).__init__(**kwargs)
 		
-		self.__nodes = []
 		self.__parent = None
+	
+	def update_style(self):
+		self.update_style_request(self)
 	
 	# Chain of responsibility
 	def update_style_request(self, node):
@@ -156,6 +151,52 @@ class StageNode(StylizableNode, BoundaryNode):
 		
 		self.__parent = node
 	
+	def get_hovered_node(self, mouse_position):
+		return self
+	
+	def get_parent(self):
+		return self.__parent
+	
+	def get_parent_boundary(self):
+		try:
+			return self.__parent.boundary
+		except AttributeError:
+			return NullBoundary()
+
+
+class Node(InteractiveNode, StageNode):
+	def reset(self):
+		pass
+	
+	def repaint(self, surface):
+		pass
+	
+	def update(self):
+		pass
+
+
+class ComplexNode(Node):
+	def __init__(self, **kwargs):
+		super(ComplexNode, self).__init__(boundary_type=ComplexNodeBoundary, **kwargs)
+		
+		self.__nodes = []
+	
+	def reset(self):
+		self.update_style()
+		
+		for node in self.children():
+			node.reset()
+		
+		self.boundary.reset()
+		self.boundary.fit_size_to_children(True)
+		self.update()
+		self.update_layout()
+	
+	def repaint(self, surface):
+		if self["visible"]:
+			for node in self.children():
+				node.repaint(surface)
+	
 	def _insert_node(self, node, index=None):
 		if index is None:
 			self.__nodes.append(node)
@@ -168,57 +209,41 @@ class StageNode(StylizableNode, BoundaryNode):
 		node.set_parent(None)
 		self.__nodes.remove(node)
 	
-	def get_hovered_node(self, mouse_position):
-		return self
-	
-	def get_parent(self):
-		return self.__parent
-	
-	def get_parent_boundary(self):
-		try:
-			return self.__parent.boundary
-		except AttributeError:
-			return None
+	def update_layout(self):
+		pass
 	
 	def children(self):
-		return self.__nodes
-
-
-class Node(InteractiveNode, StageNode):
-	def __init__(self, **kwargs):
-		super(Node, self).__init__(**kwargs)
-		
-		self.__canvas = None
+		for node in self.__nodes:
+			yield node
 	
-	def repaint(self, surface):
-		if self["visible"]:
-			if self.__canvas:
-				surface.blit(self.__canvas, self.absolute_position())
-			
-			for node in self.children():
-				node.repaint(surface)
+	def _debug_lookup_element(self, selector):
+		for element in self.children():
+			for node_selector in element.appearance.selectors():
+				if node_selector == selector:
+					return element
+
+
+class SimpleNode(Node):
+	def __init__(self, **kwargs):
+		super(SimpleNode, self).__init__(boundary_type=SimpleNodeBoundary, **kwargs)
+		
+		self.__surface = None
 	
 	def reset(self):
 		self.update_style()
-		self.update_boundary()
-		
-		for node in self.children():
-			node.reset()
-		
+		self.boundary.reset()
 		self.update()
 	
-	def update_style(self):
-		self.update_style_request(self)
+	def repaint(self, surface):
+		if self["visible"]:
+			surface.blit(self.__surface, self.absolute_position())
 	
-	def update(self):
-		pass
+	def _set_surface(self, surface):
+		self.__surface = surface
 	
-	def _set_canvas(self, canvas):
-		self.__canvas = canvas
+	def _get_surface(self):
+		return self.__surface
 	
 	def _fit_size(self):
-		width, height = self.__canvas.get_size()
+		width, height = self.__surface.get_size()
 		self.set_size(width, height)
-	
-	def _get_canvas(self):
-		return self.__canvas

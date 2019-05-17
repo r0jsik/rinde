@@ -5,9 +5,9 @@ class BoundaryBase(object):
 	def __init__(self, node):
 		self.node = node
 	
-	def update_parent(self, axis, dimension, side_1, side_2):
+	def update_parent(self):
 		parent = self.get_parent_boundary()
-		parent.update_size(axis, dimension, side_1, side_2)
+		parent.fit_size_to_children(True)
 		parent.update_layout()
 	
 	def update_layout(self):
@@ -47,12 +47,10 @@ class PositionBoundary(SpaceBoundary):
 		self.__update("y", "height", 0, 2)
 	
 	def __update(self, axis, dimension, side_1, side_2):
-		self.__update_absolute_position(axis, dimension, side_1, side_2)
-		self.update_parent(axis, dimension, side_1, side_2)
+		self.reset_absolute_position(axis, dimension, side_1, side_2)
 	
-	def __update_absolute_position(self, axis, dimension, side_1, side_2):
+	def reset_absolute_position(self, axis, dimension, side_1, side_2):
 		self.__absolute_position[axis] = self.__get_parent_origin(axis, side_2) + self.__get_local_origin(axis, side_1)
-		self.__update_children_position(axis, dimension, side_1, side_2)
 	
 	def __get_parent_origin(self, axis, side):
 		parent = self.node.get_parent()
@@ -64,10 +62,6 @@ class PositionBoundary(SpaceBoundary):
 	
 	def __get_local_origin(self, axis, side):
 		return self.node["position-%s" % axis] + self.node["margin"][side]
-	
-	def __update_children_position(self, axis, dimension, side_1, side_2):
-		for child in self.node.children():
-			child.boundary.__update(axis, dimension, side_1, side_2)
 	
 	def update_absolute_position(self):
 		self.__update_absolute_position_x()
@@ -90,24 +84,17 @@ class SizeBoundary(SpaceBoundary):
 		self.node.properties.create_number("height", self.__update_absolute_height)
 	
 	def __update_absolute_width(self):
-		self.__update("x", "width", 3, 1)
+		self.__update("width", 3, 1)
 	
 	def __update_absolute_height(self):
-		self.__update("y", "height", 0, 2)
+		self.__update("height", 0, 2)
 	
-	def __update(self, axis, dimension, side_1, side_2):
+	def __update(self, dimension, side_1, side_2):
+		self.reset_absolute_size(dimension, side_1, side_2)
+		self.update_parent()
+	
+	def reset_absolute_size(self, dimension, side_1, side_2):
 		self.__absolute_size[dimension] = self.node["padding"][side_1] + self.node[dimension] + self.node["padding"][side_2]
-		self.update_parent(axis, dimension, side_1, side_2)
-	
-	def update_size(self, axis, dimension, side_1, side_2):
-		size = 0
-		
-		for child in self.node.children():
-			child_end = child["position-%s" % axis] + child.boundary.__absolute_size[dimension]
-			child_end_with_margins = child["margin"][side_1] + child_end + child["margin"][side_2]
-			size = max(child_end_with_margins, size)
-		
-		self.node[dimension] = size
 	
 	def update_absolute_size(self):
 		self.__update_absolute_width()
@@ -121,6 +108,12 @@ class SizeBoundary(SpaceBoundary):
 
 
 class Boundary(PositionBoundary, SizeBoundary):
+	def reset(self):
+		self.reset_absolute_position("x", "width", 3, 1)
+		self.reset_absolute_position("y", "height", 0, 2)
+		self.reset_absolute_size("width", 3, 1)
+		self.reset_absolute_size("height", 0, 2)
+	
 	def update_space(self):
 		self.update_absolute_position()
 		self.update_absolute_size()
@@ -131,6 +124,39 @@ class Boundary(PositionBoundary, SizeBoundary):
 				return True
 		
 		return False
+
+
+class ComplexNodeBoundary(Boundary):
+	def reset_absolute_position(self, axis, dimension, side_1, side_2):
+		super(ComplexNodeBoundary, self).reset_absolute_position(axis, dimension, side_1, side_2)
+		
+		for child in self.node.children():
+			child.boundary.reset_absolute_position(axis, dimension, side_1, side_2)
+	
+	def fit_size_to_children(self, considering_position):
+		self.__fit_size_to_children("x", "width", 3, 1, considering_position)
+		self.__fit_size_to_children("y", "height", 0, 2, considering_position)
+	
+	def __fit_size_to_children(self, axis, dimension, side_1, side_2, considering_position):
+		size = 0
+		
+		for child in self.node.children():
+			child_size = self.__compute_size(child, axis, dimension, side_1, side_2, considering_position)
+			size = max(child_size, size)
+		
+		self.node[dimension] = size
+	
+	def __compute_size(self, child, axis, dimension, side_1, side_2, considering_position):
+		size = child["margin"][side_1] + child.get_absolute_size(dimension) + child["margin"][side_2]
+		
+		if considering_position:
+			return size + child["position-%s" % axis]
+		
+		return size
+
+
+class SimpleNodeBoundary(Boundary):
+	pass
 
 
 class NullBoundary:

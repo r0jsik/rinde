@@ -1,8 +1,9 @@
-from rinde.stage.node import Node
+from rinde.stage.node import ComplexNode
+from rinde.stage.node import SimpleNode
 from rinde.stage.node.util import Font
 
 
-class Text(Node):
+class Text(ComplexNode):
 	def __init__(self, text="", **kwargs):
 		super(Text, self).__init__(**kwargs)
 		
@@ -20,12 +21,8 @@ class Text(Node):
 		self.borrow_property(self.__display, "color")
 		self._insert_node(self.__display)
 	
-	def _crop_display_canvas(self, offset_x, offset_y, width, height):
-		canvas = self.__display._get_canvas()
-		canvas = canvas.subsurface((offset_x, offset_y, width, height))
-		
-		self.__display._set_canvas(canvas)
-		self.__display._fit_size()
+	def crop_display_surface(self, offset_x, offset_y, width, height):
+		self.__display.crop_surface((offset_x, offset_y, width, height))
 
 
 class Label(Text):
@@ -43,7 +40,7 @@ class Label(Text):
 		self._insert_node(shadow, 0)
 
 
-class TextDisplay(Node):
+class TextDisplay(SimpleNode):
 	def __init__(self, text):
 		super(TextDisplay, self).__init__()
 		
@@ -57,9 +54,16 @@ class TextDisplay(Node):
 	
 	def update(self):
 		font = Font(self["font"], self["font-size"])
-		canvas = font.render(self["text"], self["color"])
+		surface = font.render(self["text"], self["color"])
 		
-		self._set_canvas(canvas)
+		self._set_surface(surface)
+		self._fit_size()
+	
+	def crop_surface(self, bounds):
+		canvas = self._get_surface()
+		canvas = canvas.subsurface(bounds)
+		
+		self._set_surface(canvas)
 		self._fit_size()
 
 

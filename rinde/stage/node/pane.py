@@ -1,8 +1,8 @@
-from rinde.stage.node import Node
+from rinde.stage.node import ComplexNode
 from rinde.stage.node.util.layout import LayoutComputer
 
 
-class Pane(Node):
+class Pane(ComplexNode):
 	def __init__(self, nodes=(), **kwargs):
 		super(Pane, self).__init__(**kwargs)
 		
@@ -10,9 +10,6 @@ class Pane(Node):
 			self._insert_node(node)
 		
 		self.set_style_name("pane")
-	
-	def update(self):
-		self.update_layout()
 	
 	def get_hovered_node(self, mouse_position):
 		hovered_node = self
@@ -45,5 +42,7 @@ class StackPane(Pane):
 		self.__layout_computer = LayoutComputer(self)
 	
 	def update_layout(self):
+		self.boundary.fit_size_to_children(False)
+		
 		for node in self.get_nodes():
 			self.__layout_computer.center_node(node)

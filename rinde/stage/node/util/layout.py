@@ -13,7 +13,7 @@ class LayoutComputer(object):
 		node["position-y"] = self.compute_node_center(node, "height")
 	
 	def compute_node_center(self, node, dimension):
-		return (self.node[dimension] - node[dimension])/2
+		return (self.node.get_absolute_size(dimension) - node.get_absolute_size(dimension))/2
 
 
 class PaneLayoutComputer(LayoutComputer):

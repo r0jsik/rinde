@@ -37,7 +37,7 @@ class AbstractXMLParser(object):
 		return {property: value for property, value in element.attrib.items()}
 	
 	def create_root(self, attributes, tag):
-		pass
+		raise NotImplementedError
 	
 	def parse(self):
 		return self.__parse_elements(self.__root)
@@ -56,7 +56,7 @@ class AbstractXMLParser(object):
 		return self.__parse_attributes(element), self.__parse_elements(element)
 	
 	def parse_element(self, type_name, attributes, children):
-		pass
+		raise NotImplementedError
 	
 	def get_imported(self, type_name):
 		try:
@@ -82,7 +82,7 @@ class AbstractLayoutParser(AbstractXMLParser):
 			raise TypeError("Invalid stage argumentation")
 	
 	def create_stage(self, attributes, tag):
-		pass
+		raise NotImplementedError
 	
 	def parse_element(self, type_name, attributes, children):
 		if "action" in attributes:

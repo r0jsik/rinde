@@ -10,10 +10,10 @@ class Box(Pane):
 		self.properties.create("align", self.update_nodes_align, align)
 	
 	def update_nodes_spacing(self):
-		pass
+		raise NotImplementedError
 	
 	def update_nodes_align(self):
-		pass
+		raise NotImplementedError
 	
 	def update_layout(self):
 		self.update_nodes_spacing()
@@ -44,4 +44,4 @@ class BoxLayoutComputer(PaneLayoutComputer):
 		return position
 	
 	def compute_aligned_position(self, node, align):
-		return 0
+		raise NotImplementedError

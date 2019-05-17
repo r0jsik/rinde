@@ -1,9 +1,9 @@
-from rinde.stage.node import Node
+from rinde.stage.node import SimpleNode
 from rinde.stage.node.util import Canvas
 from rinde.stage.node.util import Image
 
 
-class ImageView(Node):
+class ImageView(SimpleNode):
 	def __init__(self, resource, **kwargs):
 		super(ImageView, self).__init__(**kwargs)
 		
@@ -12,7 +12,7 @@ class ImageView(Node):
 		self.set_style_name("image-view")
 	
 	def update(self):
-		self._set_canvas(self.__content.get())
+		self._set_surface(self.__content.get())
 		self._fit_size()
 	
 	def set_image(self, image):
@@ -23,7 +23,7 @@ class ImageView(Node):
 		return self.__content
 
 
-class CanvasView(Node):
+class CanvasView(SimpleNode):
 	def __init__(self, width, height, **kwargs):
 		super(CanvasView, self).__init__(**kwargs)
 		
@@ -32,7 +32,7 @@ class CanvasView(Node):
 		self.set_style_name("canvas-view")
 	
 	def update(self):
-		self._set_canvas(self.__content.get())
+		self._set_surface(self.__content.get())
 		self._fit_size()
 	
 	def set_canvas(self, canvas):

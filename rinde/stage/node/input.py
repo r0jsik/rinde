@@ -1,10 +1,10 @@
-from rinde.stage.node import Node
+from rinde.stage.node import ComplexNode
 from rinde.stage.node.region import Region
 from rinde.stage.node.text import Text
 from rinde.stage.node.util.layout import LayoutComputer
 
 
-class Input(Node):
+class Input(ComplexNode):
 	def __init__(self, text="", selected=False, **kwargs):
 		super(Input, self).__init__(**kwargs)
 		
@@ -27,11 +27,11 @@ class Input(Node):
 		self.borrow_property(self.__text, "text")
 		self._insert_node(self.__text)
 	
-	def update(self):
+	def update_layout(self):
 		self.__layout_computer.align_nodes(self.__selector, self.__text)
 
 
-class Selector(Node):
+class Selector(ComplexNode):
 	def __init__(self, selected):
 		super(Selector, self).__init__()
 		
@@ -61,7 +61,7 @@ class Selector(Node):
 		
 		self.properties.insert("selected", property)
 	
-	def update(self):
+	def update_layout(self):
 		self.__layout_computer.center_node(self.__pipe)
 
 

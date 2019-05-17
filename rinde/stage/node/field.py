@@ -1,9 +1,9 @@
-from rinde.stage.node import Node
+from rinde.stage.node import ComplexNode
 from rinde.stage.node.region import Region
 from rinde.stage.node.text import Text
 
 
-class Field(Node):
+class Field(ComplexNode):
 	def __init__(self, text="", placeholder="", **kwargs):
 		super(Field, self).__init__(**kwargs)
 		
@@ -37,13 +37,13 @@ class Field(Node):
 		self.__fit_content_size()
 	
 	def _get_content_text(self):
-		pass
+		raise NotImplementedError
 	
 	def __fit_content_size(self):
 		offset = self.__text.get_absolute_size("width") - self.__background.get_absolute_size("width")
 		
 		if offset > 0:
-			self.__text._crop_display_canvas(offset, 0, self.__get_content_space("width"), self.__get_content_space("height"))
+			self.__text.crop_display_surface(offset, 0, self.__get_content_space("width"), self.__get_content_space("height"))
 	
 	def __get_content_space(self, dimension):
 		return self.__background[dimension] - self.__text.get_absolute_size(dimension) + self.__text[dimension]

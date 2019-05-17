@@ -1,8 +1,8 @@
-from rinde.stage.node import Node
+from rinde.stage.node import SimpleNode
 from rinde.stage.node.util import Canvas
 
 
-class Region(Node):
+class Region(SimpleNode):
 	def __init__(self, **kwargs):
 		super(Region, self).__init__(**kwargs)
 		
@@ -26,7 +26,7 @@ class Region(Node):
 	def __update_canvas(self):
 		width, height = self.absolute_size()
 		self.__canvas = Canvas(width, height)
-		self._set_canvas(self.__canvas.get())
+		self._set_surface(self.__canvas.get())
 	
 	def __redraw(self):
 		bounds = (0, 0, *self.absolute_size())

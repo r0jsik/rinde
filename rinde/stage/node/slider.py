@@ -1,9 +1,9 @@
-from rinde.stage.node import Node
+from rinde.stage.node import ComplexNode
 from rinde.stage.node.region import Region
 from rinde.stage.node.util.layout import LayoutComputer
 
 
-class Slider(Node):
+class Slider(ComplexNode):
 	def __init__(self, range=100, action=None, **kwargs):
 		super(Slider, self).__init__(**kwargs)
 		
@@ -41,12 +41,12 @@ class Slider(Node):
 		self.borrow_property(self.__thumb, "position-x", action, "value")
 		self.properties.add_trigger("value", self.__clamp_value)
 	
-	def update(self):
+	def update_layout(self):
 		self.__layout_computer.center_node_vertically(self.__track)
 		self.__layout_computer.center_node_vertically(self.__thumb)
 	
 	def get_hovered_node(self, mouse_position):
-		if self.__thumb.is_mouse_over(mouse_position):
+		if self.__thumb.boundary.is_mouse_over(mouse_position):
 			return self.__thumb
 		
 		return self
