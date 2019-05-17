@@ -6,9 +6,9 @@ class VBox(Box):
 	def __init__(self, nodes=(), align="left", **kwargs):
 		super(VBox, self).__init__(nodes, align, **kwargs)
 		
-		self.set_style_name("vbox")
-		
 		self.__layout_computer = VBoxLayoutComputer(self)
+		
+		self.set_style_name("vbox")
 	
 	def update_nodes_spacing(self):
 		self.__layout_computer.update_nodes_spacing("y", "height", 0, 2)
@@ -26,4 +26,4 @@ class VBoxLayoutComputer(BoxLayoutComputer):
 			return self.compute_node_center(node, "width")
 		
 		if align == "right":
-			return self.node["width"] - node["width"]
+			return self.node.get_absolute_size("width") - node.get_absolute_size("width")

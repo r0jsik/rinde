@@ -37,9 +37,9 @@ class StackPane(Pane):
 	def __init__(self, **kwargs):
 		super(StackPane, self).__init__(**kwargs)
 		
-		self.set_style_name("stack-pane")
-		
 		self.__layout_computer = LayoutComputer(self)
+		
+		self.set_style_name("stack-pane")
 	
 	def update_layout(self):
 		self.boundary.fit_size_to_children(False)

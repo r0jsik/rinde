@@ -6,9 +6,9 @@ class HBox(Box):
 	def __init__(self, nodes=(), align="top", **kwargs):
 		super(HBox, self).__init__(nodes, align, **kwargs)
 		
-		self.set_style_name("hbox")
-		
 		self.__layout_computer = HBoxLayoutComputer(self)
+		
+		self.set_style_name("hbox")
 	
 	def update_nodes_spacing(self):
 		self.__layout_computer.update_nodes_spacing("x", "width", 3, 1)
@@ -26,4 +26,4 @@ class HBoxLayoutComputer(BoxLayoutComputer):
 			return self.compute_node_center(node, "height")
 		
 		if align == "bottom":
-			return self.node["height"] - node["height"]
+			return self.node.get_absolute_size("height") - node.get_absolute_size("height")

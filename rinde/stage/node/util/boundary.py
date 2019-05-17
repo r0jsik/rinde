@@ -41,13 +41,10 @@ class PositionBoundary(SpaceBoundary):
 		self.node.properties.create_number("position-y", self.__update_absolute_position_y, position_y)
 	
 	def __update_absolute_position_x(self):
-		self.__update("x", "width", 3, 1)
+		self.reset_absolute_position("x", "width", 3, 1)
 	
 	def __update_absolute_position_y(self):
-		self.__update("y", "height", 0, 2)
-	
-	def __update(self, axis, dimension, side_1, side_2):
-		self.reset_absolute_position(axis, dimension, side_1, side_2)
+		self.reset_absolute_position("y", "height", 0, 2)
 	
 	def reset_absolute_position(self, axis, dimension, side_1, side_2):
 		self.__absolute_position[axis] = self.__get_parent_origin(axis, side_2) + self.__get_local_origin(axis, side_1)
@@ -153,10 +150,6 @@ class ComplexNodeBoundary(Boundary):
 			return size + child["position-%s" % axis]
 		
 		return size
-
-
-class SimpleNodeBoundary(Boundary):
-	pass
 
 
 class NullBoundary:

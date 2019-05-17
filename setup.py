@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 setup(
 	name="rinde",
 	description="Library used for creating GUI based on XML and CSS.",
-	version="0.88-B",
+	version="0.88-C",
 	license="MIT License",
 	author="Marcin Rajs",
 	requires=("pygame", "cssutils"),

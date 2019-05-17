@@ -36,5 +36,6 @@ class Button(ComplexNode):
 		self._insert_node(text)
 	
 	def update(self):
-		self.__background.set_size(*self.absolute_size())
+		width, height = self.absolute_size()
+		self.__background.set_size(width, height)
 		self.__background.update()
