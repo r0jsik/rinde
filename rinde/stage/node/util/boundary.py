@@ -7,8 +7,9 @@ class BoundaryBase(object):
 	
 	def update_parent(self):
 		parent = self.get_parent_boundary()
-		parent.fit_size_to_children(True)
+		parent.fit_size_to_children(False)
 		parent.update_layout()
+		parent.fit_size_to_children(True)
 	
 	def update_layout(self):
 		self.node.update_layout()

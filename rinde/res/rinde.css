@@ -123,10 +123,18 @@ text-field placeholder, password-field placeholder
 	font: rinde_src("Roboto Condensed Regular.ttf");
 	font-size: 14;
 	color: #666666;
-	padding: 2 5;
+	padding: 0 5;
+	position-y: 2;
 }
 
-text-field text, password-field text
+text-field text
 {
-	padding: 3 5;
+	padding: 0 5;
+	position-y: 3;
+}
+
+password-field text
+{
+	padding: 0 5;
+	position-y: 5;
 }

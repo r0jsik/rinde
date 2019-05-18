@@ -93,8 +93,8 @@ class AbstractLayoutParser(AbstractXMLParser):
 		
 		try:
 			node = self.__create_node(type_name, attributes, children)
-		except TypeError:
-			raise TypeError("Invalid '%s' argumentation" % type_name)
+		except TypeError as exception:
+			raise TypeError("Invalid '%s' argumentation: %s" % (type_name, exception))
 		
 		if "id" in attributes:
 			self.__controller.nodes[attributes["id"]] = node

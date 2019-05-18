@@ -12,7 +12,7 @@ class Appearance:
 	
 	def __reset_properties(self, style):
 		for property_name, value in style.get_declarations(None):
-			self.node.property(property_name).reset(value)
+			self.node.properties[property_name].reset(value)
 		
 		self.__reset_children_appearances(style)
 	

@@ -7,9 +7,9 @@ class Text(ComplexNode):
 	def __init__(self, text="", **kwargs):
 		super(Text, self).__init__(**kwargs)
 		
-		self.properties.create("text", value=text)
-		self.properties.create("font")
-		self.properties.create_number("font-size")
+		self.properties.create("text", self.update, text)
+		self.properties.create("font", self.update)
+		self.properties.create_number("font-size", self.update)
 		
 		self.__init_display()
 		
@@ -18,8 +18,11 @@ class Text(ComplexNode):
 	def __init_display(self):
 		self.__display = TextDisplay(self)
 		
-		self.borrow_property(self.__display, "color")
+		self._borrow_property(self.__display, "color")
 		self._insert_node(self.__display)
+	
+	def update(self):
+		self.__display.redraw()
 	
 	def crop_display_surface(self, offset_x, offset_y, width, height):
 		self.__display.crop_surface((offset_x, offset_y, width, height))
@@ -34,25 +37,30 @@ class Label(Text):
 		self.set_style_name("label")
 	
 	def __init_shadow(self):
-		shadow = TextDisplay(self)
-		shadow.set_style_name("shadow")
+		self.__shadow = TextDisplay(self)
+		self.__shadow.set_style_name("shadow")
 		
-		self._insert_node(shadow, 0)
+		self._insert_node(self.__shadow, 0)
+	
+	def update(self):
+		super(Label, self).update()
+		
+		self.__shadow.redraw()
 
 
 class TextDisplay(SimpleNode):
 	def __init__(self, text):
 		super(TextDisplay, self).__init__()
 		
-		self.borrow_property(text, "text", self.update)
-		self.borrow_property(text, "font", self.update)
-		self.borrow_property(text, "font-size", self.update)
+		self._borrow_property(text, "text")
+		self._borrow_property(text, "font")
+		self._borrow_property(text, "font-size")
 		
-		self.properties.create_number("color", self.update)
+		self.properties.create_number("color", self.redraw)
 		
 		self.set_style_name("display")
 	
-	def update(self):
+	def redraw(self):
 		font = Font(self["font"], self["font-size"])
 		surface = font.render(self["text"], self["color"])
 		

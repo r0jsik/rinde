@@ -14,11 +14,11 @@ class Controller(ControllerBase):
 		self.hide_header()
 	
 	def hide_header(self):
-		property = self.nodes["header"].property("position-y")
+		property = self.nodes["header"].properties["position-y"]
 		property.animate_to(-40, self.hide_form)
 	
 	def hide_form(self):
-		property = self.nodes["form"].property("position-x")
+		property = self.nodes["form"].properties["position-x"]
 		property.animate_by(-220, self.show_summary, 3)
 	
 	def show_summary(self):

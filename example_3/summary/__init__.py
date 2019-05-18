@@ -18,7 +18,7 @@ class Summary(ControllerBase):
 		label["position-x"] = (window_width - label["width"])/2
 	
 	def show_header(self):
-		property = self.nodes["header"].property("position-y")
+		property = self.nodes["header"].properties["position-y"]
 		property.animate_to(50, self.show_summary)
 	
 	def show_summary(self):

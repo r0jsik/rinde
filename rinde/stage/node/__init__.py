@@ -9,16 +9,13 @@ class NodeBase(object):
 	def __init__(self, **kwargs):
 		self.properties = Properties()
 	
-	def borrow_property(self, node, name, trigger=None, name_as=None):
+	def _borrow_property(self, node, name, trigger=None, name_as=None):
 		property = node.properties[name]
 		
 		if name_as:
 			self.properties.insert(name_as, property, trigger)
 		else:
 			self.properties.insert(name, property, trigger)
-	
-	def property(self, property_name):
-		return self.properties[property_name]
 	
 	def __setitem__(self, property_name, value):
 		self.properties[property_name].set(value)
@@ -73,15 +70,6 @@ class BoundaryNode(NodeBase):
 	
 	def get_absolute_size(self, dimension):
 		return self.boundary.get_absolute_size(dimension)
-	
-	def set_position(self, position_x, position_y):
-		self["position-x"], self["position-y"] = position_x, position_y
-	
-	def set_size(self, width, height):
-		self["width"], self["height"] = width, height
-	
-	def get_size(self):
-		return self["width"], self["height"]
 
 
 class InteractiveNode(StylizableNode, BoundaryNode):
@@ -244,5 +232,4 @@ class SimpleNode(Node):
 		return self.__surface
 	
 	def _fit_size(self):
-		width, height = self.__surface.get_size()
-		self.set_size(width, height)
+		self["width"], self["height"] = self.__surface.get_size()

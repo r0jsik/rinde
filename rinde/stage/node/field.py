@@ -43,10 +43,7 @@ class Field(ComplexNode):
 		offset = self.__text.get_absolute_size("width") - self.__background.get_absolute_size("width")
 		
 		if offset > 0:
-			self.__text.crop_display_surface(offset, 0, self.__get_content_space("width"), self.__get_content_space("height"))
-	
-	def __get_content_space(self, dimension):
-		return self.__background[dimension] - self.__text.get_absolute_size(dimension) + self.__text[dimension]
+			self.__text.crop_display_surface(offset, 0, self.__text["width"] - offset, self.__text["height"])
 	
 	def key_pressed(self, code, char):
 		if code == 8:

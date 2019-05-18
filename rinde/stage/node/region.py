@@ -24,11 +24,10 @@ class Region(SimpleNode):
 		self.__redraw()
 	
 	def __update_canvas(self):
-		width, height = self.absolute_size()
-		self.__canvas = Canvas(width, height)
+		self.__canvas = Canvas(self["width"], self["height"])
 		self._set_surface(self.__canvas.get())
 	
 	def __redraw(self):
-		bounds = (0, 0, *self.absolute_size())
+		bounds = (0, 0, self["width"], self["height"])
 		self.__canvas.clear()
 		self.__canvas.draw_rounded_rect(self["inside-color"], bounds, self["radius"], self["stroke-width"], self["stroke-color"])

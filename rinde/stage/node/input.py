@@ -18,13 +18,13 @@ class Input(ComplexNode):
 	def __init_selector(self, selected):
 		self.__selector = Selector(selected)
 		
-		self.borrow_property(self.__selector, "selected")
+		self._borrow_property(self.__selector, "selected")
 		self._insert_node(self.__selector)
 	
 	def __init_text(self, text):
 		self.__text = Text(text)
 		
-		self.borrow_property(self.__text, "text")
+		self._borrow_property(self.__text, "text")
 		self._insert_node(self.__text)
 	
 	def update_layout(self):
@@ -56,7 +56,7 @@ class Selector(ComplexNode):
 		self._insert_node(self.__pipe)
 	
 	def __init_selected(self, selected):
-		property = self.__pipe.property("visible")
+		property = self.__pipe.properties["visible"]
 		property.reset(selected)
 		
 		self.properties.insert("selected", property)
@@ -85,8 +85,8 @@ class InputLayoutComputer(LayoutComputer):
 		raise ValueError("Unknown alignment: '%s'" % align)
 	
 	def __align_node(self, node, position_x):
-		position_y = self.compute_node_center(node, "height")
-		node.set_position(position_x, position_y)
+		node["position-x"] = position_x
+		node["position-y"] = self.compute_node_center(node, "height")
 		position_x = node["width"] + self.node["spacing"]
 		
 		return position_x
@@ -99,7 +99,7 @@ class CheckBox(Input):
 		self.set_style_name("check-box")
 	
 	def click(self):
-		self.property("selected").toggle()
+		self.properties["selected"].toggle()
 
 
 class RadioBox(Input):

@@ -22,14 +22,14 @@ class Slider(ComplexNode):
 		self._insert_node(self.__track)
 	
 	def __init_range(self, value):
-		range = self.__track.property("width")
+		range = self.__track.properties["width"]
 		range.reset(value)
 		
 		self.properties.insert("range", range, self.__clamp_value)
 	
 	# Prevents thumb from getting out of the range
 	def __clamp_value(self):
-		self.property("value").set_in_range(0, self["value"], self["range"])
+		self.properties["value"].set_in_range(0, self["value"], self["range"])
 	
 	def __init_thumb(self):
 		self.__thumb = Thumb(self)
@@ -38,7 +38,7 @@ class Slider(ComplexNode):
 		self._insert_node(self.__thumb)
 	
 	def __init_value(self, action):
-		self.borrow_property(self.__thumb, "position-x", action, "value")
+		self._borrow_property(self.__thumb, "position-x", action, "value")
 		self.properties.add_trigger("value", self.__clamp_value)
 	
 	def update_layout(self):
@@ -59,4 +59,4 @@ class Thumb(Region):
 		self.__slider = slider
 	
 	def drag(self, mouse_offset):
-		self.property("position-x").set_in_range(0, self["position-x"] + mouse_offset[0], self.__slider["range"])
+		self.properties["position-x"].set_in_range(0, self["position-x"] + mouse_offset[0], self.__slider["range"])

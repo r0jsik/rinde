@@ -32,10 +32,8 @@ class Button(ComplexNode):
 	def __init_text(self, text):
 		text = Text(text)
 		
-		self.borrow_property(text, "text")
+		self._borrow_property(text, "text")
 		self._insert_node(text)
 	
 	def update(self):
-		width, height = self.absolute_size()
-		self.__background.set_size(width, height)
-		self.__background.update()
+		self.__background["width"], self.__background["height"] = self.absolute_size()
