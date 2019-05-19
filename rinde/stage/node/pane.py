@@ -20,8 +20,8 @@ class Pane(ComplexNode):
 		
 		return hovered_node
 	
-	def insert_node(self, node):
-		self._insert_node(node)
+	def insert_node(self, node, index=None):
+		self._insert_node(node, index)
 		node.reset()
 		self.update_layout()
 	

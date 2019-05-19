@@ -3,8 +3,8 @@ from rinde.stage.node.box import BoxLayoutComputer
 
 
 class HBox(Box):
-	def __init__(self, nodes=(), align="top", **kwargs):
-		super(HBox, self).__init__(nodes, align, **kwargs)
+	def __init__(self, **kwargs):
+		super(HBox, self).__init__(**kwargs)
 		
 		self.__layout_computer = HBoxLayoutComputer(self)
 		

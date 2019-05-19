@@ -3,8 +3,8 @@ from rinde.stage.node.box import BoxLayoutComputer
 
 
 class VBox(Box):
-	def __init__(self, nodes=(), align="left", **kwargs):
-		super(VBox, self).__init__(nodes, align, **kwargs)
+	def __init__(self, **kwargs):
+		super(VBox, self).__init__(**kwargs)
 		
 		self.__layout_computer = VBoxLayoutComputer(self)
 		

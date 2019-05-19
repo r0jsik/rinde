@@ -28,26 +28,6 @@ class Text(ComplexNode):
 		self.__display.crop_surface((offset_x, offset_y, width, height))
 
 
-class Label(Text):
-	def __init__(self, **kwargs):
-		super(Label, self).__init__(**kwargs)
-		
-		self.__init_shadow()
-		
-		self.set_style_name("label")
-	
-	def __init_shadow(self):
-		self.__shadow = TextDisplay(self)
-		self.__shadow.set_style_name("shadow")
-		
-		self._insert_node(self.__shadow, 0)
-	
-	def update(self):
-		super(Label, self).update()
-		
-		self.__shadow.redraw()
-
-
 class TextDisplay(SimpleNode):
 	def __init__(self, text):
 		super(TextDisplay, self).__init__()
@@ -73,6 +53,26 @@ class TextDisplay(SimpleNode):
 		
 		self._set_surface(canvas)
 		self._fit_size()
+
+
+class Label(Text):
+	def __init__(self, **kwargs):
+		super(Label, self).__init__(**kwargs)
+		
+		self.__init_shadow()
+		
+		self.set_style_name("label")
+	
+	def __init_shadow(self):
+		self.__shadow = TextDisplay(self)
+		self.__shadow.set_style_name("shadow")
+		
+		self._insert_node(self.__shadow, 0)
+	
+	def update(self):
+		super(Label, self).update()
+		
+		self.__shadow.redraw()
 
 
 class DraggableLabel(Label):

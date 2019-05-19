@@ -27,8 +27,6 @@ class Field(ComplexNode):
 	
 	def __init_text(self, text):
 		self.__text = Text(text)
-		self.__text.properties.add_trigger("text", self.update)
-		
 		self._insert_node(self.__text)
 	
 	def update(self):

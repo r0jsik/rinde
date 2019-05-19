@@ -4,7 +4,7 @@ from rinde.stage.node.util.layout import LayoutComputer
 
 
 class Slider(ComplexNode):
-	def __init__(self, range=100, action=None, **kwargs):
+	def __init__(self, range, action=None, **kwargs):
 		super(Slider, self).__init__(**kwargs)
 		
 		self.__layout_computer = LayoutComputer(self)

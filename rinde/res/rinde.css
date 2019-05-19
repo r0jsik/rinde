@@ -10,26 +10,26 @@ text display
 	position-y: -1;
 }
 
-label, draggable-label, text-button
+label, draggable-label, label-button
 {
 	font: rinde_src("Roboto Condensed Regular.ttf");
 	font-size: 32;
 	color: #837654;
 }
 
-label shadow, draggable-label shadow, text-button shadow
+label shadow, draggable-label shadow, label-button shadow
 {
 	color: #111111;
 	position-x: 1;
 	position-y: 1;
 }
 
-text-button:hovered
+label-button:hovered
 {
 	color: #A59876;
 }
 
-text-button:active
+label-button:active
 {
 	color: #615432;
 }
@@ -137,4 +137,14 @@ password-field text
 {
 	padding: 0 5;
 	position-y: 5;
+}
+
+hbox
+{
+	align: "top";
+}
+
+vbox
+{
+	align: "left";
 }

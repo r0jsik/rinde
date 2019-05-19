@@ -9,15 +9,15 @@
 <Scene controller="stage.Controller" width="410" height="95">
 	<VBox>
 		<HBox>
-			<Text text="R:" /> <Slider id="r" action="change_color" />
+			<Text text="R:" /> <Slider id="r" action="change_color" range="255" />
 		</HBox>
 		
 		<HBox>
-			<Text text="G:" /> <Slider id="g" action="change_color" />
+			<Text text="G:" /> <Slider id="g" action="change_color" range="255" />
 		</HBox>
 		
 		<HBox>
-			<Text text="B:" /> <Slider id="b" action="change_color" />
+			<Text text="B:" /> <Slider id="b" action="change_color" range="255" />
 		</HBox>
 	</VBox>
 	

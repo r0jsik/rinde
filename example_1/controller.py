@@ -8,7 +8,7 @@ class Controller(ControllerBase):
 	def start(self):
 		
 		# Access to node with id="button" (defined in XML)
-		print("TextButton: ", self.nodes["button"])
+		print("LabelButton: ", self.nodes["button"])
 	
 	# Method invoked when button with action="say_hello" (defined in XML) is clicked
 	def say_hello(self):

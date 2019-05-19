@@ -4,13 +4,13 @@ from rinde.stage.node.text import Label
 from rinde.stage.node.text import Text
 
 
-class TextButton(Label):
+class LabelButton(Label):
 	def __init__(self, action, **kwargs):
-		super(TextButton, self).__init__(**kwargs)
+		super(LabelButton, self).__init__(**kwargs)
 		
 		self.click = action
 		
-		self.set_style_name("text-button")
+		self.set_style_name("label-button")
 
 
 class Button(ComplexNode):

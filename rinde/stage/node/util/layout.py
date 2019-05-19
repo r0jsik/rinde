@@ -14,13 +14,3 @@ class LayoutComputer(object):
 	
 	def compute_node_center(self, node, dimension):
 		return (self.node.get_absolute_size(dimension) - node.get_absolute_size(dimension))/2
-
-
-class PaneLayoutComputer(LayoutComputer):
-	def __init__(self, pane):
-		super(PaneLayoutComputer, self).__init__(pane)
-		
-		self.__pane = pane
-	
-	def get_nodes(self):
-		return self.__pane.get_nodes()

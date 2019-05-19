@@ -16,11 +16,6 @@ text
 	font: src("res/Roboto Bold.ttf");
 }
 
-slider
-{
-	range: 255;
-}
-
 #display
 {
 	position-x: 325;

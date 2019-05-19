@@ -11,11 +11,11 @@ class BoundaryBase(object):
 		parent.update_layout()
 		parent.fit_size_to_children(True)
 	
-	def update_layout(self):
-		self.node.update_layout()
-	
 	def get_parent_boundary(self):
 		return self.node.get_parent_boundary() or NullBoundary()
+	
+	def update_layout(self):
+		self.node.update_layout()
 
 
 class SpaceBoundary(BoundaryBase):
