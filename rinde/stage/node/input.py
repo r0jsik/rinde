@@ -1,5 +1,6 @@
 from rinde.stage.node import ComplexNode
 from rinde.stage.node.region import Region
+from rinde.stage.node.region import ComplexNodeWithBackground
 from rinde.stage.node.text import Text
 from rinde.stage.node.util.layout import LayoutComputer
 
@@ -31,23 +32,16 @@ class Input(ComplexNode):
 		self.__layout_computer.align_nodes(self.__selector, self.__text)
 
 
-class Selector(ComplexNode):
+class Selector(ComplexNodeWithBackground):
 	def __init__(self, selected):
 		super(Selector, self).__init__()
 		
 		self.__layout_computer = LayoutComputer(self)
 		
-		self.__init_background()
 		self.__init_pipe()
 		self.__init_selected(selected)
 		
 		self.set_style_name("selector")
-	
-	def __init_background(self):
-		background = Region()
-		background.set_style_name("background")
-		
-		self._insert_node(background)
 	
 	def __init_pipe(self):
 		self.__pipe = Region()
@@ -114,3 +108,9 @@ class RadioBox(Input):
 	
 	def click(self):
 		self.__group.select(self.__name)
+	
+	def is_selected(self):
+		return self["selected"]
+	
+	def set_selected(self, value):
+		self["selected"] = value

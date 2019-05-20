@@ -30,24 +30,9 @@ class StylizableNode(NodeBase):
 		
 		self.appearance = Appearance(self, id, style_class)
 		
-		self.__create_state_property("hovered")
-		self.__create_state_property("active")
-		self.__create_state_property("focused")
-	
-	def __create_state_property(self, name):
-		self.properties.create_boolean(name, self.__update_state)
-	
-	def __update_state(self):
-		self.appearance.apply(None)
-		
-		if self["hovered"]:
-			self.appearance.apply("hovered")
-		
-		if self["active"]:
-			self.appearance.apply("active")
-		
-		if self["focused"]:
-			self.appearance.apply("focused")
+		self.appearance.create_state("hovered")
+		self.appearance.create_state("active")
+		self.appearance.create_state("focused")
 	
 	def set_style_name(self, value):
 		self.appearance.style_name = value
@@ -83,22 +68,22 @@ class InteractiveNode(StylizableNode, BoundaryNode):
 		return self["visible"] and self["enabled"] and self.boundary.is_mouse_over(mouse_position)
 	
 	def hover(self):
-		self["hovered"] = True
+		self.appearance["hovered"] = True
 	
 	def leave(self):
-		self["hovered"] = False
+		self.appearance["hovered"] = False
 	
 	def activate(self):
-		self["active"] = True
+		self.appearance["active"] = True
 	
 	def deactivate(self):
-		self["active"] = False
+		self.appearance["active"] = False
 	
 	def focus(self):
-		self["focused"] = True
+		self.appearance["focused"] = True
 	
 	def unfocus(self):
-		self["focused"] = False
+		self.appearance["focused"] = False
 	
 	def drag(self, mouse_offset):
 		pass
@@ -231,5 +216,5 @@ class SimpleNode(Node):
 	def _get_surface(self):
 		return self.__surface
 	
-	def _fit_size(self):
+	def _fit_size_to_surface(self):
 		self["width"], self["height"] = self.__surface.get_size()

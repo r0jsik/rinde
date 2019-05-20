@@ -117,8 +117,8 @@ class Boundary(PositionBoundary, SizeBoundary):
 		self.update_absolute_size()
 	
 	def is_mouse_over(self, mouse_position):
-		if self.get_absolute_size("width") > mouse_position[0] - self.get_absolute_position("x") > 0:
-			if self.get_absolute_size("height") > mouse_position[1] - self.get_absolute_position("y") > 0:
+		if self.get_absolute_size("width") >= mouse_position[0] - self.get_absolute_position("x") >= 0:
+			if self.get_absolute_size("height") >= mouse_position[1] - self.get_absolute_position("y") >= 0:
 				return True
 		
 		return False

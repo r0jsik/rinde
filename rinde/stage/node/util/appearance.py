@@ -1,3 +1,6 @@
+from rinde.stage.property import BooleanProperty
+
+
 class Appearance:
 	def __init__(self, node, id, style_class):
 		self.node = node
@@ -5,6 +8,7 @@ class Appearance:
 		self.style_class = style_class
 		self.style_name = None
 		self.style = ()
+		self.state = {}
 	
 	def apply_default(self):
 		for style in self.style:
@@ -49,3 +53,20 @@ class Appearance:
 		
 		if self.id:
 			yield "#%s" % self.id
+	
+	def create_state(self, name, value=False):
+		self.state[name] = BooleanProperty(value)
+		self.state[name].add_trigger(self.__update_state)
+	
+	def __update_state(self):
+		self.apply(None)
+		
+		for state_name, value in self.state.items():
+			if value:
+				self.apply(state_name)
+	
+	def __setitem__(self, property_name, value):
+		self.state[property_name].set(value)
+	
+	def __getitem__(self, property_name):
+		return self.state[property_name].get()

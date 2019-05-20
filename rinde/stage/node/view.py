@@ -13,7 +13,7 @@ class ImageView(SimpleNode):
 	
 	def update(self):
 		self._set_surface(self.__content.get())
-		self._fit_size()
+		self._fit_size_to_surface()
 	
 	def set_image(self, image):
 		self.__content = image
@@ -33,7 +33,7 @@ class CanvasView(SimpleNode):
 	
 	def update(self):
 		self._set_surface(self.__content.get())
-		self._fit_size()
+		self._fit_size_to_surface()
 	
 	def set_canvas(self, canvas):
 		self.__content = canvas

@@ -119,7 +119,7 @@ class AbstractLayoutParser(AbstractXMLParser):
 		type = self.get_imported(type_name)
 		
 		if children:
-			return type(nodes=children, **attributes)
+			return type(children=children, **attributes)
 		else:
 			return type(**attributes)
 

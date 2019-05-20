@@ -1,47 +1,31 @@
-from rinde.stage.node import ComplexNode
-from rinde.stage.node.region import Region
-from rinde.stage.node.text import Text
+from rinde.stage.node.region import ComplexNodeWithBackground
+from rinde.stage.node.text import PlaceholdedText
 
 
-class Field(ComplexNode):
+class Field(ComplexNodeWithBackground):
 	def __init__(self, text="", placeholder="", **kwargs):
 		super(Field, self).__init__(**kwargs)
 		
 		self.properties.create("text", self.update, text)
 		
-		self.__init_background()
-		self.__init_placeholder(placeholder)
-		self.__init_text(text)
+		self.__init_placeholded_text(text, placeholder)
 	
-	def __init_background(self):
-		self.__background = Region()
-		self.__background.set_style_name("background")
-		
-		self._insert_node(self.__background)
-	
-	def __init_placeholder(self, text):
-		self.__placeholder = Text(text)
-		self.__placeholder.set_style_name("placeholder")
-		
-		self._insert_node(self.__placeholder)
-	
-	def __init_text(self, text):
-		self.__text = Text(text)
-		self._insert_node(self.__text)
+	def __init_placeholded_text(self, text, placeholder):
+		self.__placeholded_text = PlaceholdedText(text, placeholder)
+		self._insert_node(self.__placeholded_text)
 	
 	def update(self):
-		self.__text["text"] = self._get_content_text()
-		self.__placeholder["visible"] = (self.__text["text"] == "")
+		self.__placeholded_text["text"] = self._get_content_text()
 		self.__fit_content_size()
 	
 	def _get_content_text(self):
 		raise NotImplementedError
 	
 	def __fit_content_size(self):
-		offset = self.__text.get_absolute_size("width") - self.__background.get_absolute_size("width")
+		offset = self.get_absolute_size("width") - self.background.get_absolute_size("width")
 		
 		if offset > 0:
-			self.__text.crop_display_surface(offset, 0, self.__text["width"] - offset, self.__text["height"])
+			self.__placeholded_text.shift_text_surface(offset, 0)
 	
 	def key_pressed(self, code, char):
 		if code == 8:

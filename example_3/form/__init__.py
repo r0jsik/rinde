@@ -24,9 +24,10 @@ class Controller(ControllerBase):
 	def show_summary(self):
 		username = self.nodes["username"]["text"]
 		password = self.nodes["password"]["text"]
-		difficulty = self.groups["difficulty"]
+		difficulty = self.groups["difficulty"].get()
 		checkbox_1 = self.nodes["checkbox 1"]["selected"]
 		checkbox_2 = self.nodes["checkbox 2"]["selected"]
-		summary = Summary(username, password, difficulty, checkbox_1, checkbox_2)
+		option = self.groups["options"].get()
+		summary = Summary(username, password, difficulty, checkbox_1, checkbox_2, option)
 		
 		self.window.set_stage("summary", summary)

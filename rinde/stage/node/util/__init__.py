@@ -125,17 +125,28 @@ class Group:
 	def insert(self, node, name):
 		self.__items[name] = node
 		
-		if node["selected"]:
+		if node.is_selected():
 			self.select(name)
+	
+	def remove(self, name):
+		del self.__items[name]
 	
 	def select(self, name):
 		self.__selected = name
 		
 		for item_name, item in self.__items.items():
-			item["selected"] = (item_name == name)
+			item.set_selected(item_name == name)
+		
+		self.on_selected()
+	
+	def on_selected(self):
+		pass
+	
+	def get(self):
+		return self.__selected
+	
+	def get_item(self):
+		return self.__items[self.__selected]
 	
 	def __eq__(self, other):
 		return self.__selected == other
-	
-	def __str__(self):
-		return self.__selected

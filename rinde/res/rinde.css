@@ -1,13 +1,27 @@
-text
+hbox
+{
+	align: "top";
+}
+
+vbox
+{
+	align: "left";
+}
+
+text, placeholder
 {
 	font: rinde_src("Roboto Condensed Regular.ttf");
 	font-size: 14;
+}
+
+text
+{
 	color: #333333;
 }
 
-text display
+placeholder
 {
-	position-y: -1;
+	color: #666666;
 }
 
 label, draggable-label, label-button
@@ -15,13 +29,6 @@ label, draggable-label, label-button
 	font: rinde_src("Roboto Condensed Regular.ttf");
 	font-size: 32;
 	color: #837654;
-}
-
-label shadow, draggable-label shadow, label-button shadow
-{
-	color: #111111;
-	position-x: 1;
-	position-y: 1;
 }
 
 label-button:hovered
@@ -32,6 +39,13 @@ label-button:hovered
 label-button:active
 {
 	color: #615432;
+}
+
+label-shadow
+{
+	color: #111111;
+	position-x: 1;
+	position-y: 1;
 }
 
 button background
@@ -118,33 +132,51 @@ text-field background, password-field background
 	radius: 25;
 }
 
-text-field placeholder, password-field placeholder
+text-field placeholded-text, password-field placeholded-text
 {
-	font: rinde_src("Roboto Condensed Regular.ttf");
-	font-size: 14;
-	color: #666666;
-	padding: 0 5;
-	position-y: 2;
+	padding: 2 5;
 }
 
-text-field text
+choice-box disposer background
 {
-	padding: 0 5;
-	position-y: 3;
+	width: 122;
+	height: 22;
+	stroke-width: 1;
+	stroke-color: #837654;
+	inside-color: #EEEEEE;
 }
 
-password-field text
+choice-box disposer placeholded-text
 {
-	padding: 0 5;
-	position-y: 5;
+	position-x: 4;
+	position-y: 1;
 }
 
-hbox
+list-view background
 {
-	align: "top";
+	stroke-width: 1;
+	stroke-color: #837654;
+	inside-color: #CCCCCC;
 }
 
-vbox
+list-view pane
 {
-	align: "left";
+	padding: 1;
+}
+
+option background
+{
+	width: 120;
+	height: 20;
+	inside-color: #EEEEEE;
+}
+
+option text
+{
+	position-x: 3;
+}
+
+option:hovered background, option:selected background
+{
+	inside-color: #C3B694;
 }

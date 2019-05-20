@@ -1,3 +1,4 @@
+from rinde.stage.node import ComplexNode
 from rinde.stage.node import SimpleNode
 from rinde.stage.node.util import Canvas
 
@@ -31,3 +32,19 @@ class Region(SimpleNode):
 		bounds = (0, 0, self["width"], self["height"])
 		self.__canvas.clear()
 		self.__canvas.draw_rounded_rect(self["inside-color"], bounds, self["radius"], self["stroke-width"], self["stroke-color"])
+
+
+class ComplexNodeWithBackground(ComplexNode):
+	def __init__(self, **kwargs):
+		super(ComplexNodeWithBackground, self).__init__(**kwargs)
+		
+		self.__init_background()
+	
+	def __init_background(self):
+		self.background = Region()
+		self.background.set_style_name("background")
+		
+		self._insert_node(self.background)
+	
+	def fit_background_size(self):
+		self.background["width"], self.background["height"] = self.absolute_size()
