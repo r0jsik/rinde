@@ -12,6 +12,8 @@ class Field(ComplexNodeWithBackground):
 	
 	def __init_placeholded_text(self, text, placeholder):
 		self.__placeholded_text = PlaceholdedText(text, placeholder)
+		
+		self._borrow_property(self.__placeholded_text, "placeholder")
 		self._insert_node(self.__placeholded_text)
 	
 	def update(self):

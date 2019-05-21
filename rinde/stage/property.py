@@ -41,13 +41,16 @@ class Property(object):
 		self.__bound_properties = set()
 		self.__triggers = set()
 		
-		self._value = value
+		self._value = self._convert_value(value)
 	
 	def reset(self, value):
-		self._value = value
+		self._value = self._convert_value(value)
 		
 		for property in self.__bound_properties:
 			property.reset(value)
+	
+	def _convert_value(self, value):
+		return value
 	
 	def bind_to(self, property):
 		if self.__bound_to:
@@ -62,6 +65,8 @@ class Property(object):
 		self.__bound_to = None
 	
 	def set(self, value):
+		value = self._convert_value(value)
+		
 		if self._value != value:
 			self.__change(value)
 		
@@ -93,7 +98,10 @@ class Property(object):
 
 class NumberProperty(Property):
 	def __init__(self, value=0):
-		super(NumberProperty, self).__init__(int(value))
+		super(NumberProperty, self).__init__(value)
+	
+	def _convert_value(self, value):
+		return int(value)
 	
 	def animate_to(self, value, callback, speed=2):
 		animation = Animation(self, value, callback, speed)
@@ -105,9 +113,6 @@ class NumberProperty(Property):
 	
 	def set_in_range(self, min_value, value, max_value):
 		self.set(min_value if value < min_value else value if value < max_value else max_value)
-	
-	def get(self):
-		return int(self._value)
 	
 	def __iadd__(self, other):
 		return self.set(self._value + other)
@@ -131,75 +136,83 @@ class NumberProperty(Property):
 		return self.set(self._value % other)
 	
 	def __int__(self):
-		return int(self._value)
+		return self._value
+
+
+class SizeProperty(Property):
+	def __init__(self, node):
+		super(SizeProperty, self).__init__((0, 0))
+		
+		self.__node = node
+		
+		self.__apply()
+	
+	def __apply(self):
+		self.__node.properties["width"] = NumberProperty()
+		self.__node.properties["height"] = NumberProperty()
+		self.__node.properties["size"] = self
+	
+	def set(self, value):
+		self.__node.properties["width"].set(value[0])
+		self.__node.properties["height"].set(value[1])
+		
+		super(SizeProperty, self).set(value)
+	
+	def reset(self, value):
+		self.__node.properties["width"].reset(value[0])
+		self.__node.properties["height"].reset(value[1])
+		
+		super(SizeProperty, self).reset(value)
 
 
 class SpaceProperty(Property):
 	def __init__(self):
-		super(SpaceProperty, self).__init__((0, 0, 0, 0))
-		
-		self.__sides = (
-			self.__create_property(),
-			self.__create_property(),
-			self.__create_property(),
-			self.__create_property()
-		)
+		super(SpaceProperty, self).__init__([0, 0, 0, 0])
 	
-	def __create_property(self):
-		property = NumberProperty()
-		property.add_trigger(self.__update)
+	def _convert_value(self, value):
+		if isinstance(value, str):
+			value = value.split(" ")
 		
-		return property
+		elif isinstance(value, int):
+			value = (value, )
+		
+		return [int(value[side]) for side in self.__split_directional(value)]
 	
-	def __update(self):
-		self.set(self.__sides)
-	
-	def set(self, value):
-		values = self.__split_directional(value)
-		
-		for side, value in enumerate(values):
-			self.__sides[side].set(value)
-		
-		super(SpaceProperty, self).set(values)
-	
-	def __split_directional(self, value):
-		values = str(value).split(" ")
-		
+	def __split_directional(self, values):
 		if len(values) == 1:
-			return int(values[0]), int(values[0]), int(values[0]), int(values[0])
+			return 0, 0, 0, 0
 		
 		if len(values) == 2:
-			return int(values[0]), int(values[1]), int(values[0]), int(values[1])
+			return 0, 1, 0, 1
 		
 		if len(values) == 3:
-			return int(values[0]), int(values[1]), int(values[2]), int(values[1])
+			return 0, 1, 2, 1
 		
 		if len(values) == 4:
-			return int(values[0]), int(values[1]), int(values[2]), int(values[3])
+			return 0, 1, 2, 3
 		
 		raise ValueError("Invalid space value")
 	
-	def reset(self, value):
-		values = self.__split_directional(value)
-		
-		for side, value in enumerate(values):
-			self.__sides[side].reset(value)
-		
-		super(SpaceProperty, self).reset(values)
+	def get(self):
+		return tuple(self._value)
 	
 	def __setitem__(self, side, value):
-		self.__sides[side].set(value)
+		self._value[side] = value
+		self.set(self._value)
 	
 	def __getitem__(self, side):
-		return self.__sides[side].get()
+		return self._value[side]
 
 
 class BooleanProperty(Property):
 	def __init__(self, value=False):
 		super(BooleanProperty, self).__init__(value)
 	
+	def _convert_value(self, value):
+		return value in ["true", True]
+	
 	def toggle(self):
-		self.set(not self.get())
+		self.set(not self._value)
 	
 	def true(self):
 		self.set(True)
@@ -207,8 +220,5 @@ class BooleanProperty(Property):
 	def false(self):
 		self.set(False)
 	
-	def get(self):
-		return self._value in [True, "true"]
-	
 	def __bool__(self):
-		return self.get()
+		return self._value

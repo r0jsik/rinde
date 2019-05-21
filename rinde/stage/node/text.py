@@ -103,6 +103,7 @@ class PlaceholdedText(ComplexNode):
 		self.__placeholder = Text(placehodler)
 		self.__placeholder.set_style_name("placeholder")
 		
+		self._borrow_property(self.__placeholder, "text", name_as="placeholder")
 		self._insert_node(self.__placeholder)
 	
 	def update(self):

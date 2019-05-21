@@ -20,6 +20,8 @@ class ChoiceBox(ComplexNode):
 	
 	def __init_disposer(self, placeholder):
 		self.__disposer = Disposer(self, placeholder)
+		
+		self._borrow_property(self.__disposer.placeholded_text, "placeholder")
 		self._insert_node(self.__disposer)
 	
 	def __init_list_view(self, children, group):
@@ -38,9 +40,9 @@ class ChoiceBox(ComplexNode):
 	def update(self):
 		if self.__group.get():
 			option = self.__group.get_item()
-			self.__disposer["text"] = option.get_text()
+			self.__disposer.placeholded_text["text"] = option.get_text()
 		else:
-			self.__disposer["text"] = ""
+			self.__disposer.placeholded_text["text"] = ""
 	
 	def update_layout(self):
 		self.__list_view["position-y"] = self.__disposer.get_absolute_size("height")
@@ -64,10 +66,8 @@ class Disposer(ComplexNodeWithBackground):
 		self.set_style_name("disposer")
 	
 	def __init_placeholded_text(self, placeholder):
-		self.__placeholded_text = PlaceholdedText(placeholder=placeholder)
-		
-		self._borrow_property(self.__placeholded_text, "text")
-		self._insert_node(self.__placeholded_text)
+		self.placeholded_text = PlaceholdedText(placeholder=placeholder)
+		self._insert_node(self.placeholded_text)
 	
 	def __init_arrow(self):
 		self.__arrow = ImageView("rinde_src('disposer-arrow.png')")

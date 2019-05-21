@@ -217,4 +217,4 @@ class SimpleNode(Node):
 		return self.__surface
 	
 	def _fit_size_to_surface(self):
-		self["width"], self["height"] = self.__surface.get_size()
+		self["size"] = self.__surface.get_size()

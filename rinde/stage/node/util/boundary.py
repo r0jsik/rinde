@@ -1,3 +1,4 @@
+from rinde.stage.property import SizeProperty
 from rinde.stage.property import SpaceProperty
 
 
@@ -78,25 +79,19 @@ class SizeBoundary(SpaceBoundary):
 		
 		self.__absolute_size = {"width": 0, "height": 0}
 		
-		self.node.properties.create_number("width", self.__update_absolute_width)
-		self.node.properties.create_number("height", self.__update_absolute_height)
+		self.__create_size_property()
 	
-	def __update_absolute_width(self):
-		self.__update("width", 3, 1)
+	def __create_size_property(self):
+		property = SizeProperty(self.node)
+		property.add_trigger(self.update_absolute_size)
 	
-	def __update_absolute_height(self):
-		self.__update("height", 0, 2)
-	
-	def __update(self, dimension, side_1, side_2):
-		self.reset_absolute_size(dimension, side_1, side_2)
+	def update_absolute_size(self):
+		self.reset_absolute_size("width", 3, 1)
+		self.reset_absolute_size("height", 0, 2)
 		self.update_parent()
 	
 	def reset_absolute_size(self, dimension, side_1, side_2):
 		self.__absolute_size[dimension] = self.node["padding"][side_1] + self.node[dimension] + self.node["padding"][side_2]
-	
-	def update_absolute_size(self):
-		self.__update_absolute_width()
-		self.__update_absolute_height()
 	
 	def absolute_size(self):
 		return self.__absolute_size["width"], self.__absolute_size["height"]
@@ -132,17 +127,19 @@ class ComplexNodeBoundary(Boundary):
 			child.boundary.reset_absolute_position(axis, dimension, side_1, side_2)
 	
 	def fit_size_to_children(self, considering_position):
-		self.__fit_size_to_children("x", "width", 3, 1, considering_position)
-		self.__fit_size_to_children("y", "height", 0, 2, considering_position)
+		width = self.__get_max_child_size("x", "width", 3, 1, considering_position)
+		height = self.__get_max_child_size("y", "height", 0, 2, considering_position)
+		
+		self.node["size"] = width, height
 	
-	def __fit_size_to_children(self, axis, dimension, side_1, side_2, considering_position):
+	def __get_max_child_size(self, axis, dimension, side_1, side_2, considering_position):
 		size = 0
 		
 		for child in self.node.children():
 			child_size = self.__compute_size(child, axis, dimension, side_1, side_2, considering_position)
 			size = max(child_size, size)
 		
-		self.node[dimension] = size
+		return size
 	
 	def __compute_size(self, child, axis, dimension, side_1, side_2, considering_position):
 		size = child["margin"][side_1] + child.get_absolute_size(dimension) + child["margin"][side_2]

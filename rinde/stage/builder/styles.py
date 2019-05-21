@@ -74,9 +74,6 @@ class StylesheetParser(object):
 		if value.startswith("#"):
 			return int(value[1:], 16)
 		
-		if value.lstrip("-").isdigit():
-			return int(value)
-		
 		# If value between quotes
 		if value[0] == value[-1] and value[0] in ["\"", "'"]:
 			return value[1:-1]
