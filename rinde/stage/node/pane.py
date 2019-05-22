@@ -23,11 +23,10 @@ class Pane(ComplexNode):
 	def insert_node(self, node, index=None):
 		self._insert_node(node, index)
 		node.reset()
-		self.update_layout()
 	
 	def remove_node(self, node):
 		self._remove_node(node)
-		self.update_layout()
+		self.boundary.update()
 
 
 class StackPane(Pane):

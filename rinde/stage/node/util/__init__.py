@@ -119,19 +119,28 @@ class Canvas:
 
 class Group:
 	def __init__(self):
-		self.__selected = ""
+		self.__selected = None
 		self.__items = {}
 	
-	def insert(self, node, name):
-		self.__items[name] = node
+	def insert(self, item, name):
+		self.__items[name] = item
 		
-		if node.is_selected():
+		if item.is_selected():
 			self.select(name)
 	
 	def remove(self, name):
-		del self.__items[name]
+		item = self.__items.pop(name)
+		
+		if item.is_selected():
+			self.select(None)
 	
 	def select(self, name):
+		if name is None or name in self.__items:
+			self.__select(name)
+		else:
+			raise KeyError("Unknown item name: '%s'" % name)
+	
+	def __select(self, name):
 		self.__selected = name
 		
 		for item_name, item in self.__items.items():
@@ -146,7 +155,10 @@ class Group:
 		return self.__selected
 	
 	def get_item(self):
-		return self.__items[self.__selected]
+		try:
+			return self.__items[self.__selected]
+		except KeyError:
+			return None
 	
 	def __eq__(self, other):
 		return self.__selected == other

@@ -11,7 +11,6 @@ class ChoiceBox(ComplexNode):
 		super(ChoiceBox, self).__init__(**kwargs)
 		
 		self.__group = group
-		self.__group.on_selected = self.update
 		
 		self.__init_disposer(placeholder)
 		self.__init_list_view(children, group)
@@ -38,8 +37,13 @@ class ChoiceBox(ComplexNode):
 		return self
 	
 	def update(self):
-		if self.__group.get():
-			option = self.__group.get_item()
+		self.__group.on_selected = self.__update_disposer
+		self.__update_disposer()
+	
+	def __update_disposer(self):
+		option = self.__group.get_item()
+		
+		if option:
 			self.__disposer.placeholded_text["text"] = option.get_text()
 		else:
 			self.__disposer.placeholded_text["text"] = ""
@@ -50,7 +54,7 @@ class ChoiceBox(ComplexNode):
 	def insert_option(self, text, name, selected=False, index=None):
 		self.__list_view.insert_option(text, name, selected, index)
 	
-	def remove_option_by_name(self, name):
+	def remove_option(self, name):
 		self.__list_view.remove_option(name)
 
 
@@ -104,27 +108,36 @@ class ListView(ComplexNodeWithBackground):
 	def get_hovered_node(self, mouse_position):
 		return self.__pane.get_hovered_node(mouse_position)
 	
+	def update(self):
+		self.background["size"] = self.__pane.absolute_size()
+	
 	def update_layout(self):
 		position = 0
 		
 		for node in self.__pane.children():
 			node["position-y"] = position
 			position += node.get_absolute_size("height") + 1
-		
-		self.fit_background_size()
 	
 	def insert_option(self, text, name, selected=False, index=None):
 		option = Option(text, name, selected)
 		option.insert_to_group(self.__group)
 		
-		self.__pane._insert_node(option, index)
+		self.__pane.insert_node(option, index)
+		self.update()
 	
 	def remove_option(self, name):
-		for option in self.children():
+		option = self.__get_option(name)
+		
+		self.__group.remove(name)
+		self.__pane.remove_node(option)
+		self.update()
+	
+	def __get_option(self, name):
+		for option in self.__pane.children():
 			if option == name:
-				self.__pane._remove_node(option)
-				self.__group.remove(name)
-				break
+				return option
+		
+		raise KeyError("Option not found")
 
 
 class Option(ComplexNodeWithBackground):

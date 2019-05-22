@@ -1,0 +1,26 @@
+#Boundary-1
+{
+	position-x: 5;
+	position-y: 6;
+	margin: 3 6 9 12;
+	padding: 8 6;
+}
+
+#Boundary-2
+{
+	position-x: 3;
+	position-y: 4;
+	margin: 10 15 20;
+	padding: 2;
+}
+
+#VBox-1
+{
+	spacing: 5;
+	margin: 3;
+}
+
+#VBox-3
+{
+	margin: 0 3;
+}

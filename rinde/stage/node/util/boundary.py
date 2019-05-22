@@ -5,15 +5,6 @@ from rinde.stage.property import SpaceProperty
 class BoundaryBase(object):
 	def __init__(self, node):
 		self.node = node
-	
-	def update_parent(self):
-		parent = self.node.get_parent_boundary()
-		parent.fit_size_to_children(False)
-		parent.update_layout()
-		parent.fit_size_to_children(True)
-	
-	def update_layout(self):
-		self.node.update_layout()
 
 
 class SpaceBoundary(BoundaryBase):
@@ -91,7 +82,9 @@ class SizeBoundary(SpaceBoundary):
 	def update_absolute_size(self):
 		self.reset_absolute_size("width", 3, 1)
 		self.reset_absolute_size("height", 0, 2)
-		self.update_parent()
+		
+		parent_boundary = self.node.get_parent_boundary()
+		parent_boundary.update()
 	
 	def reset_absolute_size(self, dimension, side_1, side_2):
 		self.__absolute_size[dimension] = self.node["padding"][side_1] + self.node[dimension] + self.node["padding"][side_2]
@@ -123,6 +116,11 @@ class Boundary(PositionBoundary, SizeBoundary):
 
 
 class ComplexNodeBoundary(Boundary):
+	def update(self):
+		self.fit_size_to_children(False)
+		self.node.update_layout()
+		self.fit_size_to_children(True)
+	
 	def reset_absolute_position(self, axis,side_1, side_2):
 		super(ComplexNodeBoundary, self).reset_absolute_position(axis, side_1, side_2)
 		

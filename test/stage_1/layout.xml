@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<?import rinde.stage.node.box.hbox.HBox ?>
+<?import rinde.stage.node.box.vbox.VBox ?>
+<?import rinde.stage.node.button.Button ?>
+<?import rinde.stage.node.button.LabelButton ?>
+<?import rinde.stage.node.field.PasswordField ?>
+<?import rinde.stage.node.field.TextField ?>
+<?import rinde.stage.node.input.CheckBox ?>
+<?import rinde.stage.node.input.RadioBox ?>
+<?import rinde.stage.node.list.ChoiceBox ?>
+<?import rinde.stage.node.list.ListView ?>
+<?import rinde.stage.node.list.Option ?>
+<?import rinde.stage.node.pane.Pane ?>
+<?import rinde.stage.node.pane.StackPane ?>
+<?import rinde.stage.node.slider.Slider ?>
+<?import rinde.stage.node.text.DraggableLabel ?>
+<?import rinde.stage.node.text.Label ?>
+<?import rinde.stage.node.text.Text ?>
+<?import rinde.stage.node.view.CanvasView ?>
+<?import rinde.stage.node.view.ImageView ?>
+
+<Scene controller="stage_1.Controller" width="960" height="480">
+	<Pane id="Boundary-1">
+		<Pane id="Boundary-2" />
+	</Pane>
+	
+	<VBox>
+		<HBox>
+			<VBox id="VBox-1">
+				<TextField id="TextField-1" />
+				<TextField id="TextField-2" placeholder="Enter text..." />
+				<PasswordField id="PasswordField-1" />
+				<PasswordField id="PasswordField-2" placeholder="Enter password..." />
+			</VBox>
+			
+			<VBox id="VBox-2">
+				<CheckBox id="CheckBox" text="CheckBox" />
+				<RadioBox id="RadioBox-1" group="RadioBox" name="1" selected="true" />
+				<RadioBox id="RadioBox-2" group="RadioBox" name="2" />
+			</VBox>
+			
+			<VBox id="VBox-3">
+				<Button id="Button-1" action="action_1" text="Action 1" />
+				<Button id="Button-2" action="action_2" text="Action 2" />
+			</VBox>
+			
+			<VBox id="VBox-4">
+				<Slider id="Slider-1" range="100" />
+				<Slider id="Slider-2" range="100" />
+				<Slider id="Slider-3" range="100" />
+				<Label text="123" />
+			</VBox>
+			
+			<Pane id="Pane" />
+			
+			<StackPane id="StackPane">
+				<ImageView id="ImageView" resource="res/test_1.png" />
+				<CanvasView id="CanvasView" width="256" height="256" />
+			</StackPane>
+		</HBox>
+		
+		<HBox>
+			<ChoiceBox id="ChoiceBox" group="ChoiceBox">
+				<Option text="Option 1" name="option_1" />
+				<Option text="Option 2" name="option_2" selected="true" />
+				<Option text="Option 3" name="option_3" />
+			</ChoiceBox>
+			
+			<ListView id="ListView" group="ListView">
+				<Option text="Option 1" name="option_1" />
+				<Option text="Option 2" name="option_2" />
+				<Option text="Option 3" name="option_3" selected="true" />
+			</ListView>
+		</HBox>
+	</VBox>
+</Scene>
