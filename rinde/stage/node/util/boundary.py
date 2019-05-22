@@ -7,13 +7,10 @@ class BoundaryBase(object):
 		self.node = node
 	
 	def update_parent(self):
-		parent = self.get_parent_boundary()
+		parent = self.node.get_parent_boundary()
 		parent.fit_size_to_children(False)
 		parent.update_layout()
 		parent.fit_size_to_children(True)
-	
-	def get_parent_boundary(self):
-		return self.node.get_parent_boundary() or NullBoundary()
 	
 	def update_layout(self):
 		self.node.update_layout()
@@ -31,6 +28,9 @@ class SpaceBoundary(BoundaryBase):
 	
 	def update_space(self):
 		pass
+	
+	def get_space(self, side_1, side_2):
+		return self.node["margin"][side_1] + self.node["padding"][side_1] + self.node["padding"][side_2] + self.node["margin"][side_2]
 
 
 class PositionBoundary(SpaceBoundary):
@@ -43,13 +43,16 @@ class PositionBoundary(SpaceBoundary):
 		self.node.properties.create_number("position-y", self.__update_absolute_position_y, position_y)
 	
 	def __update_absolute_position_x(self):
-		self.reset_absolute_position("x", "width", 3, 1)
+		self.reset_absolute_position("x", 3, 1)
 	
 	def __update_absolute_position_y(self):
-		self.reset_absolute_position("y", "height", 0, 2)
+		self.reset_absolute_position("y", 0, 2)
 	
-	def reset_absolute_position(self, axis, dimension, side_1, side_2):
-		self.__absolute_position[axis] = self.__get_parent_origin(axis, side_2) + self.__get_local_origin(axis, side_1)
+	def reset_absolute_position(self, axis, side_1, side_2):
+		self.__absolute_position[axis] = self.compute_absolute_position(axis, side_1, side_2)
+	
+	def compute_absolute_position(self, axis, side_1, side_2):
+		return self.__get_parent_origin(axis, side_2) + self.__get_local_origin(axis, side_1)
 	
 	def __get_parent_origin(self, axis, side):
 		parent = self.node.get_parent()
@@ -102,8 +105,8 @@ class SizeBoundary(SpaceBoundary):
 
 class Boundary(PositionBoundary, SizeBoundary):
 	def reset(self):
-		self.reset_absolute_position("x", "width", 3, 1)
-		self.reset_absolute_position("y", "height", 0, 2)
+		self.reset_absolute_position("x", 3, 1)
+		self.reset_absolute_position("y", 0, 2)
 		self.reset_absolute_size("width", 3, 1)
 		self.reset_absolute_size("height", 0, 2)
 	
@@ -120,11 +123,11 @@ class Boundary(PositionBoundary, SizeBoundary):
 
 
 class ComplexNodeBoundary(Boundary):
-	def reset_absolute_position(self, axis, dimension, side_1, side_2):
-		super(ComplexNodeBoundary, self).reset_absolute_position(axis, dimension, side_1, side_2)
+	def reset_absolute_position(self, axis,side_1, side_2):
+		super(ComplexNodeBoundary, self).reset_absolute_position(axis, side_1, side_2)
 		
 		for child in self.node.children():
-			child.boundary.reset_absolute_position(axis, dimension, side_1, side_2)
+			child.boundary.reset_absolute_position(axis, side_1, side_2)
 	
 	def fit_size_to_children(self, considering_position):
 		width = self.__get_max_child_size("x", "width", 3, 1, considering_position)
@@ -148,6 +151,11 @@ class ComplexNodeBoundary(Boundary):
 			return size + child["position-%s" % axis]
 		
 		return size
+
+
+class SimpleNodeBoundary(Boundary):
+	def compute_absolute_position(self, axis, side_1, side_2):
+		return super(SimpleNodeBoundary, self).compute_absolute_position(axis, side_1, side_2) + self.node["padding"][side_1]
 
 
 class NullBoundary:

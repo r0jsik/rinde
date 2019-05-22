@@ -8,20 +8,16 @@ vbox
 	align: "left";
 }
 
-text, placeholder
+text, placeholded-text
 {
 	font: rinde_src("Roboto Condensed Regular.ttf");
 	font-size: 14;
-}
-
-text
-{
 	color: #333333;
 }
 
-placeholder
+placeholded-text
 {
-	color: #666666;
+	placeholder-color: #666666;
 }
 
 label, draggable-label, label-button
@@ -29,6 +25,7 @@ label, draggable-label, label-button
 	font: rinde_src("Roboto Condensed Regular.ttf");
 	font-size: 32;
 	color: #837654;
+	shadow-color: #111111;
 }
 
 label-button:hovered
@@ -39,13 +36,6 @@ label-button:hovered
 label-button:active
 {
 	color: #615432;
-}
-
-label-shadow
-{
-	color: #111111;
-	position-x: 1;
-	position-y: 1;
 }
 
 button background
@@ -125,7 +115,7 @@ radio-box selector background, radio-box selector pipe
 text-field background, password-field background
 {
 	width: 160;
-	height: 24;
+	height: 23;
 	stroke-width: 1;
 	stroke-color: #837654;
 	inside-color: #EEEEEE;

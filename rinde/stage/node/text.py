@@ -1,76 +1,55 @@
-from rinde.stage.node import ComplexNode
 from rinde.stage.node import SimpleNode
 from rinde.stage.node.util import Font
 
 
-class Text(ComplexNode):
-	def __init__(self, text="", **kwargs):
-		super(Text, self).__init__(**kwargs)
+class TextualNode(SimpleNode):
+	def __init__(self, text, **kwargs):
+		super(TextualNode, self).__init__(**kwargs)
 		
 		self.properties.create("text", self.update, text)
 		self.properties.create("font", self.update)
 		self.properties.create_number("font-size", self.update)
-		
-		self.__init_display()
-		
-		self.set_style_name("text")
-	
-	def __init_display(self):
-		self.__display = TextDisplay(self)
-		
-		self._borrow_property(self.__display, "color")
-		self._insert_node(self.__display)
+		self.properties.create_number("color", self.update)
 	
 	def update(self):
-		self.__display.redraw()
-	
-	def crop_display_surface(self, offset_x, offset_y, width, height):
-		self.__display.crop_surface((offset_x, offset_y, width, height))
-
-
-class TextDisplay(SimpleNode):
-	def __init__(self, text):
-		super(TextDisplay, self).__init__()
-		
-		self._borrow_property(text, "text")
-		self._borrow_property(text, "font")
-		self._borrow_property(text, "font-size")
-		
-		self.properties.create_number("color", self.redraw)
-	
-	def redraw(self):
-		font = Font(self["font"], self["font-size"])
-		surface = font.render(self["text"], self["color"])
+		surface = self.postprocess(self.render())
 		
 		self._set_surface(surface)
 		self._fit_size_to_surface()
 	
-	def crop_surface(self, bounds):
-		canvas = self._get_surface()
-		canvas = canvas.subsurface(bounds)
+	def postprocess(self, surface):
+		return surface
+	
+	def render(self):
+		raise NotImplementedError
+
+
+class Text(TextualNode):
+	def __init__(self, text="", **kwargs):
+		super(Text, self).__init__(text, **kwargs)
 		
-		self._set_surface(canvas)
-		self._fit_size_to_surface()
+		self.set_style_name("text")
+	
+	def render(self):
+		return Font(self["font"], self["font-size"]).render(self["text"], self["color"])
+	
 
-
-class Label(Text):
+class Label(TextualNode):
 	def __init__(self, **kwargs):
 		super(Label, self).__init__(**kwargs)
 		
-		self.__init_shadow()
+		self.properties.create_number("shadow-color", self.update)
 		
 		self.set_style_name("label")
 	
-	def __init_shadow(self):
-		self.__shadow = TextDisplay(self)
-		self.__shadow.set_style_name("label-shadow")
+	def render(self):
+		font = Font(self["font"], self["font-size"])
 		
-		self._insert_node(self.__shadow, 0)
-	
-	def update(self):
-		super(Label, self).update()
+		back = font.render(self["text"], self["shadow-color"])
+		face = font.render(self["text"], self["color"])
+		back.blit(face, (-1, -1))
 		
-		self.__shadow.redraw()
+		return back
 
 
 class DraggableLabel(Label):
@@ -84,30 +63,19 @@ class DraggableLabel(Label):
 		self["position-y"] += mouse_offset[1]
 
 
-class PlaceholdedText(ComplexNode):
+class PlaceholdedText(TextualNode):
 	def __init__(self, text="", placeholder="", **kwargs):
-		super(PlaceholdedText, self).__init__(**kwargs)
+		super(PlaceholdedText, self).__init__(text, **kwargs)
 		
-		self.__init_text(text)
-		self.__init_placeholder(placeholder)
+		self.properties.create("placeholder", self.update, placeholder)
+		self.properties.create_number("placeholder-color", self.update)
 		
 		self.set_style_name("placeholded-text")
 	
-	def __init_text(self, text):
-		self.__text = Text(text)
+	def render(self):
+		font = Font(self["font"], self["font-size"])
 		
-		self._borrow_property(self.__text, "text", self.update)
-		self._insert_node(self.__text)
-	
-	def __init_placeholder(self, placehodler):
-		self.__placeholder = Text(placehodler)
-		self.__placeholder.set_style_name("placeholder")
-		
-		self._borrow_property(self.__placeholder, "text", name_as="placeholder")
-		self._insert_node(self.__placeholder)
-	
-	def update(self):
-		self.__placeholder["visible"] = (self.__text["text"] == "")
-	
-	def shift_text_surface(self, offset_x, offset_y):
-		self.__text.crop_display_surface(offset_x, offset_y, self.__text["width"] - offset_x, self.__text["height"] - offset_y)
+		if self["text"] == "":
+			return font.render(self["placeholder"], self["placeholder-color"])
+		else:
+			return font.render(self["text"], self["color"])

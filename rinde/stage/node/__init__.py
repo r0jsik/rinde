@@ -1,7 +1,7 @@
 from rinde.stage.node.util.appearance import Appearance
-from rinde.stage.node.util.boundary import Boundary
 from rinde.stage.node.util.boundary import ComplexNodeBoundary
 from rinde.stage.node.util.boundary import NullBoundary
+from rinde.stage.node.util.boundary import SimpleNodeBoundary
 from rinde.stage.property import Properties
 
 
@@ -197,7 +197,7 @@ class ComplexNode(Node):
 
 class SimpleNode(Node):
 	def __init__(self, **kwargs):
-		super(SimpleNode, self).__init__(boundary_type=Boundary, **kwargs)
+		super(SimpleNode, self).__init__(boundary_type=SimpleNodeBoundary, **kwargs)
 		
 		self.__surface = None
 	

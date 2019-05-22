@@ -12,22 +12,18 @@ class Field(ComplexNodeWithBackground):
 	
 	def __init_placeholded_text(self, text, placeholder):
 		self.__placeholded_text = PlaceholdedText(text, placeholder)
+		self.__placeholded_text.postprocess = self.__shit_content
 		
+		self._borrow_property(self.__placeholded_text, "text", name_as="content-text")
 		self._borrow_property(self.__placeholded_text, "placeholder")
 		self._insert_node(self.__placeholded_text)
 	
-	def update(self):
-		self.__placeholded_text["text"] = self._get_content_text()
-		self.__fit_content_size()
-	
-	def _get_content_text(self):
-		raise NotImplementedError
-	
-	def __fit_content_size(self):
-		offset = self.get_absolute_size("width") - self.background.get_absolute_size("width")
+	def __shit_content(self, surface):
+		width, height = surface.get_size()
+		expected_width = self.background["width"] - self.__placeholded_text.boundary.get_space(3, 1)
+		bounds = max(0, width - expected_width), 0, min(width, expected_width), height
 		
-		if offset > 0:
-			self.__placeholded_text.shift_text_surface(offset, 0)
+		return surface.subsurface(bounds)
 	
 	def key_pressed(self, code, char):
 		if code == 8:
@@ -42,8 +38,8 @@ class TextField(Field):
 		
 		self.set_style_name("text-field")
 	
-	def _get_content_text(self):
-		return self["text"]
+	def update(self):
+		self["content-text"] = self["text"]
 
 
 class PasswordField(Field):
@@ -52,5 +48,5 @@ class PasswordField(Field):
 		
 		self.set_style_name("password-field")
 	
-	def _get_content_text(self):
-		return "*" * len(self["text"])
+	def update(self):
+		self["content-text"] = "*" * len(self["text"])
