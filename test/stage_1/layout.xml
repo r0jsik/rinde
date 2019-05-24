@@ -47,7 +47,7 @@
 			
 			<VBox id="VBox-4">
 				<Slider id="Slider-1" range="100" />
-				<Slider id="Slider-2" range="100" />
+				<Slider id="Slider-2" range="200" />
 				<Slider id="Slider-3" range="100" />
 				<Label text="123" />
 			</VBox>

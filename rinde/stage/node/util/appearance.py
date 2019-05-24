@@ -15,34 +15,25 @@ class Appearance:
 			self.__reset_properties(style)
 	
 	def __reset_properties(self, style):
-		for property_name, value in style.get_declarations(None):
-			self.node.properties[property_name].reset(value)
+		for state_name in self.states():
+			for property_name, value in style.get_declarations(state_name):
+				self.node.properties[property_name].reset(value)
+			
+			for style_child in style.get_children(state_name):
+				self.__reset_children_appearance(style_child)
+	
+	def __reset_children_appearance(self, style):
+		for node in self.node.children():
+			for selector in node.appearance.selectors():
+				if selector == style:
+					node.appearance.__reset_properties(style)
+	
+	def states(self):
+		yield None
 		
-		self.__reset_children_appearances(style)
-	
-	def __reset_children_appearances(self, style):
-		for style_child in style.get_children(None):
-			for child in self.node.children():
-				for selector in child.appearance.selectors():
-					if selector == style_child:
-						child.appearance.__reset_properties(style_child)
-	
-	def apply(self, state):
-		for style in self.style:
-			self.__set_properties(style, state)
-	
-	def __set_properties(self, style, state):
-		for property_name, value in style.get_declarations(state):
-			self.node[property_name] = value
-		
-		self.__extend_children_appearances(style, state)
-	
-	def __extend_children_appearances(self, style, state):
-		for style_child in style.get_children(state):
-			for child in self.node.children():
-				for selector in child.appearance.selectors():
-					if selector == style_child:
-						child.appearance.__set_properties(style_child, None)
+		for state_name in self.state:
+			if self.state[state_name]:
+				yield state_name
 	
 	def selectors(self):
 		if self.style_name:
@@ -59,11 +50,22 @@ class Appearance:
 		self.state[name].add_trigger(self.__update_state)
 	
 	def __update_state(self):
-		self.apply(None)
-		
-		for state_name, value in self.state.items():
-			if value:
-				self.apply(state_name)
+		for style in self.style:
+			self.__set_properties(style)
+	
+	def __set_properties(self, style):
+		for state_name in self.states():
+			for property_name, value in style.get_declarations(state_name):
+				self.node.properties[property_name].set(value)
+			
+			for style_child in style.get_children(state_name):
+				self.__extend_children_appearance(style_child)
+	
+	def __extend_children_appearance(self, style):
+		for child in self.node.children():
+			for selector in child.appearance.selectors():
+				if selector == style:
+					child.appearance.__set_properties(style)
 	
 	def __setitem__(self, property_name, value):
 		self.state[property_name].set(value)

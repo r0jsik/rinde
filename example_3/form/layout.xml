@@ -13,7 +13,7 @@
 <?import rinde.stage.node.text.Text ?>
 
 <Fullscreen controller="form.Controller">
-	<Label text="Fill in the form" id="header" />
+	<Label id="header" text="Fill in the form" position_y="50" />
 	
 	<VBox id="form">
 		<Label text="User" />

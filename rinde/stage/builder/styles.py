@@ -76,9 +76,9 @@ class StylesheetParser(object):
 		
 		# If value between quotes
 		if value[0] == value[-1] and value[0] in ["\"", "'"]:
-			return value[1:-1]
+			value = value[1:-1]
 		
-		return value.strip()
+		return str(value.strip())
 	
 	def __get_subrules(self, rule_group):
 		return rule_group.selectorText.split(",")

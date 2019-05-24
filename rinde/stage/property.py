@@ -222,3 +222,6 @@ class BooleanProperty(Property):
 	
 	def __bool__(self):
 		return self._value
+	
+	def __nonzero__(self):
+		return self._value

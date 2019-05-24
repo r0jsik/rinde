@@ -108,6 +108,9 @@ class Controller(ControllerBase):
 		slider["value"] = 200
 		
 		assert slider["value"] == 100
+		
+		self.nodes["Slider-3"]["value"] = 200
+		self.nodes["Slider-3"]["range"] = 150
 	
 	def __test_canvas_view(self):
 		canvas_view = self.nodes["CanvasView"]
