@@ -4,6 +4,7 @@
 <?import rinde.stage.node.box.vbox.VBox ?>
 <?import rinde.stage.node.button.Button ?>
 <?import rinde.stage.node.button.LabelButton ?>
+<?import rinde.stage.node.field.TextArea ?>
 <?import rinde.stage.node.field.PasswordField ?>
 <?import rinde.stage.node.field.TextField ?>
 <?import rinde.stage.node.input.CheckBox ?>
@@ -17,6 +18,7 @@
 <?import rinde.stage.node.text.DraggableLabel ?>
 <?import rinde.stage.node.text.Label ?>
 <?import rinde.stage.node.text.Text ?>
+<?import rinde.stage.node.text.TextFlow ?>
 <?import rinde.stage.node.view.CanvasView ?>
 <?import rinde.stage.node.view.ImageView ?>
 
@@ -72,6 +74,10 @@
 				<Option text="Option 2" name="option_2" />
 				<Option text="Option 3" name="option_3" selected="true" />
 			</ListView>
+			
+			<TextArea id="TextArea" placeholder="Placeholder" />
+			
+			<TextFlow id="TextFlow" />
 		</HBox>
 	</VBox>
 </Scene>

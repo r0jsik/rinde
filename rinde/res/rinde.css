@@ -8,7 +8,7 @@ vbox
 	align: "left";
 }
 
-text, placeholded-text
+text, placeholded-text, text-flow
 {
 	font: rinde_src("Roboto Condensed Regular.ttf");
 	font-size: 14;
@@ -112,17 +112,27 @@ radio-box selector background, radio-box selector pipe
 	radius: 100;
 }
 
+text-field background, password-field background, text-area background
+{
+	stroke-width: 1;
+	stroke-color: #837654;
+	inside-color: #EEEEEE;
+}
+
 text-field background, password-field background
 {
 	width: 160;
 	height: 23;
-	stroke-width: 1;
-	stroke-color: #837654;
-	inside-color: #EEEEEE;
 	radius: 25;
 }
 
-text-field placeholded-text, password-field placeholded-text
+text-area background
+{
+	width: 210;
+	height: 100;
+}
+
+text-field placeholded-text, password-field placeholded-text, text-area placeholded-text
 {
 	padding: 2 5;
 }

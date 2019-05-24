@@ -1,10 +1,15 @@
 import pygame
 
+from rinde.script import rounded_rect
 from rinde.data import Resources
 
 
 class Font:
 	__CACHE = {}
+	
+	@staticmethod
+	def remove_from_cache(resource):
+		del Font.__CACHE[Resources.get_path(resource)]
 	
 	def __init__(self, resource, size):
 		try:
@@ -30,6 +35,9 @@ class Font:
 	
 	def __int_to_rgb(self, color):
 		return tuple((color >> offset) & 255 for offset in (16, 8, 0))
+	
+	def pygame(self):
+		return self.__pygame_font
 
 
 class Image:
@@ -82,36 +90,11 @@ class Canvas:
 	def fill_rounded_rect(self, color, bounds, radius):
 		if radius < 0 or radius > 100:
 			raise ValueError("Radius must be in range <0, 100>")
-		else:
-			radius /= 100
 		
 		if bounds[2] <= 0 or bounds[3] <= 0:
 			return
 		
-		rectangle = pygame.Rect(0, 0, bounds[2], bounds[3])
-		surface = pygame.Surface(rectangle.size, pygame.SRCALPHA)
-		
-		corner = pygame.Surface([min(rectangle.size) * 2] * 2, pygame.SRCALPHA)
-		pygame.draw.ellipse(corner, (0, 0, 0), corner.get_rect())
-		corner = pygame.transform.smoothscale(corner, [int(min(rectangle.size) * radius)] * 2)
-		
-		radius = surface.blit(corner, (0, 0))
-		
-		radius.bottomright = rectangle.bottomright
-		surface.blit(corner, radius)
-		
-		radius.topright = rectangle.topright
-		surface.blit(corner, radius)
-		
-		radius.bottomleft = rectangle.bottomleft
-		surface.blit(corner, radius)
-		
-		surface.fill((0, 0, 0), rectangle.inflate(-radius.w, 0))
-		surface.fill((0, 0, 0), rectangle.inflate(0, -radius.h))
-		surface.fill((255, 255, 255), special_flags=pygame.BLEND_RGBA_MIN)
-		surface.fill(color, special_flags=pygame.BLEND_RGBA_MAX)
-		
-		self.__canvas.blit(surface, bounds)
+		self.__canvas.blit(rounded_rect.render(color, bounds, radius / 100), bounds)
 	
 	def get(self):
 		return self.__canvas

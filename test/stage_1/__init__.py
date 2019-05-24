@@ -22,6 +22,8 @@ class Controller(ControllerBase):
 		self.__test_image_view()
 		self.__test_choice_box()
 		self.__test_list_view()
+		self.__test_text_area()
+		self.__test_text_flow()
 	
 	def __test_boundary(self):
 		boundary_1 = self.nodes["Boundary-1"]
@@ -156,6 +158,12 @@ class Controller(ControllerBase):
 		self.nodes["ListView"].insert_option("Option 4", "option_4", True, 3)
 		
 		assert self.groups["ListView"] == "option_4"
+	
+	def __test_text_area(self):
+		self.nodes["TextArea"]["text"] = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec tempor dapibus condimentum. Donec a malesuada ex, quis posuere nisl. Curabitur a molestie est, a aliquet enim. Integer sit amet nulla in mauris rhoncus tempor id ut tortor."
+	
+	def __test_text_flow(self):
+		self.nodes["TextFlow"]["text"] = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.\nDonec tempor dapibus condimentum.\nDonec a malesuada ex, quis posuere nisl.\nCurabitur a molestie est, a aliquet enim.\nInteger sit amet nulla in mauris rhoncus tempor id ut tortor.\nUt eu enim id tortor iaculis volutpat.\nMaecenas metus nulla, tristique a leo a, sollicitudin mollis leo.\nMorbi lorem erat, euismod et mauris sed, congue eleifend arcu."
 	
 	def action_1(self):
 		self.nodes["TextField-2"]["text"] = "Very long text typed in the TextField"
