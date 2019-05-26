@@ -7,8 +7,8 @@ class GroupTest(unittest.TestCase):
 	def test_empty_group(self):
 		group = Group()
 		
-		assert group.get() is None
-		assert group.get_item() is None
+		assert group.get_selected_name() is None
+		assert group.get_selected_item() is None
 	
 	def test_insert_unselected(self):
 		item = MockItem(False)
@@ -16,7 +16,7 @@ class GroupTest(unittest.TestCase):
 		group = Group()
 		group.insert(item, "item")
 		
-		assert group.get() is None
+		assert group.get_selected_item() is None
 	
 	def test_insert_selected(self):
 		item = MockItem(True)
@@ -72,7 +72,7 @@ class GroupTest(unittest.TestCase):
 		group.insert(item, "item")
 		group.remove("item")
 		
-		assert group.get() is None
+		assert group.get_selected_item() is None
 	
 	def test_get_item(self):
 		item_1 = MockItem(True)
@@ -82,11 +82,11 @@ class GroupTest(unittest.TestCase):
 		group.insert(item_1, "item_1")
 		group.insert(item_2, "item_2")
 		
-		assert group.get_item() == item_1
+		assert group.get_selected_item() == item_1
 		
 		group.select("item_2")
 		
-		assert group.get_item() == item_2
+		assert group.get_selected_item() == item_2
 	
 	def test_select_not_existing_item(self):
 		group = Group()

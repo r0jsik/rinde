@@ -153,7 +153,7 @@ class Controller(ControllerBase):
 		
 		self.nodes["ListView"].remove_option("option_3")
 		
-		assert self.groups["ListView"].get() is None
+		assert self.groups["ListView"].get_selected_name() is None
 		
 		self.nodes["ListView"].insert_option("Option 4", "option_4", True, 3)
 		

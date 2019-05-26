@@ -41,7 +41,7 @@ class ChoiceBox(ComplexNode):
 		self.__update_disposer()
 	
 	def __update_disposer(self):
-		option = self.__group.get_item()
+		option = self.__group.get_selected_item()
 		
 		if option:
 			self.__disposer.placeholded_text["text"] = option.get_text()
@@ -126,18 +126,11 @@ class ListView(ComplexNodeWithBackground):
 		self.update()
 	
 	def remove_option(self, name):
-		option = self.__get_option(name)
+		option = self.__group.get_item_by_name(name)
 		
 		self.__group.remove(name)
 		self.__pane.remove_node(option)
 		self.update()
-	
-	def __get_option(self, name):
-		for option in self.__pane.children():
-			if option == name:
-				return option
-		
-		raise KeyError("Option not found")
 
 
 class Option(ComplexNodeWithBackground):
@@ -172,6 +165,3 @@ class Option(ComplexNodeWithBackground):
 	
 	def get_text(self):
 		return self.__text
-	
-	def __eq__(self, other):
-		return self.__name == other

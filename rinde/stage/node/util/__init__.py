@@ -134,14 +134,17 @@ class Group:
 	def on_selected(self):
 		pass
 	
-	def get(self):
+	def get_selected_name(self):
 		return self.__selected
 	
-	def get_item(self):
+	def get_selected_item(self):
 		try:
 			return self.__items[self.__selected]
 		except KeyError:
 			return None
+	
+	def get_item_by_name(self, name):
+		return self.__items[name]
 	
 	def __eq__(self, other):
 		return self.__selected == other
