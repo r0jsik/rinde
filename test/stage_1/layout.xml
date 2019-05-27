@@ -12,6 +12,8 @@
 <?import rinde.stage.node.list.ChoiceBox ?>
 <?import rinde.stage.node.list.ListView ?>
 <?import rinde.stage.node.list.Option ?>
+<?import rinde.stage.node.page.Page ?>
+<?import rinde.stage.node.page.Pages ?>
 <?import rinde.stage.node.pane.Pane ?>
 <?import rinde.stage.node.pane.StackPane ?>
 <?import rinde.stage.node.slider.Slider ?>
@@ -27,57 +29,78 @@
 		<Pane id="Boundary-2" />
 	</Pane>
 	
-	<VBox>
-		<HBox>
+	<ChoiceBox id="ChoiceBox" group="ChoiceBox">
+		<Option text="button" name="button" />
+		<Option text="Option 2" name="option_2" selected="true" />
+		<Option text="field" name="field" />
+		<Option text="input" name="input" />
+		<Option text="list" name="list" />
+		<Option text="pane" name="pane" />
+		<Option text="slider" name="slider" />
+		<Option text="text" name="text" />
+		<Option text="view" name="view" />
+	</ChoiceBox>
+	
+	<Pages id="Pages" group="module" position_x="200">
+		<Page id="Page-1" name="button">
+			<VBox id="VBox-3">
+				<Button id="Button-1" action="action_1" text="Action 1" />
+				<Button id="Button-2" action="action_2" text="Action 2" />
+			</VBox>
+		</Page>
+		
+		<Page id="Page-2" name="field">
 			<VBox id="VBox-1">
 				<TextField id="TextField-1" />
 				<TextField id="TextField-2" placeholder="Enter text..." />
 				<PasswordField id="PasswordField-1" />
 				<PasswordField id="PasswordField-2" placeholder="Enter password..." />
+				<TextArea id="TextArea" placeholder="Placeholder" />
 			</VBox>
-			
+		</Page>
+		
+		<Page id="Page-3" name="input">
 			<VBox id="VBox-2">
 				<CheckBox id="CheckBox" text="CheckBox" />
 				<RadioBox id="RadioBox-1" group="RadioBox" name="1" selected="true" />
 				<RadioBox id="RadioBox-2" group="RadioBox" name="2" />
 			</VBox>
-			
-			<VBox id="VBox-3">
-				<Button id="Button-1" action="action_1" text="Action 1" />
-				<Button id="Button-2" action="action_2" text="Action 2" />
-			</VBox>
-			
+		</Page>
+		
+		<Page id="Page-4" name="list">
+			<ListView id="ListView" group="ListView">
+				<Option text="Option 1" name="option_1" />
+				<Option text="Option 2" name="option_2" />
+				<Option text="Option 3" name="option_3" selected="true" />
+			</ListView>
+		</Page>
+		
+		<Page id="Page-5" name="pane">
+			<Pane id="Pane" />
+		</Page>
+		
+		<Page id="Page-6" name="slider">
 			<VBox id="VBox-4">
 				<Slider id="Slider-1" range="100" />
 				<Slider id="Slider-2" range="200" />
 				<Slider id="Slider-3" range="100" />
 				<Label text="123" />
 			</VBox>
-			
-			<Pane id="Pane" />
-			
+		</Page>
+		
+		<Page id="Page-7" name="text">
+			<HBox>
+				<Label text="Test" />
+				<TextFlow id="TextFlow" />
+				<Text />
+			</HBox>
+		</Page>
+		
+		<Page id="Page-8" name="view">
 			<StackPane id="StackPane">
 				<ImageView id="ImageView" resource="res/test_1.png" />
 				<CanvasView id="CanvasView" width="256" height="256" />
 			</StackPane>
-		</HBox>
-		
-		<HBox>
-			<ChoiceBox id="ChoiceBox" group="ChoiceBox">
-				<Option text="Option 1" name="option_1" />
-				<Option text="Option 2" name="option_2" selected="true" />
-				<Option text="Option 3" name="option_3" />
-			</ChoiceBox>
-			
-			<ListView id="ListView" group="ListView">
-				<Option text="Option 1" name="option_1" />
-				<Option text="Option 2" name="option_2" />
-				<Option text="Option 3" name="option_3" selected="true" />
-			</ListView>
-			
-			<TextArea id="TextArea" placeholder="Placeholder" />
-			
-			<TextFlow id="TextFlow" />
-		</HBox>
-	</VBox>
+		</Page>
+	</Pages>
 </Scene>

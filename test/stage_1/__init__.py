@@ -20,6 +20,7 @@ class Controller(ControllerBase):
 		self.__test_slider()
 		self.__test_canvas_view()
 		self.__test_image_view()
+		self.__test_pages()
 		self.__test_choice_box()
 		self.__test_list_view()
 		self.__test_text_area()
@@ -135,6 +136,23 @@ class Controller(ControllerBase):
 		
 		assert image_view.absolute_size() == (256, 256)
 	
+	def __test_pages(self):
+		self.groups["module"].select("button")
+		
+		self.__assert_only_visible_page("button")
+		
+		self.groups["module"].select("field")
+		
+		self.__assert_only_visible_page("field")
+		
+		self.groups["module"].select(None)
+	
+	def __assert_only_visible_page(self, name):
+		for node in self.nodes["Pages"].children():
+			assert node["visible"] == False or node == name
+		
+		assert self.groups["module"] == name
+	
 	def __test_choice_box(self):
 		disposer = self.__lookup_element("ChoiceBox", "disposer")
 		
@@ -145,6 +163,13 @@ class Controller(ControllerBase):
 		self.nodes["ChoiceBox"].remove_option("option_2")
 		
 		assert disposer.placeholded_text["text"] == ""
+		
+		self.groups["ChoiceBox"].add_trigger(self.__page_selected)
+		self.groups["ChoiceBox"].select("button")
+	
+	def __page_selected(self):
+		module = self.groups["ChoiceBox"].get_selected_name()
+		self.groups["module"].select(module)
 	
 	def __test_list_view(self):
 		self.nodes["ListView"].insert_option("Option 0", "option_0", index=0)

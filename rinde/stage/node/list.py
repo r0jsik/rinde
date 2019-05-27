@@ -10,10 +10,11 @@ class ChoiceBox(ComplexNode):
 	def __init__(self, children, group, placeholder="", **kwargs):
 		super(ChoiceBox, self).__init__(**kwargs)
 		
-		self.__group = group
-		
 		self.__init_disposer(placeholder)
 		self.__init_list_view(children, group)
+		
+		self.__group = group
+		self.__group.add_trigger(self.update)
 		
 		self.set_style_name("choice-box")
 	
@@ -37,10 +38,6 @@ class ChoiceBox(ComplexNode):
 		return self
 	
 	def update(self):
-		self.__group.on_selected = self.__update_disposer
-		self.__update_disposer()
-	
-	def __update_disposer(self):
 		option = self.__group.get_selected_item()
 		
 		if option:
@@ -165,3 +162,6 @@ class Option(ComplexNodeWithBackground):
 	
 	def get_text(self):
 		return self.__text
+	
+	def __eq__(self, other):
+		return self.__name == other

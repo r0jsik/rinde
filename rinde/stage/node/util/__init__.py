@@ -104,6 +104,7 @@ class Group:
 	def __init__(self):
 		self.__selected = None
 		self.__items = {}
+		self.__triggers = []
 	
 	def insert(self, item, name):
 		self.__items[name] = item
@@ -129,10 +130,11 @@ class Group:
 		for item_name, item in self.__items.items():
 			item.set_selected(item_name == name)
 		
-		self.on_selected()
+		for trigger in self.__triggers:
+			trigger()
 	
-	def on_selected(self):
-		pass
+	def add_trigger(self, trigger):
+		self.__triggers.append(trigger)
 	
 	def get_selected_name(self):
 		return self.__selected

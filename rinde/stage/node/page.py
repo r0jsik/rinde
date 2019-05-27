@@ -28,6 +28,14 @@ class Pages(ComplexNode):
 		
 		self.__group.remove(name)
 		self._remove_node(page)
+	
+	def get_hovered_node(self, mouse_position):
+		for node in self.children():
+			if node.can_be_hovered(mouse_position):
+				return node.get_hovered_node(mouse_position)
+		
+		if self.can_be_hovered(mouse_position):
+			return self
 
 
 class Page(Pane):
@@ -46,3 +54,6 @@ class Page(Pane):
 	
 	def insert_to(self, group):
 		group.insert(self, self.__name)
+	
+	def __eq__(self, other):
+		return self.__name == other
