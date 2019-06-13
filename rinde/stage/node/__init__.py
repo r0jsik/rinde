@@ -170,6 +170,9 @@ class ComplexNode(Node):
 				node.repaint(surface)
 	
 	def _insert_node(self, node, index=None):
+		if not isinstance(node, (SimpleNode, ComplexNode)):
+			raise TypeError("Node must be a subclass of rinde.stage.node.ComplexNode or rinde.stage.node.SimpleNode")
+		
 		if index is None:
 			self.__nodes.append(node)
 		else:

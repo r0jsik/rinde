@@ -3,6 +3,8 @@ import re
 import xml.etree.cElementTree as xml
 
 from rinde.stage import StageFactory
+from rinde.stage.node import ComplexNode
+from rinde.stage.node import SimpleNode
 from rinde.stage.node.util import Group
 
 
@@ -95,6 +97,9 @@ class AbstractLayoutParser(AbstractXMLParser):
 			node = self.__create_node(type_name, attributes, children)
 		except TypeError as exception:
 			raise TypeError("Invalid '%s' argumentation: %s" % (type_name, exception))
+		
+		if not isinstance(node, (SimpleNode, ComplexNode)):
+			raise TypeError("Node must be a subclass of rinde.stage.node.ComplexNode or rinde.stage.node.SimpleNode")
 		
 		if "id" in attributes:
 			self.__controller.nodes[attributes["id"]] = node

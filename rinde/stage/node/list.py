@@ -144,8 +144,7 @@ class Option(ComplexNodeWithBackground):
 		self.set_style_name("option")
 	
 	def __init_text(self, text):
-		text = Text(text)
-		self._insert_node(text)
+		self._insert_node(Text(text))
 	
 	def insert_to_group(self, group):
 		self.__group = group

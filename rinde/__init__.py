@@ -92,6 +92,9 @@ class Window:
 			
 			clock.tick(60)
 	
+	def center_in_stage(self, node, axis):
+		self.__stage.center_node(node, axis)
+	
 	def get_size(self):
 		return self.__stage.get_size()
 	

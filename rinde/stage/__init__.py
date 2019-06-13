@@ -261,6 +261,19 @@ class Stage(InteractiveStage):
 		self.handle_events()
 		self.repaint(surface)
 	
+	def center_node(self, node, axis):
+		if node not in self.get_nodes():
+			raise AttributeError("Cannot center indirect child of the Stage")
+		
+		if axis == "x":
+			node["position-x"] = (self.__size[0] - node["width"])/2
+		
+		elif axis == "y":
+			node["position-y"] = (self.__size[1] - node["height"])/2
+		
+		else:
+			raise ValueError("Unknown axis: '%s', use 'x' or 'y' instead" % axis)
+	
 	def get_size(self):
 		return self.__size
 	

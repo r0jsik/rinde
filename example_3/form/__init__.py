@@ -4,10 +4,7 @@ from example_3.summary import Summary
 
 class Controller(ControllerBase):
 	def start(self):
-		window_width, window_height = self.window.get_size()
-		
-		label = self.nodes["header"]
-		label["position-x"] = (window_width - label["width"])/2
+		self.window.center_in_stage(self.nodes["header"], "x")
 	
 	def confirm(self):
 		self.nodes["form"]["enabled"] = False
@@ -22,12 +19,13 @@ class Controller(ControllerBase):
 		property.animate_by(-220, self.show_summary, 3)
 	
 	def show_summary(self):
-		username = self.nodes["username"]["text"]
-		password = self.nodes["password"]["text"]
-		difficulty = self.groups["difficulty"].get_selected_name()
-		checkbox_1 = self.nodes["checkbox 1"]["selected"]
-		checkbox_2 = self.nodes["checkbox 2"]["selected"]
-		option = self.groups["options"].get_selected_name()
-		summary = Summary(username, password, difficulty, checkbox_1, checkbox_2, option)
+		summary = Summary({
+			"Username": self.nodes["username"]["text"],
+			"Password": self.nodes["password"]["text"],
+			"Diffiulty": self.groups["difficulty"].get_selected_name(),
+			"Checkbox 1": self.nodes["checkbox 1"]["selected"],
+			"Checkbox 2": self.nodes["checkbox 2"]["selected"],
+			"Option": self.groups["options"].get_selected_name()
+		})
 		
 		self.window.set_stage("summary", summary)

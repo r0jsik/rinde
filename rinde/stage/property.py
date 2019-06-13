@@ -68,20 +68,18 @@ class Property(object):
 		value = self._convert_value(value)
 		
 		if self._value != value:
-			self.__change(value)
+			self._change(value)
 		
 		return self
 	
-	def __change(self, value):
+	def _change(self, value):
 		self._value = value
-		self.__invoke_triggers()
 		
-		for property in self.__bound_properties:
-			property.set(value)
-	
-	def __invoke_triggers(self):
 		for trigger in self.__triggers:
 			trigger()
+		
+		for property in self.__bound_properties:
+			property._change(value)
 	
 	def add_trigger(self, action):
 		self.__triggers.add(action)
@@ -209,7 +207,7 @@ class BooleanProperty(Property):
 		super(BooleanProperty, self).__init__(value)
 	
 	def _convert_value(self, value):
-		return value in ["true", True]
+		return value in ("True", "true", True)
 	
 	def toggle(self):
 		self.set(not self._value)
@@ -225,3 +223,26 @@ class BooleanProperty(Property):
 	
 	def __nonzero__(self):
 		return self._value
+
+
+class TupleProperty(Property):
+	def __init__(self, value=()):
+		super(TupleProperty, self).__init__(value)
+	
+	def _convert_value(self, value):
+		return [item for item in value]
+	
+	def append(self, item):
+		self._value.append(item)
+		self._change(self._value)
+	
+	def insert(self, item, index):
+		self._value.insert(index, item)
+		self._change(self._value)
+	
+	def remove(self, item):
+		self._value.remove(item)
+		self._change(self._value)
+	
+	def get(self):
+		return tuple(self._value)

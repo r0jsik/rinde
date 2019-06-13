@@ -67,6 +67,12 @@ class Appearance:
 				if selector == style:
 					child.appearance.__set_properties(style)
 	
+	def update_children(self):
+		for state_name in self.states():
+			for style in self.style:
+				for style_child in style.get_children(state_name):
+					self.__extend_children_appearance(style_child)
+	
 	def __setitem__(self, property_name, value):
 		self.state[property_name].set(value)
 	

@@ -1,11 +1,11 @@
 hbox
 {
-	align: "top";
+	align: top;
 }
 
 vbox
 {
-	align: "left";
+	align: left;
 }
 
 text, placeholded-text, text-flow
@@ -82,7 +82,7 @@ slider track
 
 check-box, radio-box
 {
-	align: "right";
+	align: right;
 	spacing: 5;
 }
 
@@ -179,4 +179,24 @@ option text
 option:hovered background, option:selected background
 {
 	inside-color: #C3B694;
+}
+
+table background
+{
+	inside-color: #837654;
+}
+
+column head background
+{
+	inside-color: #C3B694;
+}
+
+column cell background
+{
+	inside-color: #EEEEEE;
+}
+
+column head text, column cell text
+{
+	padding: 2 5;
 }

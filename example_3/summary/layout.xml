@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
+<?import rinde.stage.node.table.Column ?>
+<?import rinde.stage.node.table.Table ?>
 <?import rinde.stage.node.text.Label ?>
-<?import rinde.stage.node.text.Text ?>
 
 <Fullscreen>
 	<Label text="Summary" id="header" position_y="-40" />
-	<Text id="summary" />
+	
+	<Table id="summary" visible="false">
+		<Column heading="Field" />
+		<Column heading="Value" />
+	</Table>
 </Fullscreen>

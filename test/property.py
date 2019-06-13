@@ -2,6 +2,7 @@ import unittest
 
 from rinde.stage.property import Property
 from rinde.stage.property import SpaceProperty
+from rinde.stage.property import TupleProperty
 
 
 class PropertyTest(unittest.TestCase):
@@ -122,6 +123,39 @@ class SpacePropertyTest(unittest.TestCase):
 		
 		with self.assertRaises(IndexError):
 			property[256] = 8
+
+
+class TuplePropertyTest(unittest.TestCase):
+	def test_append(self):
+		property = TupleProperty((1, 2, 3))
+		property.append(4)
+		
+		assert property.get() == (1, 2, 3, 4)
+	
+	def test_insert(self):
+		property = TupleProperty((1, 2, 4))
+		property.insert(3, 2)
+		
+		assert property.get() == (1, 2, 3, 4)
+	
+	def test_remove(self):
+		property = TupleProperty((1, 2, 8, 3))
+		property.remove(8)
+		
+		assert property.get() == (1, 2, 3)
+	
+	def test_binding(self):
+		property_1 = TupleProperty((1, 2, 3))
+		property_2 = TupleProperty()
+		
+		property_2.bind_to(property_1)
+		property_1.append(4)
+		
+		assert property_2.get() == (1, 2, 3, 4)
+		
+		property_1.set((4, 5, 6))
+		
+		assert property_2.get() == (4, 5, 6)
 
 
 if __name__ == '__main__':

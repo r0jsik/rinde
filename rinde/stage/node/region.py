@@ -47,4 +47,4 @@ class ComplexNodeWithBackground(ComplexNode):
 		self._insert_node(self.background)
 	
 	def fit_background_size(self):
-		self.background["width"], self.background["height"] = self.absolute_size()
+		self.background["size"] = self.absolute_size()

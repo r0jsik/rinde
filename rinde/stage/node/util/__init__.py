@@ -31,7 +31,7 @@ class Font:
 		return Font.__CACHE[path][size]
 	
 	def render(self, text, color):
-		return self.__pygame_font.render(text, True, self.__int_to_rgb(color))
+		return self.__pygame_font.render(str(text), True, self.__int_to_rgb(color))
 	
 	def __int_to_rgb(self, color):
 		return tuple((color >> offset) & 255 for offset in (16, 8, 0))
