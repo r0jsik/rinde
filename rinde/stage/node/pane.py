@@ -1,5 +1,5 @@
 from rinde.stage.node import ComplexNode
-from rinde.stage.node.util.layout import LayoutComputer
+from rinde.stage.node.util import LayoutComputer
 
 
 class Pane(ComplexNode):

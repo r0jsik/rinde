@@ -1,4 +1,4 @@
-from rinde.script import surface_shift
+from rinde.script import shift_surface
 from rinde.script import text_lines
 from rinde.stage.node.region import ComplexNodeWithBackground
 from rinde.stage.node.text import PlaceholdedText
@@ -32,7 +32,7 @@ class Field(KeyboardInput):
 		self._insert_node(self.__placeholded_text)
 	
 	def __shift_content(self, surface):
-		return surface_shift.shift_x(surface, self.background["width"] - self.__placeholded_text.boundary.get_space(3, 1))
+		return shift_surface.shift_x(surface, self.background["width"] - self.__placeholded_text.boundary.get_space(3, 1))
 
 
 class TextField(Field):
@@ -84,4 +84,4 @@ class TextArea(KeyboardInput):
 		return text_lines.render(text_lines.truncate_to_width(text, font.pygame(), width), font, color)
 	
 	def __shift_content(self, surface):
-		return surface_shift.shift_y(surface, self.background["height"] - self.__placeholded_text.boundary.get_space(2, 0))
+		return shift_surface.shift_y(surface, self.background["height"] - self.__placeholded_text.boundary.get_space(2, 0))

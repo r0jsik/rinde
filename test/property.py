@@ -1,8 +1,8 @@
 import unittest
 
-from rinde.stage.property import Property
-from rinde.stage.property import SpaceProperty
-from rinde.stage.property import TupleProperty
+from rinde.property import Property
+from rinde.property import SpaceProperty
+from rinde.property import TupleProperty
 
 
 class PropertyTest(unittest.TestCase):

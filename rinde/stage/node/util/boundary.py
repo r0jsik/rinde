@@ -1,5 +1,5 @@
-from rinde.stage.property import SizeProperty
-from rinde.stage.property import SpaceProperty
+from rinde.property import SizeProperty
+from rinde.property import SpaceProperty
 
 
 class BoundaryBase(object):

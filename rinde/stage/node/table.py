@@ -1,7 +1,7 @@
 from rinde.stage.node import ComplexNode
 from rinde.stage.node.region import ComplexNodeWithBackground
 from rinde.stage.node.text import Text
-from rinde.stage.property import TupleProperty
+from rinde.property import TupleProperty
 
 
 class Table(ComplexNodeWithBackground):

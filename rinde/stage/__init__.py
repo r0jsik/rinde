@@ -1,6 +1,6 @@
 import pygame
 
-from rinde.stage.animation import Animations
+from rinde.property.animation import Animations
 
 
 class Screen:

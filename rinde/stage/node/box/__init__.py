@@ -1,5 +1,5 @@
 from rinde.stage.node.pane import Pane
-from rinde.stage.node.util.layout import LayoutComputer
+from rinde.stage.node.util import LayoutComputer
 
 
 class Box(Pane):

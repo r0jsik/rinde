@@ -1,4 +1,4 @@
-from rinde.stage.animation import Animation
+from rinde.property.animation import Animation
 
 
 class Properties:
@@ -172,7 +172,7 @@ class SpaceProperty(Property):
 			value = value.split(" ")
 		
 		elif isinstance(value, int):
-			value = (value, )
+			value = (value,)
 		
 		return [int(value[side]) for side in self.__split_directional(value)]
 	

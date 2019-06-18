@@ -2,7 +2,7 @@ from rinde.stage.node.util.appearance import Appearance
 from rinde.stage.node.util.boundary import ComplexNodeBoundary
 from rinde.stage.node.util.boundary import NullBoundary
 from rinde.stage.node.util.boundary import SimpleNodeBoundary
-from rinde.stage.property import Properties
+from rinde.property import Properties
 
 
 class NodeBase(object):

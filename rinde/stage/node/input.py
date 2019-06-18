@@ -2,7 +2,7 @@ from rinde.stage.node import ComplexNode
 from rinde.stage.node.region import Region
 from rinde.stage.node.region import ComplexNodeWithBackground
 from rinde.stage.node.text import Text
-from rinde.stage.node.util.layout import LayoutComputer
+from rinde.stage.node.util import LayoutComputer
 
 
 class Input(ComplexNode):

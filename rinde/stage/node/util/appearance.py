@@ -1,4 +1,4 @@
-from rinde.stage.property import BooleanProperty
+from rinde.property import BooleanProperty
 
 
 class Appearance:
