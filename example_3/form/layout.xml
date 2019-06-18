@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<?import rinde.stage.node.box.vbox.VBox ?>
-<?import rinde.stage.node.box.hbox.HBox ?>
+<?import rinde.stage.node.box.VBox ?>
+<?import rinde.stage.node.box.HBox ?>
 <?import rinde.stage.node.button.Button ?>
 <?import rinde.stage.node.field.TextField ?>
 <?import rinde.stage.node.field.PasswordField ?>
