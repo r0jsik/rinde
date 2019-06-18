@@ -29,9 +29,10 @@ class StageBase(object):
 			node.set_parent(self)
 			node.reset()
 	
-	def update_style_request(self, node):
+	def update_style_request(self, node, path):
 		node.appearance.style = self.__style.get_for(node)
 		node.appearance.apply_default()
+		node.appearance.apply_from_parents(path)
 	
 	def repaint(self, surface):
 		surface.fill(0xEEEEEE)

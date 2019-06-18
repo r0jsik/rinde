@@ -39,6 +39,7 @@ class StylesheetParser(object):
 	def __not_comment(self, rule_group):
 		return not isinstance(rule_group, cssutils.css.CSSComment)
 	
+	# I don't know how to explain this monster, but it works
 	def __parse_rule(self, rule_group, data):
 		declarations = self.__get_declarations(rule_group)
 		
@@ -94,14 +95,12 @@ class Styles:
 	def __init__(self, data):
 		self.__data = data
 	
+	def _debug_print(self):
+		for style in self.__data.values():
+			style._debug_print()
+	
 	def get_for(self, node):
-		style = []
-		
-		for selector in node.appearance.selectors():
-			if selector in self.__data:
-				style.append(self.__data[selector])
-		
-		return style
+		return tuple(self.__data[selector] for selector in node.appearance.selectors() if selector in self.__data)
 
 
 class Style:
@@ -138,6 +137,18 @@ class Style:
 			return self.__declarations[state].items()
 		
 		return ()
+	
+	def _debug_print(self, indent_level=0):
+		print("\t" * indent_level, self.__selector, sep="")
+		
+		for state in self.__declarations:
+			print("\t" * (indent_level + 1), state, " -> ", self.__declarations[state], sep="")
+		
+		for state in self.__children:
+			print("\t" * (indent_level + 1), state, sep="")
+			
+			for child in self.__children[state]:
+				child._debug_print(indent_level + 2)
 	
 	def __eq__(self, object):
 		return object == self.__selector

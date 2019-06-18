@@ -108,14 +108,17 @@ class StageNode(StylizableNode, BoundaryNode):
 		self.__parent = None
 	
 	def update_style(self):
-		self.update_style_request(self)
+		self.update_style_request(self, [self])
 	
 	# Chain of responsibility
-	def update_style_request(self, node):
+	def update_style_request(self, node, path):
 		if self.__parent is None:
 			raise RuntimeError("Node is not inserted to the stage")
 		
-		self.__parent.update_style_request(node)
+		if isinstance(self.__parent, Node):
+			self.__parent.update_style_request(node, [self.__parent] + path)
+		else:
+			self.__parent.update_style_request(node, path)
 	
 	def set_parent(self, node):
 		if self.__parent and node:

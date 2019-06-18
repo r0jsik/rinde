@@ -19,8 +19,6 @@ class Table(ComplexNodeWithBackground):
 		for i, column in enumerate(self.__columns):
 			for record in self["records"]:
 				column.insert_cell(record[i])
-			
-			column.appearance.update_children()
 		
 		self.fit_background_size()
 	
@@ -63,7 +61,7 @@ class Column(ComplexNode):
 		
 		for cell in self.children():
 			cell["position-y"] = position_y
-			cell.fit_size_in_table(self)
+			cell.fit_size_in_column(self)
 			position_y += cell.get_absolute_size("height") + 1
 
  
@@ -78,5 +76,5 @@ class Cell(ComplexNodeWithBackground):
 	def __init_text(self, text):
 		self._insert_node(Text(text))
 	
-	def fit_size_in_table(self, column):
+	def fit_size_in_column(self, column):
 		self.background["size"] = column.get_absolute_size("width"), self.get_absolute_size("height")
