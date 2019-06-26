@@ -9,7 +9,7 @@ setup(
 	name="rinde",
 	description="Library used for creating GUI based on XML and CSS.",
 	long_description=long_description,
-	version="0.97",
+	version="0.98-A",
 	license="MIT License",
 	author="Marcin Rajs",
 	requires=("pygame", "cssutils"),
