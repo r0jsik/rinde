@@ -47,13 +47,13 @@ class BoxLayoutComputer(LayoutComputer):
 		raise NotImplementedError
 
 
-class HBox(Box):
+class HorizontalBox(Box):
 	def __init__(self, **kwargs):
-		super(HBox, self).__init__(**kwargs)
+		super(HorizontalBox, self).__init__(**kwargs)
 		
-		self.__layout_computer = HBoxLayoutComputer(self)
+		self.__layout_computer = HorizontalBoxLayoutComputer(self)
 		
-		self.set_style_name("hbox")
+		self.set_style_name("horizontal-box")
 	
 	def update_nodes_spacing(self):
 		self.__layout_computer.update_nodes_spacing("x", "width", 3, 1)
@@ -62,7 +62,7 @@ class HBox(Box):
 		self.__layout_computer.update_nodes_align("y")
 
 
-class HBoxLayoutComputer(BoxLayoutComputer):
+class HorizontalBoxLayoutComputer(BoxLayoutComputer):
 	def compute_aligned_position(self, node, align):
 		if align == "top":
 			return 0
@@ -74,13 +74,13 @@ class HBoxLayoutComputer(BoxLayoutComputer):
 			return self.node.get_absolute_size("height") - node.get_absolute_size("height")
 
 
-class VBox(Box):
+class VerticalBox(Box):
 	def __init__(self, **kwargs):
-		super(VBox, self).__init__(**kwargs)
+		super(VerticalBox, self).__init__(**kwargs)
 		
-		self.__layout_computer = VBoxLayoutComputer(self)
+		self.__layout_computer = VerticalBoxLayoutComputer(self)
 		
-		self.set_style_name("vbox")
+		self.set_style_name("vertical-box")
 	
 	def update_nodes_spacing(self):
 		self.__layout_computer.update_nodes_spacing("y", "height", 0, 2)
@@ -89,7 +89,7 @@ class VBox(Box):
 		self.__layout_computer.update_nodes_align("x")
 
 
-class VBoxLayoutComputer(BoxLayoutComputer):
+class VerticalBoxLayoutComputer(BoxLayoutComputer):
 	def compute_aligned_position(self, node, align):
 		if align == "left":
 			return 0

@@ -1,11 +1,11 @@
-vbox
+vertical-box
 {
 	padding: 10;
 	spacing: 5;
 	position-y: 5;
 }
 
-hbox
+horizontal-box
 {
 	align: middle;
 	spacing: 10;

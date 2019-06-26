@@ -1,5 +1,5 @@
 from rinde.stage import ControllerBase
-from rinde.stage.node.input import RadioBox
+from rinde.stage.node.switch import RadioSwitch
 from rinde.stage.node.pane import Pane
 from rinde.stage.node.text import Text
 from rinde.stage.node.util import Canvas
@@ -14,8 +14,8 @@ class Controller(ControllerBase):
 		self.__test_boundary()
 		self.__test_password_field()
 		self.__test_text_field()
-		self.__test_check_box()
-		self.__test_radio_box()
+		self.__test_check_switch()
+		self.__test_radio_switch()
 		self.__test_pane()
 		self.__test_slider()
 		self.__test_canvas_view()
@@ -64,30 +64,30 @@ class Controller(ControllerBase):
 		assert self.nodes["TextField-1"]["text"] == "correct"
 		assert self.nodes["TextField-1"]["content-text"] == "correct"
 	
-	def __test_check_box(self):
-		assert self.nodes["CheckBox"]["selected"] is False
+	def __test_check_switch(self):
+		assert self.nodes["CheckSwitch"]["selected"] is False
 		
-		self.nodes["CheckBox"].click()
+		self.nodes["CheckSwitch"].click()
 		
-		assert self.nodes["CheckBox"]["selected"] is True
+		assert self.nodes["CheckSwitch"]["selected"] is True
 	
-	def __test_radio_box(self):
-		radio_box_1 = self.nodes["RadioBox-1"]
-		radio_box_2 = self.nodes["RadioBox-2"]
+	def __test_radio_switch(self):
+		radio_switch_1 = self.nodes["RadioSwitch-1"]
+		radio_switch_2 = self.nodes["RadioSwitch-2"]
 		
-		assert radio_box_1["selected"] is True
-		assert radio_box_2["selected"] is False
+		assert radio_switch_1["selected"] is True
+		assert radio_switch_2["selected"] is False
 		
-		radio_box_2.click()
+		radio_switch_2.click()
 		
-		assert radio_box_1["selected"] is False
-		assert radio_box_2["selected"] is True
+		assert radio_switch_1["selected"] is False
+		assert radio_switch_2["selected"] is True
 		
-		radio_box_3 = RadioBox(self.groups["RadioBox"], "3", selected=True)
+		radio_switch_3 = RadioSwitch(self.groups["RadioSwitch"], "3", selected=True)
 		
-		assert radio_box_1["selected"] is False
-		assert radio_box_2["selected"] is False
-		assert radio_box_3["selected"] is True
+		assert radio_switch_1["selected"] is False
+		assert radio_switch_2["selected"] is False
+		assert radio_switch_3["selected"] is True
 	
 	def __test_pane(self):
 		pane = self.nodes["Pane"]
@@ -151,9 +151,9 @@ class Controller(ControllerBase):
 		
 		self.__assert_only_visible_page("button")
 		
-		self.groups["module"].select("field")
+		self.groups["module"].select("input")
 		
-		self.__assert_only_visible_page("field")
+		self.__assert_only_visible_page("input")
 		
 		self.groups["module"].select(None)
 	
@@ -204,4 +204,4 @@ class Controller(ControllerBase):
 		self.nodes["TextField-2"]["text"] = "Very long text typed in the TextField"
 	
 	def action_2(self):
-		self.nodes["RadioBox-1"]["text"] = "Very long description of the RadioBox"
+		self.nodes["RadioSwitch-1"]["text"] = "Very long description of the RadioSwitch"

@@ -23,8 +23,8 @@ class Controller(ControllerBase):
 			"Username": self.nodes["username"]["text"],
 			"Password": self.nodes["password"]["text"],
 			"Diffiulty": self.groups["difficulty"].get_selected_name(),
-			"Checkbox 1": self.nodes["checkbox 1"]["selected"],
-			"Checkbox 2": self.nodes["checkbox 2"]["selected"],
+			"CheckSwitch 1": self.nodes["checkbox 1"]["selected"],
+			"CheckSwitch 2": self.nodes["checkbox 2"]["selected"],
 			"Option": self.groups["options"].get_selected_name()
 		})
 		

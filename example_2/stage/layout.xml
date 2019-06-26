@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<?import rinde.stage.node.box.HBox ?>
-<?import rinde.stage.node.box.VBox ?>
+<?import rinde.stage.node.box.HorizontalBox ?>
+<?import rinde.stage.node.box.VerticalBox ?>
 <?import rinde.stage.node.slider.Slider ?>
 <?import rinde.stage.node.text.Text ?>
 <?import rinde.stage.node.view.CanvasView ?>
 
 <Scene controller="stage.Controller" width="410" height="95">
-	<VBox>
-		<HBox>
+	<VerticalBox>
+		<HorizontalBox>
 			<Text text="R:" /> <Slider id="r" action="change_color" range="255" />
-		</HBox>
+		</HorizontalBox>
 		
-		<HBox>
+		<HorizontalBox>
 			<Text text="G:" /> <Slider id="g" action="change_color" range="255" />
-		</HBox>
+		</HorizontalBox>
 		
-		<HBox>
+		<HorizontalBox>
 			<Text text="B:" /> <Slider id="b" action="change_color" range="255" />
-		</HBox>
-	</VBox>
+		</HorizontalBox>
+	</VerticalBox>
 	
 	<CanvasView id="display" width="75" height="75" />
 </Scene>

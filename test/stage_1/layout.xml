@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<?import rinde.stage.node.box.HBox ?>
-<?import rinde.stage.node.box.VBox ?>
+<?import rinde.stage.node.box.HorizontalBox ?>
+<?import rinde.stage.node.box.VerticalBox ?>
 <?import rinde.stage.node.button.Button ?>
 <?import rinde.stage.node.button.LabelButton ?>
-<?import rinde.stage.node.field.TextArea ?>
-<?import rinde.stage.node.field.PasswordField ?>
-<?import rinde.stage.node.field.TextField ?>
-<?import rinde.stage.node.input.CheckBox ?>
-<?import rinde.stage.node.input.RadioBox ?>
+<?import rinde.stage.node.input.TextArea ?>
+<?import rinde.stage.node.input.PasswordField ?>
+<?import rinde.stage.node.input.TextField ?>
+<?import rinde.stage.node.switch.CheckSwitch ?>
+<?import rinde.stage.node.switch.RadioSwitch ?>
 <?import rinde.stage.node.list.ChoiceBox ?>
 <?import rinde.stage.node.list.ListView ?>
 <?import rinde.stage.node.list.Option ?>
@@ -32,8 +32,8 @@
 	<ChoiceBox id="ChoiceBox" group="ChoiceBox">
 		<Option text="button" name="button" />
 		<Option text="Option 2" name="option_2" selected="true" />
-		<Option text="field" name="field" />
 		<Option text="input" name="input" />
+		<Option text="switch" name="switch" />
 		<Option text="list" name="list" />
 		<Option text="pane" name="pane" />
 		<Option text="slider" name="slider" />
@@ -43,28 +43,28 @@
 	
 	<Pages id="Pages" group="module" position_x="200">
 		<Page id="Page-1" name="button">
-			<VBox id="VBox-3">
+			<VerticalBox id="VerticalBox-3">
 				<Button id="Button-1" action="action_1" text="Action 1" />
 				<Button id="Button-2" action="action_2" text="Action 2" />
-			</VBox>
+			</VerticalBox>
 		</Page>
 		
-		<Page id="Page-2" name="field">
-			<VBox id="VBox-1">
+		<Page id="Page-2" name="input">
+			<VerticalBox id="VerticalBox-1">
 				<TextField id="TextField-1" />
 				<TextField id="TextField-2" placeholder="Enter text..." />
 				<PasswordField id="PasswordField-1" />
 				<PasswordField id="PasswordField-2" placeholder="Enter password..." />
 				<TextArea id="TextArea" placeholder="Placeholder" />
-			</VBox>
+			</VerticalBox>
 		</Page>
 		
-		<Page id="Page-3" name="input">
-			<VBox id="VBox-2">
-				<CheckBox id="CheckBox" text="CheckBox" />
-				<RadioBox id="RadioBox-1" group="RadioBox" name="1" selected="true" />
-				<RadioBox id="RadioBox-2" group="RadioBox" name="2" />
-			</VBox>
+		<Page id="Page-3" name="switch">
+			<VerticalBox id="VerticalBox-2">
+				<CheckSwitch id="CheckSwitch" text="CheckSwitch" />
+				<RadioSwitch id="RadioSwitch-1" group="RadioSwitch" name="1" selected="true" />
+				<RadioSwitch id="RadioSwitch-2" group="RadioSwitch" name="2" />
+			</VerticalBox>
 		</Page>
 		
 		<Page id="Page-4" name="list">
@@ -80,20 +80,20 @@
 		</Page>
 		
 		<Page id="Page-6" name="slider">
-			<VBox id="VBox-4">
+			<VerticalBox id="VerticalBox-4">
 				<Slider id="Slider-1" range="100" />
 				<Slider id="Slider-2" range="200" />
 				<Slider id="Slider-3" range="100" />
 				<Label text="123" />
-			</VBox>
+			</VerticalBox>
 		</Page>
 		
 		<Page id="Page-7" name="text">
-			<HBox>
+			<HorizontalBox>
 				<Label text="Test" />
 				<TextFlow id="TextFlow" />
 				<Text />
-			</HBox>
+			</HorizontalBox>
 		</Page>
 		
 		<Page id="Page-8" name="view">

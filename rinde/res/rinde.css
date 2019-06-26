@@ -1,9 +1,9 @@
-hbox
+horizontal-box
 {
 	align: top;
 }
 
-vbox
+vertical-box
 {
 	align: left;
 }
@@ -38,24 +38,24 @@ label-button:active
 	color: #615432;
 }
 
-button background
+button background, toggle-button background
 {
 	stroke-width: 1;
 	stroke-color: #837654;
 	inside-color: #EEEEEE;
 }
 
-button:hovered background
+button:hovered background, toggle-button:hovered background
 {
 	inside-color: #B5A886;
 }
 
-button:active background
+button:active background, toggle-button:active background, toggle-button:selected background
 {
 	inside-color: #A59876;
 }
 
-button text
+button text, toggle-button text
 {
 	padding: 5 10;
 }
@@ -80,13 +80,13 @@ slider track
 	radius: 75;
 }
 
-check-box, radio-box
+check-switch, radio-switch
 {
 	align: right;
 	spacing: 5;
 }
 
-check-box selector background, radio-box selector background
+check-switch selector background, radio-switch selector background
 {
 	width: 14;
 	height: 14;
@@ -95,19 +95,19 @@ check-box selector background, radio-box selector background
 	inside-color: #EEEEEE;
 }
 
-check-box selector pipe, radio-box selector pipe
+check-switch selector pipe, radio-switch selector pipe
 {
 	width: 6;
 	height: 6;
 	inside-color: #615432;
 }
 
-check-box selector background, check-box selector pipe
+check-switch selector background, check-switch selector pipe
 {
 	radius: 25;
 }
 
-radio-box selector background, radio-box selector pipe
+radio-switch selector background, radio-switch selector pipe
 {
 	radius: 100;
 }
