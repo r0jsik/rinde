@@ -169,7 +169,7 @@ class ComplexNode(Node):
 	
 	def repaint(self, surface):
 		if self["visible"]:
-			for node in self.children():
+			for node in self.__nodes:
 				node.repaint(surface)
 	
 	def _insert_node(self, node, index=None):
@@ -191,11 +191,10 @@ class ComplexNode(Node):
 		pass
 	
 	def children(self):
-		for node in self.__nodes:
-			yield node
+		return iter(self.__nodes)
 	
 	def _debug_lookup_element(self, selector):
-		for element in self.children():
+		for element in self.__nodes:
 			for node_selector in element.appearance.selectors():
 				if node_selector == selector:
 					return element

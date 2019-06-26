@@ -17,8 +17,7 @@ class Region(SimpleNode):
 		self.set_style_name("region")
 	
 	def __update_when_resized(self):
-		self.properties.add_trigger("width", self.update)
-		self.properties.add_trigger("height", self.update)
+		self.properties.add_trigger("size", self.update)
 	
 	def update(self):
 		self.__update_canvas()
@@ -30,21 +29,23 @@ class Region(SimpleNode):
 	
 	def __redraw(self):
 		bounds = (0, 0, self["width"], self["height"])
+		
 		self.__canvas.clear()
 		self.__canvas.draw_rounded_rect(self["inside-color"], bounds, self["radius"], self["stroke-width"], self["stroke-color"])
+	
+	def draw_stroke(self, start, end):
+		self.__canvas.draw_line(self["stroke-color"], start, end, self["stroke-width"])
 
 
-class ComplexNodeWithBackground(ComplexNode):
+class HybridNode(ComplexNode):
 	def __init__(self, **kwargs):
-		super(ComplexNodeWithBackground, self).__init__(**kwargs)
+		super(HybridNode, self).__init__(**kwargs)
 		
 		self.__init_background()
 	
 	def __init_background(self):
 		self.background = Region()
 		self.background.set_style_name("background")
+		self.background.properties["size"].bind_to(self.properties["size"])
 		
 		self._insert_node(self.background)
-	
-	def fit_background_size(self):
-		self.background["size"] = self.absolute_size()

@@ -35,6 +35,16 @@ class Controller(ControllerBase):
 		
 		assert boundary_2.absolute_position() == (41, 31)
 		assert boundary_2.absolute_size() == (4, 4)
+		
+		boundary_1["padding"] = 1, 2, 3, 4
+		
+		assert boundary_1.absolute_position() == (17, 9)
+		assert boundary_1.absolute_size() == (43, 42)
+		
+		boundary_2["margin"] = 4, 3, 2, 1
+		
+		assert boundary_2.absolute_position() == (23, 20)
+		assert boundary_2.absolute_size() == (4, 4)
 	
 	def __test_password_field(self):
 		assert self.nodes["PasswordField-1"]["text"] == ""

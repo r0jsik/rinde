@@ -1,10 +1,10 @@
 from rinde.script import shift_surface
 from rinde.script import text_lines
-from rinde.stage.node.region import ComplexNodeWithBackground
+from rinde.stage.node.region import HybridNode
 from rinde.stage.node.text import PlaceholdedText
 
 
-class KeyboardInput(ComplexNodeWithBackground):
+class KeyboardInput(HybridNode):
 	def __init__(self, **kwargs):
 		super(KeyboardInput, self).__init__(**kwargs)
 	

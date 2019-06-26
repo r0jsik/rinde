@@ -183,7 +183,9 @@ option:hovered background, option:selected background
 
 table background
 {
-	inside-color: #837654;
+	stroke-width: 1;
+	stroke-color: #837654;
+	inside-color: #EEEEEE;
 }
 
 column head background
@@ -191,12 +193,7 @@ column head background
 	inside-color: #C3B694;
 }
 
-column cell background
-{
-	inside-color: #EEEEEE;
-}
-
-column head text, column cell text
+column head text, column text
 {
 	padding: 2 5;
 }

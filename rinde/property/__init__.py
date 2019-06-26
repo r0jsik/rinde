@@ -79,7 +79,7 @@ class Property(object):
 			trigger()
 		
 		for property in self.__bound_properties:
-			property._change(value)
+			property.set(value)
 	
 	def add_trigger(self, action):
 		self.__triggers.add(action)

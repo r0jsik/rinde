@@ -1,6 +1,6 @@
 from rinde.stage.node import ComplexNode
 from rinde.stage.node.region import Region
-from rinde.stage.node.region import ComplexNodeWithBackground
+from rinde.stage.node.region import HybridNode
 from rinde.stage.node.text import Text
 from rinde.stage.node.util import LayoutComputer
 
@@ -32,7 +32,7 @@ class Input(ComplexNode):
 		self.__layout_computer.align_nodes(self.__selector, self.__text)
 
 
-class Selector(ComplexNodeWithBackground):
+class Selector(HybridNode):
 	def __init__(self, selected):
 		super(Selector, self).__init__()
 		

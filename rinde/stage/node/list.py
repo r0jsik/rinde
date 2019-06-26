@@ -1,6 +1,6 @@
 from rinde.stage.node import ComplexNode
 from rinde.stage.node.pane import Pane
-from rinde.stage.node.region import ComplexNodeWithBackground
+from rinde.stage.node.region import HybridNode
 from rinde.stage.node.text import Text
 from rinde.stage.node.text import PlaceholdedText
 from rinde.stage.node.view import ImageView
@@ -55,7 +55,7 @@ class ChoiceBox(ComplexNode):
 		self.__list_view.remove_option(name)
 
 
-class Disposer(ComplexNodeWithBackground):
+class Disposer(HybridNode):
 	def __init__(self, combo_box, placeholder, **kwargs):
 		super(Disposer, self).__init__(**kwargs)
 		
@@ -80,7 +80,7 @@ class Disposer(ComplexNodeWithBackground):
 		self.__arrow["position-x"] = self.get_absolute_size("width") - self.__arrow.get_absolute_size("width")
 
 
-class ListView(ComplexNodeWithBackground):
+class ListView(HybridNode):
 	def __init__(self, children, group, **kwargs):
 		super(ListView, self).__init__(**kwargs)
 		
@@ -130,7 +130,7 @@ class ListView(ComplexNodeWithBackground):
 		self.update()
 
 
-class Option(ComplexNodeWithBackground):
+class Option(HybridNode):
 	def __init__(self, text, name, selected=False, **kwargs):
 		super(Option, self).__init__(**kwargs)
 		

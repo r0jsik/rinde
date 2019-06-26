@@ -5,11 +5,6 @@ from rinde.property import SpaceProperty
 class BoundaryBase(object):
 	def __init__(self, node):
 		self.node = node
-
-
-class SpaceBoundary(BoundaryBase):
-	def __init__(self, node):
-		super(SpaceBoundary, self).__init__(node)
 		
 		self.__create_space_property("margin")
 		self.__create_space_property("padding")
@@ -24,26 +19,26 @@ class SpaceBoundary(BoundaryBase):
 		return self.node["margin"][side_1] + self.node["padding"][side_1] + self.node["padding"][side_2] + self.node["margin"][side_2]
 
 
-class PositionBoundary(SpaceBoundary):
+class PositionBoundary(BoundaryBase):
 	def __init__(self, node, position_x=0, position_y=0):
 		super(PositionBoundary, self).__init__(node)
 		
 		self.__absolute_position = {"x": 0, "y": 0}
 		
-		self.node.properties.create_number("position-x", self.__update_absolute_position_x, position_x)
-		self.node.properties.create_number("position-y", self.__update_absolute_position_y, position_y)
+		self.node.properties.create_number("position-x", self.reset_absolute_position_x, position_x)
+		self.node.properties.create_number("position-y", self.reset_absolute_position_y, position_y)
 	
-	def __update_absolute_position_x(self):
+	def reset_absolute_position_x(self):
 		self.reset_absolute_position("x", 3, 1)
 	
-	def __update_absolute_position_y(self):
+	def reset_absolute_position_y(self):
 		self.reset_absolute_position("y", 0, 2)
 	
 	def reset_absolute_position(self, axis, side_1, side_2):
 		self.__absolute_position[axis] = self.compute_absolute_position(axis, side_1, side_2)
 	
 	def compute_absolute_position(self, axis, side_1, side_2):
-		return self.__get_parent_origin(axis, side_2) + self.__get_local_origin(axis, side_1)
+		return self.__get_parent_origin(axis, side_2) + self.node["position-%s" % axis] + self.node["margin"][side_1]
 	
 	def __get_parent_origin(self, axis, side):
 		parent = self.node.get_parent()
@@ -53,13 +48,6 @@ class PositionBoundary(SpaceBoundary):
 		except AttributeError:
 			return 0
 	
-	def __get_local_origin(self, axis, side):
-		return self.node["position-%s" % axis] + self.node["margin"][side]
-	
-	def update_absolute_position(self):
-		self.__update_absolute_position_x()
-		self.__update_absolute_position_y()
-	
 	def absolute_position(self):
 		return self.__absolute_position["x"], self.__absolute_position["y"]
 	
@@ -67,7 +55,7 @@ class PositionBoundary(SpaceBoundary):
 		return self.__absolute_position[axis]
 
 
-class SizeBoundary(SpaceBoundary):
+class SizeBoundary(BoundaryBase):
 	def __init__(self, node):
 		super(SizeBoundary, self).__init__(node)
 		
@@ -80,11 +68,17 @@ class SizeBoundary(SpaceBoundary):
 		property.add_trigger(self.update_absolute_size)
 	
 	def update_absolute_size(self):
-		self.reset_absolute_size("width", 3, 1)
-		self.reset_absolute_size("height", 0, 2)
+		self.reset_absolute_width()
+		self.reset_absolute_height()
 		
 		parent_boundary = self.node.get_parent_boundary()
 		parent_boundary.update()
+	
+	def reset_absolute_width(self):
+		self.reset_absolute_size("width", 3, 1)
+	
+	def reset_absolute_height(self):
+		self.reset_absolute_size("height", 0, 2)
 	
 	def reset_absolute_size(self, dimension, side_1, side_2):
 		self.__absolute_size[dimension] = self.node["padding"][side_1] + self.node[dimension] + self.node["padding"][side_2]
@@ -98,13 +92,14 @@ class SizeBoundary(SpaceBoundary):
 
 class Boundary(PositionBoundary, SizeBoundary):
 	def reset(self):
-		self.reset_absolute_position("x", 3, 1)
-		self.reset_absolute_position("y", 0, 2)
-		self.reset_absolute_size("width", 3, 1)
-		self.reset_absolute_size("height", 0, 2)
+		self.reset_absolute_position_x()
+		self.reset_absolute_position_y()
+		self.reset_absolute_width()
+		self.reset_absolute_height()
 	
 	def update_space(self):
-		self.update_absolute_position()
+		self.reset_absolute_position_x()
+		self.reset_absolute_position_y()
 		self.update_absolute_size()
 	
 	def is_mouse_over(self, mouse_position):
@@ -121,7 +116,7 @@ class ComplexNodeBoundary(Boundary):
 		self.node.update_layout()
 		self.fit_size_to_children(True)
 	
-	def reset_absolute_position(self, axis,side_1, side_2):
+	def reset_absolute_position(self, axis, side_1, side_2):
 		super(ComplexNodeBoundary, self).reset_absolute_position(axis, side_1, side_2)
 		
 		for child in self.node.children():
