@@ -17,7 +17,7 @@ class Region(SimpleNode):
 		self.set_style_name("region")
 	
 	def __update_when_resized(self):
-		self.properties.add_trigger("size", self.update)
+		self.properties["size"].add_trigger(self.update)
 	
 	def update(self):
 		self.__update_canvas()

@@ -37,7 +37,7 @@ class Controller(ControllerBase):
 	# This method creates new Summary object and changes stage of the window
 	def show_summary(self):
 		
-		# To get text from the field with id="field_id" (defined in XML), use the following command:
+		# To get text, from the field with id="field_id" (defined in XML), use the following command:
 		# self.nodes["field_id"]["text"]
 		#
 		# To get name of the selected item in the group (like RadioSwitch), use the following command:

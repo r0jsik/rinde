@@ -88,13 +88,8 @@ class Canvas:
 		return bounds[0] + stroke_width, bounds[1] + stroke_width, bounds[2] - 2*stroke_width, bounds[3] - 2*stroke_width
 	
 	def fill_rounded_rect(self, color, bounds, radius):
-		if radius < 0 or radius > 100:
-			raise ValueError("Radius must be in range <0, 100>")
-		
-		if bounds[2] <= 0 or bounds[3] <= 0:
-			return
-		
-		self.__canvas.blit(rounded_rect.render(color, bounds, radius / 100), bounds)
+		if bounds[2] > 0 and bounds[3] > 0:
+			self.__canvas.blit(rounded_rect.render(color, bounds[2], bounds[3], radius), bounds)
 	
 	def get(self):
 		return self.__canvas

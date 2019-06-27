@@ -39,7 +39,7 @@ class Slider(ComplexNode):
 	
 	def __init_value(self, action):
 		self._borrow_property(self.__thumb, "position-x", action, "value")
-		self.properties.add_trigger("value", self.__clamp_value)
+		self.properties["value"].add_trigger(self.__clamp_value)
 	
 	def update_layout(self):
 		self.__layout_computer.center_node_vertically(self.__track)

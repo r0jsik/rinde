@@ -74,14 +74,16 @@ class TextArea(KeyboardInput):
 	
 	def __render_wrapped_text(self, font):
 		text = self.__placeholded_text["text"]
-		width = self.background["width"] - self.__placeholded_text.boundary.get_space(3, 1)
 		
 		if text == "":
 			text, color = self.__placeholded_text["placeholder"], self.__placeholded_text["placeholder-color"]
 		else:
 			color = self.__placeholded_text["color"]
 		
-		return text_lines.render(text_lines.truncate_to_width(text, font.pygame(), width), font, color)
+		width = self.background["width"] - self.__placeholded_text.boundary.get_space(3, 1)
+		lines = text_lines.truncate_to_width(text, font.pygame(), width)
+		
+		return text_lines.render(lines, font, color)
 	
 	def __shift_content(self, surface):
 		return shift_surface.shift_y(surface, self.background["height"] - self.__placeholded_text.boundary.get_space(2, 0))

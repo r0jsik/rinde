@@ -1,8 +1,23 @@
 import pygame
 
 
-def render(color, bounds, radius):
-	rectangle = pygame.Rect(0, 0, bounds[2], bounds[3])
+"""
+Creates new instance of pygame.Surface and fills it with a rounded rectangle with specified parameters.
+
+:param color: color of the content [as (r, g, b, a) tuple/list of ints]
+:param width: width of the rectangle [in pixels]
+:param height: height of the rectangle [in pixels]
+:param radius: radius of the rounding [as number in range <0, 100>]
+
+:returns: pygame.Surface
+"""
+def render(color, width, height, radius):
+	if radius < 0 or radius > 100:
+		raise ValueError("Radius must be in range <0, 100>")
+	else:
+		radius /= 100.0
+	
+	rectangle = pygame.Rect(0, 0, width, height)
 	surface = pygame.Surface(rectangle.size, pygame.SRCALPHA)
 	
 	corner = pygame.Surface([min(rectangle.size) * 2] * 2, pygame.SRCALPHA)

@@ -1,9 +1,29 @@
 import pygame
 
 
+"""
+Splits the text in such a way that none of the line rendered by the pygame.font.Font object will exceed expected width.
+
+:returns: a generator that yields string for each line whose rendered surface's length won't exceed expected width
+"""
+def truncate_to_width(text, font, max_width):
+	done = 0
+	
+	while not done:
+		real, done, line = truncate_line(text, font, max_width)
+		text = text[real:]
+		
+		yield line.strip()
+
+
+"""
+Finds how many letters could be rendered in one line (on pygame.Surface) not to exceed maximum width.
+
+:returns: data used by the algorithm to truncate lines
+"""
 def truncate_line(text, font, max_width):
 	real = len(text)
-	stext = text
+	line = text
 	width = font.size(text)[0]
 	cut = 0
 	a = 0
@@ -13,29 +33,24 @@ def truncate_line(text, font, max_width):
 		a += 1
 		n = text.rsplit(None, a)[0]
 		
-		if stext == n:
+		if line == n:
 			cut += 1
-			stext = n[:-cut]
+			line = n[:-cut]
 		else:
-			stext = n
+			line = n
 		
-		width = font.size(stext)[0]
-		real = len(stext)
+		width = font.size(line)[0]
+		real = len(line)
 		done = 0
 	
-	return real, done, stext
+	return real, done, line
 
 
-def truncate_to_width(text, font, max_width):
-	done = 0
-	
-	while not done:
-		nl, done, line = truncate_line(text, font, max_width)
-		text = text[nl:]
-		
-		yield line.strip()
+"""
+Renders string lines as text blitted into pygame.Surface object.
 
-
+:returns: pygame.Surface
+"""
 def render(lines, font, color):
 	rendered_lines = []
 	width = height = 0
@@ -53,6 +68,11 @@ def render(lines, font, color):
 	return join_rendered_lines(width, height, rendered_lines)
 
 
+"""
+Joins rendered surfaces (one under the other) into one, total surface.
+
+:returns: pygame.Surface
+"""
 def join_rendered_lines(width, height, rendered_lines):
 	surface = pygame.Surface((width, height), pygame.SRCALPHA)
 	position = 0
