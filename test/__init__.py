@@ -2,4 +2,4 @@ import rinde
 
 
 if __name__ == '__main__':
-	rinde.Application("Rinde", "stage_1")
+	rinde.Application("Rinde", "stage")

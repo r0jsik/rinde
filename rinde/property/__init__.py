@@ -168,14 +168,14 @@ class NumberProperty(Property):
 	"""
 	Invokes an animation that changes property's value gradually.
 	"""
-	def animate_to(self, value, callback, speed=2):
+	def animate_to(self, value, callback=lambda:(), speed=2):
 		animation = Animation(self, value, callback, speed)
 		animation.start()
 	
 	"""
 	Invokes an animation that changes property's value gradually.
 	"""
-	def animate_by(self, value, callback, speed=2):
+	def animate_by(self, value, callback=lambda:(), speed=2):
 		animation = Animation(self, self._value + value, callback, speed)
 		animation.start()
 	

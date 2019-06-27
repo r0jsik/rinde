@@ -156,7 +156,3 @@ class TuplePropertyTest(unittest.TestCase):
 		property_1.set((4, 5, 6))
 		
 		assert property_2.get() == (4, 5, 6)
-
-
-if __name__ == '__main__':
-	unittest.main()

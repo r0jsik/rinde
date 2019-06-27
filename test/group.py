@@ -104,7 +104,3 @@ class MockItem:
 	
 	def is_selected(self):
 		return self.__selected
-
-
-if __name__ == '__main__':
-	unittest.main()

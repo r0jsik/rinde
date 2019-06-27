@@ -100,12 +100,12 @@ class Animation:
 	def next_frame(self):
 		difference = self.__value - self.__property.get()
 		
-		if self.__speed >= difference >= -self.__speed:
+		if difference >= 1:
+			self.__property += min(difference, self.__speed)
+		
+		elif difference <= -1:
+			self.__property -= min(-difference, self.__speed)
+		
+		else:
 			Animations.remove(self)
 			self.__callback()
-		
-		elif difference < 0:
-			self.__property -= self.__speed
-		
-		elif difference > 0:
-			self.__property += self.__speed

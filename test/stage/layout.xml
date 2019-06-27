@@ -24,7 +24,7 @@
 <?import rinde.stage.node.view.CanvasView ?>
 <?import rinde.stage.node.view.ImageView ?>
 
-<Scene controller="stage_1.Controller" width="960" height="480">
+<Scene controller="stage.Controller" width="960" height="480">
 	<Pane id="Boundary-1">
 		<Pane id="Boundary-2" />
 	</Pane>
