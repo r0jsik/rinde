@@ -1,6 +1,8 @@
 # rinde
 Rinde is an amazing Python library used for creating GUI based on XML and CSS.
 
+View on [PyPi](https://pypi.org/project/rinde/).
+
 ### How does it work?
 Rinde can speed-up your work and build an application's window.
 

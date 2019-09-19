@@ -8,7 +8,7 @@ from rinde.stage.node.util import Image
 
 class Controller(ControllerBase):
 	def __lookup_element(self, node_id, selector):
-		return self.nodes[node_id]._debug_lookup_element(selector)
+		return self.nodes[node_id].lookup_element(selector)
 	
 	def start(self):
 		self.__test_boundary()

@@ -1,3 +1,5 @@
 .idea/
+build/
 dev/
-test/stage_2/
+dist/
+rinde.egg-info/

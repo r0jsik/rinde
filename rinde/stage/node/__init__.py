@@ -193,7 +193,7 @@ class ComplexNode(Node):
 	def children(self):
 		return iter(self.__nodes)
 	
-	def _debug_lookup_element(self, selector):
+	def lookup_element(self, selector):
 		for element in self.__nodes:
 			for node_selector in element.appearance.selectors():
 				if node_selector == selector:
