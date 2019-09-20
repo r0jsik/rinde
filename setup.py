@@ -10,12 +10,9 @@ setup(
 	description="Library used for creating GUI based on XML and CSS.",
 	long_description=long_description,
 	long_description_content_type="text/markdown",
-	version="1.0",
+	version="1.0.1",
 	license="MIT License",
 	author="Marcin Rajs",
 	requires=("pygame", "cssutils"),
-	packages=find_packages(
-		include="rinde/res",
-		exclude=("example_1", "example_2", "example_3")
-	)
+	packages=find_packages()
 )
